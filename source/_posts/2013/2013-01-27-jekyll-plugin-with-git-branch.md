@@ -10,6 +10,8 @@ img: "/images/2013/jekyll-plugin-with-git-branch.png"
 
 ![git分支让github page用上jekyll插件][2]
 
+**本博客已经在2013-3-9转换成octopress了,比这种手动方式要方便很多。**
+
 github page是个不错的应用，可惜对jekyll有比较多的限制，特别是插件方面。
 为了解决这个问题，我选择了分支来处理这个，大约就是source分支保存未编译的内容，
 master分支保留生成的网站。下面是大概的操作过程，针对已有博客的迁移。
