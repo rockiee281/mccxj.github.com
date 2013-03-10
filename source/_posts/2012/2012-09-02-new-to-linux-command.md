@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "Linux命令入门(旧)"
 description: "09年写的傻瓜文章"
-category: "总结" 
-tags: ["linux", "命令", "总结"]
+categories: ["linux", "命令", "总结"]
 ---
 
 __这是09年写的一篇入门文章，内容简单得有点傻瓜了。__

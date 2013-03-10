@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "把时间当作朋友读书笔记"
 description: "把时间当作朋友读书笔记"
-category: "总结"
-tags: ["笔记", "成功", "时间管理"]
+categories: ["总结", "笔记", "成功", "时间管理"]
 img: "/images/2013/to-be-times-friend.png"
 ---
 

@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "关于分享"
 description: "自己做分享活动的一些经验教训"
-category: "感悟" 
-tags: ["分享", "经验", "学习"]
+categories: ["分享", "经验", "学习"]
 ---
 
 ## 分享好处多多

@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "linux文件目录结构简介(旧)"
 description: "linux文件目录结构简介两年前的东西"
-category: "总结"
-tags: ["linux", "配置", "总结"]
+categories: ["linux", "配置", "总结"]
 ---
 
 __这是09~10年的时候弄的一份总结文档，一直存在在google docs里边。这次把它弄过来，做个见证，留个纪念。__

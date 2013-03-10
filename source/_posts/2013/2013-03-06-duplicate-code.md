@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "重复代码处理模式"
 description: "如何解决重复代码的常见模式"
-category: "总结"
-tags: ["总结", "重复代码", "模式"]
+categories: ["总结", "重复代码", "模式"]
 ---
 
 最近在整改某项目几十个模块(子项目)的重复代码，整理的一些思路。

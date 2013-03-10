@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "hello erlang, part 3"
 description: "erlang的学习笔记"
-category: "erlang"
-tags: ["erlang", "消息", "进程", "笔记"]
+categories: ["erlang", "消息", "进程", "笔记"]
 ---
 
 ### 练习重点

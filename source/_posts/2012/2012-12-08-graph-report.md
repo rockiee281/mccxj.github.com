@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "话说图形报表(旧)"
 description: "09年写的关于图形报表的东西"
-category: "总结"
-tags: ["报表", "flash", "html5"]
+categories: ["总结", "报表", "flash", "html5"]
 ---
 
 <p class="lead">

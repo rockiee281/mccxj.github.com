@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "blog in github,新的开始"
 description: "曾经写过超过1000篇的博客,不过这已经是很久之前的事了.但是我决定重新开始!"
-category: "琐事" 
-tags: ["黑客", "博客", "github", "计划"]
+categories: ["黑客", "博客", "github", "计划"]
 ---
 
 ## 老掉牙的故事

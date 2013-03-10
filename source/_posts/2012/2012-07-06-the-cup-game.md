@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "量杯倒水游戏"
 description: "一个经典的量杯倒水问题"
-category: "算法" 
-tags: ["算法", "游戏", "质数", "贝祖定理"]
+categories: ["算法", "游戏", "质数", "贝祖定理"]
 ---
 
 ![量杯倒水][1]

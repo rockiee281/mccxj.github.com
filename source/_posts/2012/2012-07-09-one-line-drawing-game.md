@@ -2,8 +2,7 @@
 layout: post
 comments: true
 title: "一笔画游戏"
-category: "算法" 
-tags: ["算法", "一笔画", "游戏", "回溯法"]
+categories: ["算法", "一笔画", "游戏", "回溯法"]
 ---
 
 在android上看过一个一笔画的小游戏，规则很简单，要连续一笔，不能重复。

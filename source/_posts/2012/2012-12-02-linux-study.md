@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "Linux经验随手记(旧)"
 description: ""
-category: "总结"
-tags: ["linux"]
+categories: ["总结", "linux"]
 ---
 
 这是10年的老文了。:)

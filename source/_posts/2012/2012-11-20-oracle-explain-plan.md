@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "oracle执行计划思维导图"
 description: "用于oracle培训的xmind截图"
-category: "培训"
-tags: ["培训", "执行计划", "oracle", "思维导图"]
+categories: ["培训", "执行计划", "oracle", "思维导图"]
 ---
 
 ## **这是为了oracle培训而编制的思维导图**

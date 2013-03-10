@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "Node.js Best practices"
 description: "来自slideshare的ppt"
-category: "内容推荐"
-tags: ["node", "实践"]
+categories: ["内容推荐", "node", "实践"]
 ---
 
 **完整的ppt来源于[Node.js Best practices][1],作者[Felix Geisendörfer][2],需翻越**

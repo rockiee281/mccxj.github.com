@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "jekyll插件:支持URL跳转"
 description: "让github page支持redirect的功能"
-category: "博客"
-tags: ["github", "alias", "博客", "alias_generator.rb"]
+categories: ["github", "alias", "博客", "alias_generator.rb"]
 img: "/images/2013/jekyll-alias-generator.png"
 ---
 

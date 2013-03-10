@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "Async Javascript读书笔记"
 description: "读书笔记"
-category: "读书笔记"
-tags: ["异步", "javascript", "笔记"]
+categories: ["读书笔记", "异步", "javascript", "笔记"]
 img: "/images/2013/async-javascript.png"
 ---
 

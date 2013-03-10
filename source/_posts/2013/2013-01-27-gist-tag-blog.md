@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "jekyll插件:嵌入github gist"
 description: "给博客增加gist支持"
-category: "博客"
-tags: ["github", "gist", "博客", "gist_tag.rb"]
+categories: ["github", "gist", "博客", "gist_tag.rb"]
 img: "/images/2013/gist-tag-blog.png"
 ---
 

@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "蚂蚁走木棍"
 description: "一个有趣的面试题"
-category: "算法" 
-tags: ["蚂蚁", "算法", "面试"]
+categories: ["蚂蚁", "算法", "面试"]
 ---
 
 ![蚂蚁走木棍][1]

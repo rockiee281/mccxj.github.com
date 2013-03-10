@@ -2,8 +2,7 @@
 layout: post
 comments: true
 title: "简单的楼梯问题"
-category: "算法" 
-tags: ["算法", "斐波纳契", "动态规划"]
+categories: ["算法", "斐波纳契", "动态规划"]
 ---
 
 ## 问题描述

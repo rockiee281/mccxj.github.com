@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "使用wunderlist进行TODO管理"
 description: "自己使用wunderlist的经验教训"
-category: "总结"
-tags: ["wunderlist", "todo", "时间管理"]
+categories: ["总结", "wunderlist", "todo", "时间管理"]
 img: "/images/2013/how-to-wunderlist.png"
 ---
 

@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "书评-Node Web开发"
 description: "在oschina写的书评"
-category: "书评"
-tags: ["书评", "node"]
+categories: ["书评", "node"]
 ---
 
 ![Node Web开发][2]

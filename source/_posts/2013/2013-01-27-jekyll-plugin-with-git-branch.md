@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "git分支让github page用上jekyll插件"
 description: "github page不支持page功能,使用分支来处理"
-category: "博客"
-tags: ["github", "博客", "git", "jekyll"]
+categories: ["github", "博客", "git", "jekyll"]
 img: "/images/2013/jekyll-plugin-with-git-branch.png"
 ---
 

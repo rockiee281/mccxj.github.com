@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "improve bitter code: 没有行为的封装"
 description: "关于编码规范，代码评审，改进质量方面的总结"
-categories: ["质量改进", "improve bitter code"]
-tags: ["可读性", "javabean", "封装", "行为", "值对象"]
+categories: ["质量改进", "improve bitter code", "可读性", "javabean", "封装", "行为", "值对象"]
 ---
 
 __备注: 示例中的代码并不是真实代码的完全拷贝__

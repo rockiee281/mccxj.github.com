@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "迷你Maven"
 description: "迷你Maven"
-category: "培训"
-tags: ["培训", "maven", "思维导图"]
+categories: ["培训", "maven", "思维导图"]
 img: "/images/2013/mini-maven.png"
 ---
 

@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "ibatis进阶(旧)"
 description: "以前写的关于ibatis的内容"
-category: "实践"
-tags: ["ibatis"]
+categories: ["实践", "ibatis"]
 ---
 
 ## Ibatis比较少人使用的配置语法

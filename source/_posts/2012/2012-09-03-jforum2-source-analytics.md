@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "小毛的jforum2源码分析(旧)"
 description: "很久的一个源码分析文章"
-category: "总结"
-tags: ["jforum2", "总结", "源码"]
+categories: ["jforum2", "总结", "源码"]
 ---
 
 这个文章大约是08年的时候写的了，jforum是java中还算比较有名的开源论坛系统，我上一家公司拿它来做二次开发。jforum2是内部自己实现的mvc，到了jforum3的时候全部重写了，都使用开源框架来做，现在不知发展到什么情况了。所以，这里特指jforum2.

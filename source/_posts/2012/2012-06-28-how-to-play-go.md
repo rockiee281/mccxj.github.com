@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "围棋中气的判断"
 description: "围棋主要逻辑气的判断,以前是用js实现的"
-category: "算法"
-tags: ["算法", "围棋", "气"]
+categories: ["算法", "围棋", "气"]
 ---
 
 ## 围棋玩法

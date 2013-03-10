@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "maven学习要点(旧)"
 description: "以前写的关于maven的内容"
-category: "实践"
-tags: ["maven"]
+categories: ["实践", "maven"]
 ---
 
 我感觉maven这东西比ant容易上手(ant每个项目规则都不一样),看那个100页的迷你书+例子(推荐basecrm或spring3.0)基本就ok了~~

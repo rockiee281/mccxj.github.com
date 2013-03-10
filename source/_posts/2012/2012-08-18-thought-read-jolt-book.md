@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "书评-Jolt大奖精选丛书"
 description: "在oschina写的书评"
-category: "书评"
-tags: ["书评", "jolt"]
+categories: ["书评", "jolt"]
 ---
 
 ![Jolt大奖精选丛书][2]

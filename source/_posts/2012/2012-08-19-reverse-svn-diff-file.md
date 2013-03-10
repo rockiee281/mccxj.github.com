@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "生成svn补丁的回退补丁"
 description: "svn补丁回退使用"
-category: "实践"
-tags: ["svn", "codediff", "工具", "回退"]
+categories: ["实践", "svn", "codediff", "工具", "回退"]
 ---
 
 ### 生成回退补丁的脚本

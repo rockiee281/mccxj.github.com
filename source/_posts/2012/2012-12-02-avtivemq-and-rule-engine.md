@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "avtivemq和规则引擎资料(旧)"
 description: "以前收集的一些资料"
-category: "资料"
-tags: ["activemq", "drools"]
+categories: ["资料", "activemq", "drools"]
 ---
 
 10年时接触activemq和drools时收集的一些资料

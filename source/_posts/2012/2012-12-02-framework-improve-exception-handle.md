@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "从某维护系统的架构改造谈起–异常处理(旧)"
 description: ""
-category: "总结"
-tags: ["总结"]
+categories: ["总结"]
 ---
 
 这是刚到公司时写的~

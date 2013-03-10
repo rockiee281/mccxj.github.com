@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "小议研究生系统升迁(旧)"
 description: "比较完整的项目经历,比较有感觉"
-category: "总结"
-tags: ["系统", "ruby"]
+categories: ["总结", "系统", "ruby"]
 ---
 
 > 09年底写的小文,记录一下。回想起来，别有一番滋味。再描述一下，项目小组共5人,3个写代码1个整理需求1个迁移数据，除了我还有2个女孩是写代码。

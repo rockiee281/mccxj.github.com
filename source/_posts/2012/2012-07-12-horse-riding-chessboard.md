@@ -2,8 +2,7 @@
 layout: post
 comments: true
 title: "马踏棋盘的算法思考"
-category: "算法" 
-tags: ["算法", "棋盘", "回溯法", "贪心法"]
+categories: ["算法", "棋盘", "回溯法", "贪心法"]
 ---
 
 ### 马踏棋盘

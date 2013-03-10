@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "抢票插件搞得上github page都要轻功"
 description: ""
-category: "博客"
-tags: ["博客", "github", "轻功", "ssh"]
+categories: ["博客", "github", "轻功", "ssh"]
 img: "/images/2013/github-across-gfw.png"
 ---
 

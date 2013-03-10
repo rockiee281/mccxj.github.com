@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "书评-JavaScript语言精髓与编程实践"
 description: "在oschina写的书评"
-category: "书评"
-tags: ["书评", "javascript"]
+categories: ["书评", "javascript"]
 ---
 
 ![JavaScript语言精髓与编程实践][2]

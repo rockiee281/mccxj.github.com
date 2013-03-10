@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "improve bitter code"
 description: "关于编码规范，代码评审，改进质量方面的总结"
-categories: ["质量改进", "improve bitter code"]
-tags: ["编码规范", "代码评审", "可读性", "重构", "学习", "总结"]
+categories: ["质量改进", "improve bitter code", "编码规范", "代码评审", "可读性", "重构", "学习", "总结"]
 ---
 
 ### 想法

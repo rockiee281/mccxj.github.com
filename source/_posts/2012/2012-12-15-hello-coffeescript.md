@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "hello,coffeescript"
 description: "coffee script入门"
-category: "资料"
-tags: ["javascript", "coffeescript"]
+categories: ["资料", "javascript", "coffeescript"]
 ---
 
 周五下午的时候，花了大半个小时在团队里边介绍了CoffeeScript，使用的是[Sam Stephenson的ppt][1]。

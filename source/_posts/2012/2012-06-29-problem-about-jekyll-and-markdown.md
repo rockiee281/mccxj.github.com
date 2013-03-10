@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "使用jekyll和markdown遇到的问题"
 description: "问题和解决方法"
-category: "博客"
-tags: ["jekyll", "markdown", "博客"]
+categories: ["jekyll", "markdown", "博客"]
 ---
 
 ### 不能正常生成页面

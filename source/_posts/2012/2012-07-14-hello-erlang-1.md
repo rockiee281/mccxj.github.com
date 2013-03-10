@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "hello erlang, part 1"
 description: "erlang的学习笔记"
-category: "erlang"
-tags: ["erlang", "笔记", "排序", "函数式", "尾递归"]
+categories: ["erlang", "笔记", "排序", "函数式", "尾递归"]
 ---
 
 ### 练习重点

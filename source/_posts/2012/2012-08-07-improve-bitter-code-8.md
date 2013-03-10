@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "improve bitter code: 判空的处理"
 description: "关于编码规范，代码评审，改进质量方面的总结"
-categories: ["质量改进", "improve bitter code"]
-tags: ["可读性", "空对象", "设计模式", "约定", "assert", "接口"]
+categories: ["质量改进", "improve bitter code", "可读性", "空对象", "设计模式", "约定", "assert", "接口"]
 ---
 
 __备注: 示例中的代码并不是真实代码的完全拷贝__

@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "reflection in java"
 description: "java反射方面的讲义"
-category: "培训" 
-tags: ["培训", "反射"]
+categories: ["培训", "反射"]
 ---
 
 ## 什么是反射

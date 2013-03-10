@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "unzip引起disk full问题(旧)"
 description: "unzip引起disk full问题"
-category: "总结"
-tags: ["unzip"]
+categories: ["总结", "unzip"]
 ---
 
 很早的记录了，以前瞎整过很多东西，还好很多资料有整理，所以看上去还有点小用的就迁移过来吧。:)

@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "使用svn命令进行每日codediff"
 description: "在公司很多人对svn命令不了解，对我开发的每日codediff工具也不甚清楚"
-category: "实践"
-tags: ["svn", "codediff", "工具"]
+categories: ["实践", "svn", "codediff", "工具"]
 ---
 
 ## 什么是codediff?

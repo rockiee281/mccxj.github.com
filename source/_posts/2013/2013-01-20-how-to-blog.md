@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "博客写作小结"
 description: "一些写博客的经验"
-category: "总结"
-tags: ["博客", "写作"]
+categories: ["总结", "博客", "写作"]
 img: "/images/2013/how-to-blog.png"
 ---
 

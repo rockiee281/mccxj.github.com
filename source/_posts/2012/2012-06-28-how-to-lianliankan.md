@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "连连看中如何判断连通"
 description: "以前弄的连连看中使用的算法,用js实现的"
-category: "算法"
-tags: ["算法", "连连看", "连通"]
+categories: ["算法", "连连看", "连通"]
 ---
 
 ## 连连看基本玩法

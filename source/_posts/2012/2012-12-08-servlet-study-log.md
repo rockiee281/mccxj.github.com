@@ -3,8 +3,7 @@ layout: post
 comments: true
 title: "学习和理解servlet(旧)"
 description: "以前学习servlet的笔记"
-category: "总结"
-tags: ["servlet", "学习"]
+categories: ["总结", "servlet", "学习"]
 ---
 
 08年写的笔记，看上去很不是太烂:)
