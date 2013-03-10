@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 算法 | 小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/blog/categories/suan-fa/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-03-09T20:36:55+08:00</updated>
+  <updated>2013-03-10T22:33:16+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -12,6 +12,111 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[improve bitter code: '不可避免'的重复]]></title>
+    <link href="http://mccxj.github.com/blog/20120729_improve-bitter-code-4.html"/>
+    <updated>2012-07-29T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/improve-bitter-code-4</id>
+    <content type="html"><![CDATA[<p><strong>备注: 示例中的代码并不是真实代码的完全拷贝</strong></p>
+
+<h3>一段分批处理的逻辑</h3>
+
+<p>周六做code diff的时候发现B项目一段颇长的处理逻辑(40行左右)。处理流程是这样的，
+从页面上取到一批数据之后，用这批数据封装参数进行后台调用(远程调用)。为了避免数据调用超时，
+对这批数据进行分批多次调用。代码如下所示(现实的代码比这个要复杂些，并且没有使用subList方法)：
+{% highlight java %}
+List batchdatas = ...;
+int batchsize = 10; // load from parameter</p>
+
+<p>int datasize = batchdatas.size();
+if(datasize > batchsize){</p>
+
+<pre><code>int batch = datasize / batchsize;
+for(int i=0;i&lt;batch;i++){
+    List inparams = new ArrayList();
+    List batchdata = batchdatas.subList(batchsize*i, batchsize*(i+1));
+    inparams.add(new CEntityList(batchdata));
+    RemoteCall.commonInvoke(operator, inparams, "CheckCmd");
+}
+
+int left = datasize % batchsize;
+if(left != 0){
+    List inparams = new ArrayList();
+    List batchdata = batchdatas.subList(batchsize*batch, datasize);
+    inparams.add(new CEntityList(batchdata));
+    RemoteCall.commonInvoke(operator, inparams, "CheckCmd");
+}
+</code></pre>
+
+<p>}
+else {</p>
+
+<pre><code>List inparams = new ArrayList();
+inparams.add(new CEntityList(batchdatas));
+RemoteCall.commonInvoke(operator, inparams, "CheckCmd");
+</code></pre>
+
+<p>}
+{% endhighlight %}</p>
+
+<p>从代码的实现看，思路还是比较清晰的。如果不足一次，就一次提交。否则计算出一共要分多少次，
+然后逐次处理提交，最后还要判断是否还有剩余的，如果有就再处理一次。</p>
+
+<p>代码显现出来的问题也比较明显，就是远程调用的逻辑出现了重复。</p>
+
+<h3>算法小调整，避免重复</h3>
+
+<p>有没什么办法可以避免重复? 或许有些童鞋第一反应是给这几句代码抽取成小方法。
+不过这里有更好的办法，首先细想一下就会发现不足一次的判断(datasize > batchsize)不是必要的，
+如果计算批次而是计算每次的起始点和结束点，上面两个分支也可以合并一下。调整后代码如下：
+{% highlight java %}
+List batchdatas = ...;
+int batchsize = 10; // load from parameter</p>
+
+<p>int datasize = batchdatas.size();
+for(int startidx=0;startidx&lt;datasize;startidx+=batchsize){</p>
+
+<pre><code>int endidx = (startidx+batchsize) &gt; datasize ? datasize : (startidx+batchsize);
+
+List inparams = new ArrayList();
+List batchdata = batchdatas.subList(startidx, endidx);
+inparams.add(new CEntityList(batchdata));
+RemoteCall.commonInvoke(operator, inparams, "CheckCmd");
+</code></pre>
+
+<p>}
+{% endhighlight %}</p>
+
+<p>其中计算endidx使用了一个三元表达式，使用三元表达式用来替代一些简单的if-else语句是个实用的小技巧。
+代码量缩小为原来的三分之一，代码少了，维护量也轻松了。</p>
+
+<p>类似这样的代码也并不少见，例如计算总页数的分页逻辑有下面的写法
+{% highlight java %}
+// 常用做法
+int totalpage = totalsize / pagesize;
+if(totalsize % pagesize != 0){</p>
+
+<pre><code>totalpage++;
+</code></pre>
+
+<p>}</p>
+
+<p>// 另外一种写法
+int totalpage = (totalsize + pagesize - 1) / pagesize;
+{% endhighlight %}</p>
+
+<h3>基本功很重要</h3>
+
+<p>java是一门比较古板的语言，大多数情况下，写出来的代码也是大同小异的。
+同时，java相关框架又特别的多，很容易拣了芝麻丢了西瓜。
+以来面试的童鞋为例，连基本算法的时间复杂度都没弄清楚的人不在少数，所以
+在项目代码中，经常看到化简为繁的代码，现在也很习惯了。</p>
+
+<p>{% assign series_list = "improve bitter code" %}
+{% include series_list.html %}</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[马踏棋盘的算法思考]]></title>
@@ -45,89 +150,90 @@
 
 <h3>代码示例</h3>
 
-<p><div class="highlight"><pre><code class="ruby"><span class="k">def</span> <span class="nf">init</span>
-  <span class="vi">@arr</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
-  <span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="vi">@arr</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">end</span>
-  <span class="vi">@path</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
-  <span class="vi">@ok</span> <span class="o">=</span> <span class="kp">false</span>
-  <span class="vi">@poss</span> <span class="o">=</span> <span class="o">[[-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">]</span><span class="p">,</span> <span class="o">[-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">]</span><span class="p">,</span> <span class="o">[-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="o">]</span><span class="p">,</span> <span class="o">[-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="o">]]</span>
-<span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<p>{% highlight ruby %}
+def init
+  @arr = Array.new(8)
+  (0..7).each do |i| @arr[i] = Array.new(8, 0) end
+  @path = Array.new(64)
+  @ok = false
+  @poss = [[-2, 1], [2, 1], [1, 2], [-1, 2], [2, -1], [-2, -1], [-1, -2], [1, -2]]
+end</p>
 
-<span class="sr">&lt;h1&gt;判断[x,y]是否在棋盘内并未走过&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<h1>判断[x,y]是否在棋盘内并未走过</h1>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">valid?</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
-  <span class="n">x</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">8</span> <span class="o">&amp;&amp;</span> <span class="n">y</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">y</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="mi">8</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="vi">@arr</span><span class="o">[</span><span class="n">x</span><span class="o">][</span><span class="n">y</span><span class="o">]==</span><span class="mi">0</span>
-<span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<p>def valid?(x,y)
+  x>=0 &amp;&amp; x<8 && y>=0 &amp;&amp; y&lt;8 &amp;&amp; @arr[x][y]==0
+end</p>
 
-<span class="sr">&lt;h1&gt;判断当前点有哪些方向可以走&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<h1>判断当前点有哪些方向可以走</h1>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
-  <span class="n">posz</span><span class="p">,</span> <span class="n">mustpos</span> <span class="o">=</span> <span class="p">{},</span> <span class="kp">nil</span>
-  <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="vi">@path</span><span class="o">[</span><span class="n">mark</span><span class="o">]</span>
-  <span class="vi">@poss</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">pos</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
+<p>def filter(mark)
+  posz, mustpos = {}, nil
+  a, b = @path[mark]
+  @poss.each do |pos|</p>
 
-<span class="sr">&lt;pre&gt;&lt;code&gt;axp, bxp = a+pos[0], b+pos[1]</span>
-<span class="sr">if valid?(axp, bxp)</span>
-<span class="sr">  sz = 0</span>
-<span class="sr">  @poss.each do |ps|</span>
-<span class="sr">    ap, bp = axp+ps[0], bxp+ps[1]</span>
-<span class="sr">    sz+=1 if valid?(ap, bp) # 存在空点</span>
-<span class="sr">  end</span>
-<span class="sr">  if sz&amp;gt;0</span>
-<span class="sr">    posz[pos] = sz</span>
-<span class="sr">  else</span>
-<span class="sr">    mustpos.nil? ? (mustpos = pos) : (return [])</span>
-<span class="sr">  end</span>
-<span class="sr">end</span>
-<span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+<pre><code>axp, bxp = a+pos[0], b+pos[1]
+if valid?(axp, bxp)
+  sz = 0
+  @poss.each do |ps|
+    ap, bp = axp+ps[0], bxp+ps[1]
+    sz+=1 if valid?(ap, bp) # 存在空点
+  end
+  if sz&gt;0
+    posz[pos] = sz
+  else
+    mustpos.nil? ? (mustpos = pos) : (return [])
+  end
+end
+</code></pre>
 
-<span class="sr">&lt;p&gt;  end</span>
-<span class="sr">  # 对目标点的方向多寡进行排序</span>
-<span class="sr">  mustpos.nil? ? posz.keys.sort {|a,b| posz[a]&amp;lt;=&gt;posz[b]} : [mustpos]</span>
-<span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+<p>  end
+  # 对目标点的方向多寡进行排序
+  mustpos.nil? ? posz.keys.sort {|a,b| posz[a]&lt;=>posz[b]} : [mustpos]
+end</p>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">walk</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
-  <span class="k">if</span> <span class="n">mark</span><span class="o">==</span><span class="mi">63</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<p>def walk(mark)
+  if mark==63</p>
 
-<span class="sr">&lt;pre&gt;&lt;code&gt;@ok = true</span>
-<span class="sr">return</span>
-<span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+<pre><code>@ok = true
+return
+</code></pre>
 
-<span class="sr">&lt;p&gt;  end</span>
-<span class="sr">  a, b = @path[mark]</span>
-<span class="sr">  filter(mark).each do |pos|&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+<p>  end
+  a, b = @path[mark]
+  filter(mark).each do |pos|</p>
 
-<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">rp</span> <span class="o">=</span> <span class="o">[</span><span class="n">a</span><span class="o">+</span><span class="n">pos</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">,</span> <span class="n">b</span><span class="o">+</span><span class="n">pos</span><span class="o">[</span><span class="mi">1</span><span class="o">]]</span>
-<span class="vi">@path</span><span class="o">[</span><span class="n">mark</span><span class="o">+</span><span class="mi">1</span><span class="o">]</span> <span class="o">=</span> <span class="n">rp</span>
-<span class="vi">@arr</span><span class="o">[</span><span class="n">rp</span><span class="o">[</span><span class="mi">0</span><span class="o">]][</span><span class="n">rp</span><span class="o">[</span><span class="mi">1</span><span class="o">]]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">walk</span><span class="p">(</span><span class="n">mark</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-<span class="vi">@ok</span> <span class="p">?</span> <span class="k">return</span> <span class="p">:</span> <span class="p">(</span><span class="vi">@arr</span><span class="o">[</span><span class="n">rp</span><span class="o">[</span><span class="mi">0</span><span class="o">]][</span><span class="n">rp</span><span class="o">[</span><span class="mi">1</span><span class="o">]]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-<span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+<pre><code>rp = [a+pos[0], b+pos[1]]
+@path[mark+1] = rp
+@arr[rp[0]][rp[1]] = 1
+walk(mark+1)
+@ok ? return : (@arr[rp[0]][rp[1]] = 0)
+</code></pre>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
-<span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<p>  end
+end</p>
 
-<span class="sr">&lt;p&gt;(0..7).each do |i|</span>
-<span class="sr">  (0..7).each do |j|&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+<p>(0..7).each do |i|
+  (0..7).each do |j|</p>
 
-<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">init</span>
-<span class="vi">@path</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">=</span> <span class="o">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="o">]</span>
-<span class="vi">@arr</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">walk</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="k">if</span> <span class="vi">@ok</span>
-  <span class="vi">@path</span><span class="o">.</span><span class="n">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="n">ps</span><span class="p">,</span> <span class="n">idx</span><span class="o">|</span>
-    <span class="vi">@arr</span><span class="o">[</span><span class="n">ps</span><span class="o">[</span><span class="mi">0</span><span class="o">]][</span><span class="n">ps</span><span class="o">[</span><span class="mi">1</span><span class="o">]]</span> <span class="o">=</span> <span class="n">idx</span>
-  <span class="k">end</span>
-  <span class="vi">@arr</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">ar</span><span class="o">|</span> <span class="nb">p</span> <span class="n">ar</span> <span class="k">end</span>
-  <span class="nb">puts</span>
-<span class="k">else</span>
-  <span class="s2">&quot;no solution&quot;</span>
-<span class="k">end</span>
-<span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+<pre><code>init
+@path[0] = [i,j]
+@arr[i][j] = 1
+walk(0)
+if @ok
+  @path.each_with_index do |ps, idx|
+    @arr[ps[0]][ps[1]] = idx
+  end
+  @arr.each do |ar| p ar end
+  puts
+else
+  "no solution"
+end
+</code></pre>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
-<span class="k">end</span>
-</code></pre></div></p>
+<p>  end
+end
+{% endhighlight %}</p>
 ]]></content>
   </entry>
   
@@ -151,69 +257,69 @@
 
 <h3>ruby代码示例</h3>
 
-<p><div class="highlight"><pre><code class="ruby"><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<p>{% highlight ruby %}</p>
 
-<span class="sr">&lt;h1&gt;判断能否在[i,j]上填入val&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<h1>判断能否在[i,j]上填入val</h1>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">is_ok?</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">val</span><span class="p">)</span>
-  <span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">m</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
+<p>def is_ok?(i,j,val)
+  (0..8).each do |m|</p>
 
-<span class="sr">&lt;pre&gt;&lt;code&gt;return false if @arr[i][m] == val &amp;amp;&amp;amp; m!=j #判断行不重复</span>
-<span class="sr">return false if @arr[m][j] == val &amp;amp;&amp;amp; m!=i #判断列不重复</span>
-<span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+<pre><code>return false if @arr[i][m] == val &amp;&amp; m!=j #判断行不重复
+return false if @arr[m][j] == val &amp;&amp; m!=i #判断列不重复
+</code></pre>
 
-<span class="sr">&lt;p&gt;  end</span>
-<span class="sr">  (i-i%3..i-i%3+2).each do |m|&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+<p>  end
+  (i-i%3..i-i%3+2).each do |m|</p>
 
-<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="n">j</span><span class="o">%</span><span class="mi">3</span><span class="o">.</span><span class="n">.j</span><span class="o">-</span><span class="n">j</span><span class="o">%</span><span class="mi">3</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">n</span><span class="o">|</span>
-  <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="vi">@arr</span><span class="o">[</span><span class="n">m</span><span class="o">][</span><span class="n">n</span><span class="o">]</span> <span class="o">==</span> <span class="n">val</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">i!</span><span class="o">=</span><span class="n">m</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">j!</span><span class="o">=</span><span class="n">n</span> <span class="c1">#判断小九宫格不重复</span>
-<span class="k">end</span>
-<span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+<pre><code>(j-j%3..j-j%3+2).each do |n|
+  return false if @arr[m][n] == val &amp;&amp; i!=m &amp;&amp; j!=n #判断小九宫格不重复
+end
+</code></pre>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
-  <span class="kp">true</span>
-<span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<p>  end
+  true
+end</p>
 
-<span class="sr">&lt;h1&gt;用来输出数独&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<h1>用来输出数独</h1>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">print</span><span class="p">;</span> <span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="n">.</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="nb">p</span> <span class="vi">@arr</span><span class="o">[</span><span class="n">m</span><span class="o">]</span> <span class="p">};</span> <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<p>def print; (0..8).each { |m| p @arr[m] }; end</p>
 
-<span class="sr">&lt;h1&gt;用来表示是否找到解&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<h1>用来表示是否找到解</h1>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="vi">@ok</span> <span class="o">=</span> <span class="kp">false</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<p>@ok = false</p>
 
-<span class="sr">&lt;h1&gt;处理序号为mark开始的格子&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<h1>处理序号为mark开始的格子</h1>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">walk</span><span class="p">(</span><span class="n">mark</span><span class="p">)</span>
-  <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">mark</span><span class="o">/</span><span class="mi">9</span><span class="p">,</span> <span class="n">mark</span><span class="o">%</span><span class="mi">9</span>
-  <span class="n">val</span> <span class="o">=</span> <span class="vi">@arr</span><span class="o">[</span><span class="n">m</span><span class="o">][</span><span class="n">n</span><span class="o">]</span>
-  <span class="c1"># 当前已经有初始值的情况</span>
-  <span class="k">if</span> <span class="n">val</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+<p>def walk(mark)
+  m, n = mark/9, mark%9
+  val = @arr[m][n]
+  # 当前已经有初始值的情况
+  if val != 0</p>
 
-<span class="sr">&lt;pre&gt;&lt;code&gt;mark == 80 ? @ok = true : walk(mark+1)</span>
-<span class="sr">return</span>
-<span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+<pre><code>mark == 80 ? @ok = true : walk(mark+1)
+return
+</code></pre>
 
-<span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+<p>  end</p>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="c1"># 没有初始值的情况</span>
-  <span class="p">(</span><span class="mi">1</span><span class="o">.</span><span class="n">.</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">v</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
+<p>  # 没有初始值的情况
+  (1..9).each do |v|</p>
 
-<span class="sr">&lt;pre&gt;&lt;code&gt;if is_ok?(m, n, v)</span>
-<span class="sr">  @arr[m][n] = v</span>
-<span class="sr">  @ok = true and return if mark==80 # 找到一个解</span>
-<span class="sr">  walk(mark+1) #填好值之后，继续深度搜索</span>
-<span class="sr">  return if @ok</span>
-<span class="sr">end</span>
-<span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+<pre><code>if is_ok?(m, n, v)
+  @arr[m][n] = v
+  @ok = true and return if mark==80 # 找到一个解
+  walk(mark+1) #填好值之后，继续深度搜索
+  return if @ok
+end
+</code></pre>
 
-<span class="sr">&lt;p&gt;  end</span>
-<span class="sr">  @arr[m][n]=0 # 都处理完，没有找到就恢复</span>
-<span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+<p>  end
+  @arr[m][n]=0 # 都处理完，没有找到就恢复
+end</p>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">walk</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="vi">@ok</span> <span class="p">?</span> <span class="nb">print</span> <span class="p">:</span> <span class="p">(</span><span class="nb">p</span> <span class="s2">&quot;no solution&quot;</span><span class="p">)</span>
-</code></pre></div></p>
+<p>walk(0)
+@ok ? print : (p "no solution")
+{% endhighlight %}</p>
 
 <h3>回溯法的基本步骤：</h3>
 
@@ -227,31 +333,31 @@
 <h3>回溯法的基本结构</h3>
 
 <p>我们考虑递归的方式(比较容易理解)，递推的以后再讨论。
-<div class="highlight"><pre><code class="ruby"><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+{% highlight ruby %}</p>
 
-<span class="sr">&lt;h1&gt;init&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+<h1>init</h1>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">flag</span> <span class="o">=</span> <span class="kp">false</span> <span class="c1"># 标记是否找到解</span>
-<span class="n">u</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># 已知解, 并假设(x1,x2....xn)为可选的解空间&lt;/p&gt;</span>
+<p>flag = false # 标记是否找到解
+u = {} # 已知解, 并假设(x1,x2....xn)为可选的解空间</p>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">backtrack</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-  <span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">.xn</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">x</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
+<p>def backtrack(k)
+  (x1..xn).each do |x|</p>
 
-<span class="sr">&lt;pre&gt;&lt;code&gt;if is_ok?(x, k) # 过滤无效的解</span>
-<span class="sr">  u.add(x) # 把x加入已知解u</span>
-<span class="sr">  backtrack(k+1) if u.is_part? # 部分解的情况，继续处理</span>
-<span class="sr">  flag = true and exit if u.is_full? # 找到解并退出</span>
-<span class="sr">  # fail的时候有可能需要对u进行恢复</span>
-<span class="sr">end</span>
-<span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+<pre><code>if is_ok?(x, k) # 过滤无效的解
+  u.add(x) # 把x加入已知解u
+  backtrack(k+1) if u.is_part? # 部分解的情况，继续处理
+  flag = true and exit if u.is_full? # 找到解并退出
+  # fail的时候有可能需要对u进行恢复
+end
+</code></pre>
 
-<span class="sr">&lt;p&gt;  end</span>
-<span class="sr">  # fail的时候有可能需要对u进行恢复</span>
-<span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+<p>  end
+  # fail的时候有可能需要对u进行恢复
+end</p>
 
-<span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">backtrack</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 从1开始搜索</span>
-<span class="n">flag</span> <span class="p">?</span> <span class="nb">p</span> <span class="n">u</span> <span class="p">:</span> <span class="s2">&quot;no solution&quot;</span>
-</code></pre></div></p>
+<p>backtrack(1) # 从1开始搜索
+flag ? p u : "no solution"
+{% endhighlight %}</p>
 ]]></content>
   </entry>
   
@@ -279,10 +385,11 @@
 <h2>斐波纳契数列</h2>
 
 <p>说白了，这是个斐波纳契数列。计算的时候简单的动态规划即可。下面是简单的ruby源码:
-<div class="highlight"><pre><code class="ruby"><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span>
-<span class="mi">98</span><span class="o">.</span><span class="n">times</span> <span class="p">{</span><span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">,</span><span class="n">b</span><span class="p">}</span>
-<span class="nb">p</span> <span class="n">b</span> <span class="c1">#=&gt; 573147844013817084101</span>
-</code></pre></div>
+{% highlight ruby %}
+a,b=1,2
+98.times {b,a=a+b,b}
+p b #=> 573147844013817084101
+{% endhighlight %}
 看，真的是一个天文数字来的。</p>
 ]]></content>
   </entry>
@@ -304,10 +411,11 @@
 另外我们需要一个链表来存放走过的路径，还需要一个标记来表示找到路径，无需继续尝试。</p>
 
 <p>初始化的伪代码如下，
-<div class="highlight"><pre><code class="ruby"><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="n">.n</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">k</span><span class="o">|</span> <span class="n">a</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="n">k</span><span class="o">]=</span><span class="mi">1</span> <span class="k">end</span> <span class="c1">#虚拟点</span>
-<span class="vi">@path</span> <span class="o">=</span> <span class="o">[]</span> <span class="c1"># 走过的路径</span>
-<span class="vi">@ok</span><span class="o">=</span><span class="kp">false</span> <span class="c1"># 标记是否完成</span>
-</code></pre></div></p>
+{% highlight ruby %}
+(0..n).each do |k| a[0][k]=1 end #虚拟点
+@path = [] # 走过的路径
+@ok=false # 标记是否完成
+{% endhighlight %}</p>
 
 <p>接下去我们需要一个回溯算法(参考<a href="20120710_sudoku.html">数独(sudoku)游戏</a>)，代码比较简单，这里就不展示代码示例了。</p>
 
@@ -316,69 +424,6 @@
 如果选择数组的话，在回溯的时候就不可以不回退了，而对于链表，回退则是必要的。</p>
 
 <p>总体来说，这个游戏的实现是比较简单的，有兴趣的同学可以自己实现一下。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[量杯倒水游戏]]></title>
-    <link href="http://mccxj.github.com/blog/20120706_the-cup-game.html"/>
-    <updated>2012-07-06T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/the-cup-game</id>
-    <content type="html"><![CDATA[<p><img src="/assets/images/the_cup_game.jpg" alt="量杯倒水" /></p>
-
-<h2>量杯倒水</h2>
-
-<p>这个问题常见于趣味题和面试题，题意大概是这样的:有两个只有最大刻度的量杯(如10毫升，3毫升)，
-并且有无限量的水。求怎么倒出x毫升的水?</p>
-
-<h2>思路与猜想</h2>
-
-<p>首先我们来操作一下，例如倒出4毫升的水,同时把大小量杯表示为a,b</p>
-
-<ol>
-<li>b装满，倒入a(a有3ml,b有0ml)</li>
-<li>b再装满，倒入a(a有6ml,b有0ml)</li>
-<li>b再装满，倒入a(a有9ml,b有0ml)</li>
-<li>b再装满，倒入a(a有10ml,b有2ml)</li>
-<li>a倒掉，b倒入a(a有2ml,b有0ml)</li>
-<li>重复2-4的动作(此时a有10ml,b有1ml)</li>
-<li>a倒掉，b倒入a(a有1ml,b有0ml)</li>
-<li>b装满，倒入a(a有4ml,b有0ml)</li>
-</ol>
-
-
-<p>假如我们再继续操作的话，还可以找到7ml,这样0ml~10ml的体积都是可以测量出来的。这是不是一般规律?</p>
-
-<p>虽然我们进行了许多次操作，但操作是有规律的:b总是往a倒水直到a装满，这时b会剩余一点。
-这样才能得到不同于a,b的体积。我们重复这个操作的过程，不考虑a装满的情况，
-在a中出现的水t可以用t=mb-na来表示(a>t>=0,m>=0,n>=0)。其中m可以表示为往a倒水的次数，
-n表示a装满的次数。</p>
-
-<p>首先考虑一下a,b不是互质的情况，假设他们的最大公约数为u,那么狠显然没法倒出t小于u的体积。
-这种情况可以归结为两边除去u的情况。</p>
-
-<p>现在再来考虑a,b互质的情况，我们需要考虑的是，对于t，是否都存在m,n使t=mb-na成立？</p>
-
-<h2>贝祖定理</h2>
-
-<p>我们从数学归纳法出发，很明显t=0的情况是满足要求的，假设t=1的要求也能够满足，
-那么有t=mb-na成立就可以推导出t+1=m1<em>b-n1</em>a+m2<em>b-n2</em>a也是符合mb-na的。</p>
-
-<p>如何证明存在m,n使得mb-na=1?这个倒不用自己动手，有个叫<a href="http://zh.wikipedia.org/wiki/%E8%B4%9D%E7%A5%96%E7%AD%89%E5%BC%8F">贝祖定理</a>的数学定理，可以很容易推导出这个结论。</p>
-
-<p>从wiki上看到的资料，贝祖定理可以证明a,b互质，存在xa+yb=1，其中x,y为整数
-不过好像跟我们的要求有点出入。不过没关系，很显然x,y如果没有不等于0的话，必须有个是负数，</p>
-
-<p>如果x是负数，显然符合要求，如果y是负数，那么总存在一个数k(k>0)使得y+ka>0,那么
-1=xa+yb=xa+yb-kab+kab=(x-ka)a+(y+ka)b,这样也是可以符合要求的。</p>
-
-<p>所以，按照我们的操作方式，假设a,b的最大公约数为u,就可以找到0ml,uml,2uml...aml的体积。</p>
-
-<h2>再思考</h2>
-
-<p>如果有多个量杯，情况会是怎样?</p>
-
-<p>要倒出一定量的水，上述操作是否是最快的?</p>
 ]]></content>
   </entry>
   

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 回溯法 | 小毛的胡思乱想]]></title>
+  <link href="http://mccxj.github.com/blog/categories/hui-su-fa/atom.xml" rel="self"/>
+  <link href="http://mccxj.github.com/"/>
+  <updated>2013-03-10T22:33:16+08:00</updated>
+  <id>http://mccxj.github.com/</id>
+  <author>
+    <name><![CDATA[蔡晓建]]></name>
+    <email><![CDATA[mc02cxj@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[马踏棋盘的算法思考]]></title>
+    <link href="http://mccxj.github.com/blog/20120712_horse-riding-chessboard.html"/>
+    <updated>2012-07-12T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/horse-riding-chessboard</id>
+    <content type="html"><![CDATA[<h3>马踏棋盘</h3>
+
+<p>将马随机放在国际象棋的8×8棋盘的某个方格中，马按走棋规则进行移动。
+要求每个方格只进入一次，走遍棋盘上全部64个方格。</p>
+
+<h3>又是回溯?</h3>
+
+<p>这个做法和前面几个问题是差不多的(<a href="20120710_sudoku.html">数独(sudoku)游戏</a>)，所以这里就不做太多解释了。
+总体来说，就是可选的解空间是8个方向。回溯的代码就不多提了，需要说的是，这里简单的回溯
+效率不好，需要跑很久才出结果。我们有什么方式可以优化一下!</p>
+
+<h3>贪心是否有效?</h3>
+
+<p>首先，我们可以对可供选择的方向进行过滤，对于它相连的8个方向所在的点，
+在当前的局面下，假如存在两个点只有一条路可以到达，那么可以直接回溯，
+因为无论走哪个方向都不能走完整个棋盘。假如存在一个点，它只有一条路可以到达，
+那么下一步必须走这个方向。</p>
+
+<p>但是，即使我们过滤了一些路径，效率还是没有非常大的提升。我们需要考虑一种贪心的思路：
+在可选的方向中，优先选择出口最少的目标点。因为优先选择出口少的点,
+就可以让出口少的点尽量少，使得最后剩下的点有比较多的入口，这样最终达到目的的概率就会大些。</p>
+
+<p>虽然这个思路，我觉得不好直接证明，不过我修改了一些代码实现，的确效率得到非常大的提升。
+就我那个机器，ruby代码，不到1s，64个点的情况就全部处理完了。</p>
+
+<h3>代码示例</h3>
+
+<p>{% highlight ruby %}
+def init
+  @arr = Array.new(8)
+  (0..7).each do |i| @arr[i] = Array.new(8, 0) end
+  @path = Array.new(64)
+  @ok = false
+  @poss = [[-2, 1], [2, 1], [1, 2], [-1, 2], [2, -1], [-2, -1], [-1, -2], [1, -2]]
+end</p>
+
+<h1>判断[x,y]是否在棋盘内并未走过</h1>
+
+<p>def valid?(x,y)
+  x>=0 &amp;&amp; x<8 && y>=0 &amp;&amp; y&lt;8 &amp;&amp; @arr[x][y]==0
+end</p>
+
+<h1>判断当前点有哪些方向可以走</h1>
+
+<p>def filter(mark)
+  posz, mustpos = {}, nil
+  a, b = @path[mark]
+  @poss.each do |pos|</p>
+
+<pre><code>axp, bxp = a+pos[0], b+pos[1]
+if valid?(axp, bxp)
+  sz = 0
+  @poss.each do |ps|
+    ap, bp = axp+ps[0], bxp+ps[1]
+    sz+=1 if valid?(ap, bp) # 存在空点
+  end
+  if sz&gt;0
+    posz[pos] = sz
+  else
+    mustpos.nil? ? (mustpos = pos) : (return [])
+  end
+end
+</code></pre>
+
+<p>  end
+  # 对目标点的方向多寡进行排序
+  mustpos.nil? ? posz.keys.sort {|a,b| posz[a]&lt;=>posz[b]} : [mustpos]
+end</p>
+
+<p>def walk(mark)
+  if mark==63</p>
+
+<pre><code>@ok = true
+return
+</code></pre>
+
+<p>  end
+  a, b = @path[mark]
+  filter(mark).each do |pos|</p>
+
+<pre><code>rp = [a+pos[0], b+pos[1]]
+@path[mark+1] = rp
+@arr[rp[0]][rp[1]] = 1
+walk(mark+1)
+@ok ? return : (@arr[rp[0]][rp[1]] = 0)
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>(0..7).each do |i|
+  (0..7).each do |j|</p>
+
+<pre><code>init
+@path[0] = [i,j]
+@arr[i][j] = 1
+walk(0)
+if @ok
+  @path.each_with_index do |ps, idx|
+    @arr[ps[0]][ps[1]] = idx
+  end
+  @arr.each do |ar| p ar end
+  puts
+else
+  "no solution"
+end
+</code></pre>
+
+<p>  end
+end
+{% endhighlight %}</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[数独(sudoku)游戏]]></title>
+    <link href="http://mccxj.github.com/blog/20120710_sudoku.html"/>
+    <updated>2012-07-10T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/sudoku</id>
+    <content type="html"><![CDATA[<h3>数独游戏</h3>
+
+<p>在9×9格的大九宫格中有9个3×3格的小九宫格，并提供17个以上的数字。
+根据这些数字，利用逻辑和推理，在其它的空格上填入1到9的数字。
+每个数字在每个小九宫格内只能出现一次，每个数字在每行、每列也只能出现一次。</p>
+
+<h3>思路与数据结构</h3>
+
+<p>使用回溯法来不断尝试就可以了，可以用一个二维数组来arr[9][9]表示整个数独，其中还没有填上的用0表示。
+我们还需要有个方法来判断能否在[i,j]这个格子上填入某个值。
+同样还需要一个变量来表示是否已经找到解。另外，我使用了mark(0~80)作为每个格子的序号，
+深度搜索的时候就从0开始处理，直到mark=80的时候出现一个解。</p>
+
+<h3>ruby代码示例</h3>
+
+<p>{% highlight ruby %}</p>
+
+<h1>判断能否在[i,j]上填入val</h1>
+
+<p>def is_ok?(i,j,val)
+  (0..8).each do |m|</p>
+
+<pre><code>return false if @arr[i][m] == val &amp;&amp; m!=j #判断行不重复
+return false if @arr[m][j] == val &amp;&amp; m!=i #判断列不重复
+</code></pre>
+
+<p>  end
+  (i-i%3..i-i%3+2).each do |m|</p>
+
+<pre><code>(j-j%3..j-j%3+2).each do |n|
+  return false if @arr[m][n] == val &amp;&amp; i!=m &amp;&amp; j!=n #判断小九宫格不重复
+end
+</code></pre>
+
+<p>  end
+  true
+end</p>
+
+<h1>用来输出数独</h1>
+
+<p>def print; (0..8).each { |m| p @arr[m] }; end</p>
+
+<h1>用来表示是否找到解</h1>
+
+<p>@ok = false</p>
+
+<h1>处理序号为mark开始的格子</h1>
+
+<p>def walk(mark)
+  m, n = mark/9, mark%9
+  val = @arr[m][n]
+  # 当前已经有初始值的情况
+  if val != 0</p>
+
+<pre><code>mark == 80 ? @ok = true : walk(mark+1)
+return
+</code></pre>
+
+<p>  end</p>
+
+<p>  # 没有初始值的情况
+  (1..9).each do |v|</p>
+
+<pre><code>if is_ok?(m, n, v)
+  @arr[m][n] = v
+  @ok = true and return if mark==80 # 找到一个解
+  walk(mark+1) #填好值之后，继续深度搜索
+  return if @ok
+end
+</code></pre>
+
+<p>  end
+  @arr[m][n]=0 # 都处理完，没有找到就恢复
+end</p>
+
+<p>walk(0)
+@ok ? print : (p "no solution")
+{% endhighlight %}</p>
+
+<h3>回溯法的基本步骤：</h3>
+
+<ol>
+<li>a定义问题的解空间</li>
+<li>a确定易于搜索的解空间结构</li>
+<li>a以深度优先搜索的策略搜索解空间，并在搜索过程中用剪枝函数避免无效搜索</li>
+</ol>
+
+
+<h3>回溯法的基本结构</h3>
+
+<p>我们考虑递归的方式(比较容易理解)，递推的以后再讨论。
+{% highlight ruby %}</p>
+
+<h1>init</h1>
+
+<p>flag = false # 标记是否找到解
+u = {} # 已知解, 并假设(x1,x2....xn)为可选的解空间</p>
+
+<p>def backtrack(k)
+  (x1..xn).each do |x|</p>
+
+<pre><code>if is_ok?(x, k) # 过滤无效的解
+  u.add(x) # 把x加入已知解u
+  backtrack(k+1) if u.is_part? # 部分解的情况，继续处理
+  flag = true and exit if u.is_full? # 找到解并退出
+  # fail的时候有可能需要对u进行恢复
+end
+</code></pre>
+
+<p>  end
+  # fail的时候有可能需要对u进行恢复
+end</p>
+
+<p>backtrack(1) # 从1开始搜索
+flag ? p u : "no solution"
+{% endhighlight %}</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[一笔画游戏]]></title>
+    <link href="http://mccxj.github.com/blog/20120709_one-line-drawing-game.html"/>
+    <updated>2012-07-09T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/one-line-drawing-game</id>
+    <content type="html"><![CDATA[<p>在android上看过一个一笔画的小游戏，规则很简单，要连续一笔，不能重复。
+当然，到后面比较难的时候还会限制方向，有些线路必须走多次等等。并不是觉得这有游戏做得多么的好，或者很有创意。
+我只是从程序员的角度来看问题，用程序是怎么处理的。
+我们只需要尝试所有可能的路径就可以了，这里用了回朔法，是一种优化过的穷举，</p>
+
+<p>先来考虑一下数据结构。我们给所有的点加上编号1-n，所有的连线可以用二维数组表示a[n+1][n+1]，值为0表示不可联通，
+其他表示需要经过的次数(我实现的时候是采用类似稀疏矩阵的链表表示)。<br/>
+至于给矩阵增加多一列，主要是考虑处理方便，还考虑到起始点不好确定，所以加个虚拟点，<br/>
+同时增加虚拟点到其他n个点的连接，这样我们深度遍历的时候从虚拟点开始就可以了。<br/>
+另外我们需要一个链表来存放走过的路径，还需要一个标记来表示找到路径，无需继续尝试。</p>
+
+<p>初始化的伪代码如下，
+{% highlight ruby %}
+(0..n).each do |k| a[0][k]=1 end #虚拟点
+@path = [] # 走过的路径
+@ok=false # 标记是否完成
+{% endhighlight %}</p>
+
+<p>接下去我们需要一个回溯算法(参考<a href="20120710_sudoku.html">数独(sudoku)游戏</a>)，代码比较简单，这里就不展示代码示例了。</p>
+
+<p>需要注意的是，找到一个可走的路径时(例如从i到j,a[i][j]>0)，深度遍历的时候需要对这个值减1，回溯的时候加1就可以了。
+而对于走过的路径path，是否需要回退呢? 其实我们关心的是把刚刚走过的路径加入路径的正确位置，
+如果选择数组的话，在回溯的时候就不可以不回退了，而对于链表，回退则是必要的。</p>
+
+<p>总体来说，这个游戏的实现是比较简单的，有兴趣的同学可以自己实现一下。</p>
+]]></content>
+  </entry>
+  
+</feed>

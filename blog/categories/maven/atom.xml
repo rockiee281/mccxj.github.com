@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: maven | 小毛的胡思乱想]]></title>
+  <link href="http://mccxj.github.com/blog/categories/maven/atom.xml" rel="self"/>
+  <link href="http://mccxj.github.com/"/>
+  <updated>2013-03-10T22:33:16+08:00</updated>
+  <id>http://mccxj.github.com/</id>
+  <author>
+    <name><![CDATA[蔡晓建]]></name>
+    <email><![CDATA[mc02cxj@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[迷你Maven]]></title>
+    <link href="http://mccxj.github.com/blog/20130206_mini-maven.html"/>
+    <updated>2013-02-06T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/mini-maven</id>
+    <content type="html"><![CDATA[<h2><strong>根据<a href="http://www.juvenxu.com/mvn-def-guide/">Maven权威指南</a>编制的思维导图</strong></h2>
+
+<h2>可以在Dropbox上下载到这个<a href="https://www.dropbox.com/s/mjn0efcr9n6ly97/%E8%BF%B7%E4%BD%A0Maven.xmind">xmind文件</a></h2>
+
+<p><img src="/assets/images/2013/maven.png" alt="迷你Maven" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[maven学习要点(旧)]]></title>
+    <link href="http://mccxj.github.com/blog/20121130_maven-quickstart.html"/>
+    <updated>2012-11-30T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/maven-quickstart</id>
+    <content type="html"><![CDATA[<p>我感觉maven这东西比ant容易上手(ant每个项目规则都不一样),看那个100页的迷你书+例子(推荐basecrm或spring3.0)基本就ok了~~
+哎，本来想写的很多，发现写出来的却很少。多多包涵!</p>
+
+<ul>
+<li>maven是一个项目管理工具，跟ant相比亮点在于它遵守了COC规则，只要遵守就好处多多</li>
+<li>maven可以分为三部分:maven本身(提供基本功能),仓库(提供jar),maven插件(提供更多的集成功能)</li>
+<li>maven的配置文件是settings.xml,maven项目的配置文件是pom.xml</li>
+<li><p>settings.xml主要是配置仓库镜像,本地仓库,网络访问设置等信息,常用配置:
+{% highlight xml %}
+<localRepository>D:/repository</localRepository> --本地仓库
+ <proxy>  --网络代理
+   <id>optional</id>
+   <active>true</active>
+   <protocol>http</protocol>
+   <username>proxyuser</username>
+   <password>proxypass</password>
+   <host>proxy.host.net</host>
+   <port>80</port>
+   <nonProxyHosts>local.net|some.host.com</nonProxyHosts>
+ </proxy>
+<mirror>  --仓库镜像
+  <id>nexus</id>
+  <mirrorOf>*</mirrorOf>
+  <name>Mirror for maven central.</name>
+  <url>http://10.137.27.223:8080/nexus/content/groups/public</url>
+</mirror>
+{% endhighlight %}</p></li>
+<li><p>pom.xml主要分为三部分:项目本身的信息,使用的插件,依赖的jar</p></li>
+<li><p>项目本身的信息,用于唯一标识(groupid-artifactId-version, 通常是这3部分)，例如
+{% highlight xml %}
+<modelVersion>4.0.0</modelVersion> --maven3.x都是使用4.0.0
+<groupId>com.huawei.boss</groupId>
+<artifactId>boss-common</artifactId>
+<version>0.0.1-SNAPSHOT</version>
+<packaging>jar</packaging>
+{% endhighlight %}
+类似这个，默认就会被打包成boss-common-0.0.1-SNAPSHOT.jar。同样，项目的依赖库也是通过这种坐标在仓库中寻找的。</p></li>
+<li><p>artifactId通常推荐使用项目名当前缀,当项目是打包成war的时候,通常需要制定发布后的命名:
+{% highlight xml %}
+<build>
+ <finalName>bossbase</finalName>
+</build>
+{% endhighlight %}</p></li>
+<li>可以通过properties定义一些常量,并通过${spring.version}之类来引用
+{% highlight xml %}
+<properties>
+
+<pre><code> &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+ &lt;spring.version&gt;2.5.6&lt;/spring.version&gt;
+</code></pre>
+
+<p></properties>
+{% endhighlight %}</p></li>
+<li><p>jar包依赖常用的有如下配置(仅举例说明):
+{% highlight xml %}
+<dependencies>
+   <dependency></p>
+
+<pre><code>     &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+         &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
+       &lt;version&gt;${spring.version}&lt;/version&gt;  --常量引用,在引用同个项目多个模块的时候相当有效
+     &lt;type&gt;jar&lt;/type&gt;  --默认就是jar
+       &lt;scope&gt;compile&lt;/scope&gt;  --默认是compile,表示对编译,测试,运行都有效
+ &lt;/dependency&gt;
+</code></pre>
+
+  <dependency>
+
+<pre><code>    &lt;groupId&gt;geronimo-spec&lt;/groupId&gt;
+      &lt;artifactId&gt;geronimo-spec-jta&lt;/artifactId&gt; --这个是为了不依赖sun的专用东东
+     &lt;version&gt;1.0.1B-rc4&lt;/version&gt;
+          &lt;type&gt;pom&lt;/type&gt;
+    &lt;scope&gt;provided&lt;/scope&gt;  --在运行的时候不依赖，我们常见的时候j2ee规范之类的api,如servlet-api
+</code></pre>
+
+</dependency>
+
+<pre><code> &lt;dependency&gt;
+       &lt;groupId&gt;junit&lt;/groupId&gt;
+         &lt;artifactId&gt;junit&lt;/artifactId&gt;
+     &lt;version&gt;4.8.2&lt;/version&gt;
+       &lt;type&gt;jar&lt;/type&gt;
+         &lt;scope&gt;test&lt;/scope&gt;  --只在测试的时候生效,另外还有个ruuntime的scope,用于运行时依赖(如jdbc驱动等)
+&lt;/dependency&gt;
+</code></pre>
+
+ <dependency>
+   <groupId>org.hibernate</groupId>
+   <artifactId>hibernate</artifactId>
+   <version>3.2.5.ga</version>
+   <exclusions>  --这里是排除依赖，因为jta官方版是在maven仓库中找不到的
+
+<pre><code> &lt;exclusion&gt;
+   &lt;groupId&gt;javax.transaction&lt;/groupId&gt;
+   &lt;artifactId&gt;jta&lt;/artifactId&gt;
+ &lt;/exclusion&gt;
+</code></pre>
+
+<p>   </exclusions>
+ </dependency>
+</dependencies>
+{% endhighlight %}</p></li>
+<li><p>当项目是分模块进行的时候,通常会考虑使用modules,如:
+{% highlight xml %}
+ <modules></p>
+
+<pre><code> &lt;module&gt;basecrm-parent&lt;/module&gt;
+ &lt;module&gt;common&lt;/module&gt;
+ &lt;module&gt;systemmgr&lt;/module&gt;
+ &lt;module&gt;prodmgr&lt;/module&gt;
+</code></pre>
+
+<p> </modules>
+{% endhighlight %}
+这个时候至少会有两级pom.xml,这样像properties,dependency等都是可以继承的(可参考basecrm项目或者spring3.x)</p></li>
+<li><p>plugin资源非常多，简单举几个常用插件(配置请上网找)<br/>
+maven-compiler-plugin 主要是配置编译方面的选项(例如使用什么版本的jdk)<br/>
+maven-surefire-plugin 跟测试有关的,例如配置测试失败是否继续,是否跳过测试等<br/>
+build-helper-maven-plugin 用于配置项目的目录结构,例如配置多个源代码目录等<br/>
+maven-shade-plugin 我只知道可以用来给打包加点料~~<br/>
+tomcat-maven-plugin 顾名思义,用于集成tomcat<br/>
+maven-jetty-plugin 顾名思义,用于集成jetty</p></li>
+<li><p>others <br/>
+maven仓库代理推荐nexus(网内已经有个现成的:http://10.137.27.223:8080/nexus)<br/>
+eclipse中的maven插件推荐m2eclipse(update-site: http://m2eclipse.sonatype.org/sites/m2e)<br/>
+maven实战迷你书(http://www.infoq.com/cn/minibooks/maven-in-action)</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -4,7 +4,7 @@
   <title><![CDATA[小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-03-09T20:36:55+08:00</updated>
+  <updated>2013-03-10T22:32:31+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -146,6 +146,8 @@
     <updated>2013-01-27T00:00:00+08:00</updated>
     <id>http://mccxj.github.com/blog/jekyll-plugin-with-git-branch</id>
     <content type="html"><![CDATA[<p><img src="http://mccxj.github.com/assets/images/2013/jekyll-plugin-with-git-branch.png" alt="git分支让github page用上jekyll插件" /></p>
+
+<p><strong>本博客已经在2013-3-9转换成octopress了,比这种手动方式要方便很多。</strong></p>
 
 <p>github page是个不错的应用，可惜对jekyll有比较多的限制，特别是插件方面。
 为了解决这个问题，我选择了分支来处理这个，大约就是source分支保存未编译的内容，

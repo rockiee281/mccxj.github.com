@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 笔记 | 小毛的胡思乱想]]></title>
+  <link href="http://mccxj.github.com/blog/categories/bi-ji/atom.xml" rel="self"/>
+  <link href="http://mccxj.github.com/"/>
+  <updated>2013-03-10T22:33:16+08:00</updated>
+  <id>http://mccxj.github.com/</id>
+  <author>
+    <name><![CDATA[蔡晓建]]></name>
+    <email><![CDATA[mc02cxj@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Async Javascript读书笔记]]></title>
+    <link href="http://mccxj.github.com/blog/20130121_async-javascript.html"/>
+    <updated>2013-01-21T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/async-javascript</id>
+    <content type="html"><![CDATA[<p><img src="/assets/images/2013/async-javascript.jpg" alt="Async Javascript" /></p>
+
+<p>这篇读书笔记的主要内容是在家里用ipad上输入的，感觉输入还是比较吃力呀。</p>
+
+<p>本书的副标题是Build More Responsive Apps with Less Code，
+关键词是异步、响应式，主要是对如何书写异步js代码提供一些指导意见，描述js的异步特性，回调代码的书写，还介绍了PubSub、Promises等通用模式。
+最后介绍了worker多线程模型，js异步加载等内容。书的页数可谓少得可怜，内容还算比较实在，
+提供了大量的开源库实现供读者参考，对于框架选型的话倒是可以参考一下。</p>
+
+<h2>js事件</h2>
+
+<p>主要是了解事件背后的本质。提供了象setTimeout document.onready都是事件的典型案例。
+因为js基本都是单线程模型，所以事件的触发和代码的执行有时候并不一致，而是有些时间差。即使是setTimeout(fn,0)这样的代码。
+这样的逻辑也不是立即执行的。它的执行模型大概是这样的(在ipad上手绘的)。
+<img src="/assets/images/2013/runjs.jpg" alt="js执行模型" /></p>
+
+<p>任何回调方法的执行都是需要按队列顺序来执行。如果当前代码没有执行完,就不会执行其他回调方法。
+因此理解js的异步处理模型非常重要，<strong>代码应该尽快执行完毕，避免阻塞其他代码的执行</strong>。</p>
+
+<h2>哪些是异步逻辑</h2>
+
+<p>主要是一些io操作。例如</p>
+
+<ol>
+<li>ajax调用</li>
+<li>webkit里边的console.log</li>
+<li>dom操作，浏览器可能会延迟的效果出现</li>
+<li>Node服务端里边比比皆是</li>
+</ol>
+
+
+<p>当然还有些是时间片操作。例如</p>
+
+<ol>
+<li>setTimeout或setInterval</li>
+<li>node的<a href="http://nodejs.org/docs/latest/api/process.html">process.nextTick</a></li>
+<li>html5提供的requestAnimationFrame等特性</li>
+</ol>
+
+
+<h2>异步逻辑注意</h2>
+
+<p>如果使用回调方法进行异步处理，就不要在后面的代码中按同步的逻辑来考虑。<br/>
+异步回调方法中用到的对象也应该先定义，避免由于缓存等造成奇怪的问题。<br/>
+可以使用web worker api或异步调用来生成缓存数据。<br/>
+避免超过两层的回调方法。</p>
+
+<h2>处理错误</h2>
+
+<p>使用异步调用时，stack trace可能会不全<br/>
+使用异步调用时，try-catch可能会失效<br/>
+使用err来作为回调方法的参数，或者区分success和error的回调方法<br/>
+处理uncaught异常，可以使用:
+{% highlight javascript %}</p>
+
+<h1>Broswer</h1>
+
+<p>window.onerror = function(err){
+}</p>
+
+<h1>Node</h1>
+
+<p>process.on('uncaughtException', function(err){
+})
+{% endhighlight %}</p>
+
+<h2>流程控制</h2>
+
+<p>回调方法太多，流程控制变得异常困难，很容易造成错误，应该避免超过两层的回调方法。
+比较常用的办法有PubSub、Promises等解决方案/模式。</p>
+
+<h3>PubSub</h3>
+
+<p>就是publish/subscribe,发布订阅，常见的监听器模式。通常是把回调方法组织为带名字的事件，模拟事件触发。例如</p>
+
+<ol>
+<li>Node的<a href="http://nodejs.org/api/events.html">EventEmitter</a></li>
+<li>Backbone的<a href="http://backbonejs.org/#Events">Event</a>模型</li>
+<li>jQuery的<a href="http://api.jquery.com/on/">自定义事件</a></li>
+</ol>
+
+
+<p>需要注意的是，<strong>PubSub模式的逻辑不一定是异步的</strong>。
+如果trigger是同步逻辑，应该注意避免在回调方法中再次trigger某个事件而造成死循环，
+例如jQuery就可能出现这个问题，而像<a href="http://backbonejs.org/">backbone</a>在值没有变化时不再触发change事件，也提供了slient的选项。而<a href="http://emberjs.com/">Ember</a>之类是采用setTimeout的方式
+加入队列进行处理的方式，就是采用了异步的方式。</p>
+
+<h3>Promises</h3>
+
+<p>书中主要使用了jquery做例子，显示了<a href="http://api.jquery.com/jQuery.Deferred/">deferred</a>的用法，对callback的用法有个比较。
+熟悉jquery的童鞋通过Deferred的用法就有个大体的印象了。我个人的感觉就是，Promises模型是对PubSub常用功能的抽象，
+有点规范的意思，事实上也的确有commonjs的<a href="http://wiki.commonjs.org/wiki/Promises/A">Promises/A</a>规范。</p>
+
+<p>介绍了promises和deferred的区别，deferred是promises一个子集，它不能自己控制状态变更，需要有由其他事件出触发。
+对于node来说，现在是采用回调方法的方式，要采用deferred方式，主要做些改变。例如：
+{% highlight javascript %}
+deferredCallback = function(deferred) {
+  return function(err) {</p>
+
+<pre><code>if (err) {
+  deferred.reject(err);
+} else {
+  deferred.resolve(Array.prototype.slice.call(arguments, 1));
+};
+</code></pre>
+
+<p>  };
+}</p>
+
+<p>var fileReading = new $.Deferred();
+fs.readFile(filename, 'utf8', deferredCallback(fileReading));
+{% endhighlight %}</p>
+
+<h2>Async.js</h2>
+
+<p>介绍了async.js的用法，用来解决异步处理中的流程控制问题，例如iterator的问题。包括串行和并行的控制。
+这个库还提供了更加复杂的并发性控制。具体的用法还是看<a href="https://github.com/caolan/async">官方的介绍</a>吧。还提供了另外一个库<a href="https://github.com/creationix/step">step</a>的介绍</p>
+
+<h2>Worker</h2>
+
+<p>提供<a href="http://www.w3.org/TR/workers/">worker</a>的功能，在浏览器上worker还是有一些受限制的地方，例如不能涉及DOM。
+而在node上，可以用<a href="http://nodejs.org/api/cluster.html">cluster</a>来支持类似worker的功能。</p>
+
+<h2>异步加载js</h2>
+
+<p>主要探讨了几种方案，如在head加载，缺点是页面显示太慢。在body末尾加载，问题是还是要等js结束还能让事件生效，并且同样需要顺序加载。
+解决方案有<a href="http://www.w3schools.com/tags/att_script_defer.asp">defer</a>/<a href="http://www.w3schools.com/tags/att_script_async.asp">async</a>和ajax加载等方案。</p>
+
+<p>对于比较现代的浏览器，支持defer关键字用于异步js加载，还有async关键字，区别是后者不会顺序加载，先加载完先处理。
+async在有些插件化的js时async可能可以用到，其他就很难用到，因为很多js都是存在依赖的关系。</p>
+
+<p>当然，还有一些介绍了自定义的异步加载方案，如html5对象有onready事件,还有ajax加载方式。
+不过业界已经有些比较成熟的异步加载库了，如<a href="http://yepnopejs.com/">yepnope</a></p>
+
+<p>最后还介绍了一些异步加载的其他方案，例如增强的语法来支持异步逻辑。这种预编译的方式，我感觉不如在coffeescript上增加关键字的预处理方式，
+类似coffeescript的class关键字。另外还介绍<a href="https://developer.mozilla.org/en-US/docs/JavaScript/New_in_JavaScript/1.7?redirectlocale=en-US&amp;redirectslug=New_in_JavaScript_1.7">js1.7</a>关于异步逻辑的新特性:Generator。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[把时间当作朋友读书笔记]]></title>
+    <link href="http://mccxj.github.com/blog/20130113_to-be-times-friend.html"/>
+    <updated>2013-01-13T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/to-be-times-friend</id>
+    <content type="html"><![CDATA[<p><img src="/assets/images/2013/tobe-times-friend.gif" alt="把时间当作朋友" /></p>
+
+<p>刚读到这本书的时候，有种相见恨晚的感觉。不同于一般的时间管理类书籍，无病呻吟式的洗脑不见了，例子也少了强加因果关系的痕迹，有些观点印象比较深，值得一读。下面是一些比较有感觉的部分，和大家分享一下。</p>
+
+<h3>欲望</h3>
+
+<p>人希望欲望尽快得到满足。这是人性，所以衍生了速成，不劳而获，学习浮于表面这些浮躁的社会现象。在这之前，我真的没有意识到这是人性本质的的一种表现，对于有些新同事急于求成的想法，甚至是自己，也经常有难以理解的感觉。没能理解到这点，就很难说感同身受了。</p>
+
+<h3>成功学</h3>
+
+<p>虽然我也读过一些成功人士的经验之谈，我向来对成功学理论不大感冒，因为多读几本就会发现，他们经常夸大某一方面对结果的影响，很多例子也很牵强，再加上环境的不同，这些经历基本是不可复制的。李老师在书中也反复强调，要警惕成功学，要有自己的独立思考。独立思考，成熟心智，管理自我，才是书中强调的思想。</p>
+
+<h3>时间管理</h3>
+
+<p>读书，除了希望能找到不同的观点，还希望能有些支持这些观点的可操作性方案。其实关于时间管理方面的著作，我也知道一些，例如使用TODO，GTD等工具，番茄工作法。 李老师也有类似的一些做法，例如代办列表，下一阶段代办列表，每日事项回顾。关于每天晚上回顾做了那些事，这个在其他书上没有特别指出，不过李老师提到的回顾发现没什么可以写的尴尬，我也经常遇到。让我产生这些做法不可靠的感觉，后来才发现，这个和代办事项的优先级与难度有关。自己经常会倾向于先完成熟悉的，简单的，感兴趣的，而不是重要的，困难的。这样即使看上去完成很多东西，回顾的时候发现没什么可以值得一提的事情。</p>
+
+<h3>计划</h3>
+
+<p>计划不如变化快，但我们还是需要计划的。关于计划，我发现自己经常高估自己的能力，这个需要多考虑意外，给自己心理估计时间多加一段时间，并且把计划细分，对于不熟悉不感兴趣的事情，更应该如此，把时间分为多个时间片，不断接近目标。书中关于这部分的内容和番茄工作法的理论有交叉，个人感觉番茄工作的理论更详细和有针对性些吧！</p>
+
+<h3>有趣言语</h3>
+
+<p>李老师常说的一句话是，相信我，你并不孤单。并引用了正态分布的理论，使得这句话特别的深刻。整本书妙语连珠，读起来比较轻松。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[超级整理术简单笔记]]></title>
+    <link href="http://mccxj.github.com/blog/20121225_arrange.html"/>
+    <updated>2012-12-25T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/arrange</id>
+    <content type="html"><![CDATA[<p>今天去体育西那边，看到戴玉堆了一桌子的书，挖了本超级整理术的书，在坐地铁的时间看完了。
+内容非常浅显直白，原则就是让信息自动化，让工作规则化，让大脑有更多时间思考。</p>
+
+<p>下面简单记录了比较可行的操作。</p>
+
+<ol>
+<li><p>使用谷歌搜索来处理文件查找，桌面搜索的好处是可以直接查找内容，另外找文件名的话，
+everything也不错，我通常让它自动启动，另外用快捷方式操作程序的话，ctrl+r或launchy都是非常实用的工具。</p></li>
+<li><p>使用rss订阅，通常有邮箱订阅或者鲜果之类的客户端，google reader也有很多人推荐，
+不过鲜果没有展示博文列表的功能，很难看到哪些更新过。所以最好还是使用google reader，
+客户端的话，我发现FeedDemon非常不错，和reader配合天衣无缝。rss订阅有很多好处，主要是信息自动飞进来，
+通过阅读大量的信息，开阔视野，增强判断力，有助于在信息大爆炸时代辨别那少量的有用信息。
+有个遗憾就是，reader在公司用不了，只能在家里用。</p></li>
+<li><p>邮件只读一遍，尽快回复，对邮件分门别类。我通常是把没处理完的标红，然后消灭之。
+书中提到说，养成这个习惯，让别人对你有好的印象，有助于推动别人和协作。</p></li>
+<li><p>将大脑清空，把所有要做的事记录到TODO上，这个非常重要。
+我通常使用wunderlist来处理，无论工作事情还是生活事情，
+无论大事小事，急事闲事，都记录到上面去。即使这件事情很琐碎或者很紧急，记录上去也是好处多多的。
+wunderlist的功能非常简单，支持多客户端。友情提醒一下，工具这东西，不要挑复杂的。
+当然，有时候我还借助番茄钟来管理。</p></li>
+<li><p>利用TODO整理时间，使用节约的时间提升自己。做事的时候按照TODO的列表弄，就不至于手忙脚乱了。
+我通常是使用wunderlist的加星功能，只是关注加星的事项。
+因为TODO帮助我们把时间分配到合理的事情上去，防止时间碎片化，所以不至于瞎忙了。</p></li>
+<li><p>工作台和电脑桌面要整洁。作者提倡的是整一个整理日，定期清理。</p></li>
+<li><p>开会议题要具体，责任要落实，使用会议纪要并用TODO跟踪。
+作者还提到，开会要注意成本，所以开会前就要把讨论事宜详细列出，记录会议纪要并跟踪完成情况，我们公司的会就是效率不行呀。</p></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[hello erlang, part 4]]></title>
+    <link href="http://mccxj.github.com/blog/20120721_hello-erlang-4.html"/>
+    <updated>2012-07-21T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/hello-erlang-4</id>
+    <content type="html"><![CDATA[<h3>练习重点</h3>
+
+<p>列表解析和高阶函数是erlang的基本用法之一，熟练掌握还是很有必要的。
+作为一个阶段的学习总结，按照书上的一个练习题，尝试实现列表模块中的一些方法。</p>
+
+<h3>后续学习计划</h3>
+
+<p>再找时间总结一下位匹配用法，然后就开始客户端服务器编程模型，
+网络和分布式方面的内容。</p>
+
+<p>相关内容虽然都看过一下，但是没有敲过代码，感觉心里没底。还是那个硬道理：纸上得来终觉浅呀。</p>
+
+<h3>简单的测试用例</h3>
+
+<p>作为另外一个章节的内容，单元测试。我顺便实践一下erlang的单元测试框架eunit，
+里边使用了宏来作为assert语句(使用eclipse插件可以有很好的提示)，
+总的来说，xunit的基本风格都差不多，注意import eunit的包，方法名采用_test结束。
+执行的时候调用模块的test方法就可以了。我简单写了一些测试用例:</p>
+
+<p>{% highlight erlang %}
+-module(myliststest).
+-include_lib("eunit/include/eunit.hrl").
+-import_all(mylists).</p>
+
+<p>%% EUnit TestCase</p>
+
+<p>%% all/2
+all_empty_test() ->
+  ?assert(mylists:all(fun(E) -> E > 10 end, [])).
+all_test() ->
+  ?assertNot(mylists:all(fun(E) -> E > 10 end, [11,12,10])).</p>
+
+<p>%% any/2
+any_empty_test() ->
+  ?assertNot(mylists:any(fun(E) -> E > 10 end, [])).
+any_test() ->
+  ?assert(mylists:any(fun(E) -> E > 10 end, [11,12,10])).</p>
+
+<p>%% append/1
+append_1_test() ->
+  ?assertEqual([1,2,3,a,b,4,5,6], mylists:append([[1, 2, 3], [a, b], [4, 5, 6]])).</p>
+
+<p>%% append/2
+append_2_test() ->
+  ?assertEqual("abcdef", mylists:append("abc", "def")).</p>
+
+<p>%% delete/2
+delete_test() ->
+  ?assertEqual([1,2,4], mylists:delete(3, [1,2,3,4])).</p>
+
+<p>%% dropwhile/2
+dropwhile_test() ->
+  ?assertEqual([1,2], mylists:dropwhile(fun(E) -> E >= 3 end, [1,2,3,4])).</p>
+
+<p>%% duplicate/2
+duplicate_test() ->
+  ?assertEqual([x, x], mylists:duplicate(2, x)).</p>
+
+<p>%% filter/2
+filter_test() ->
+  ?assertEqual([3,4], mylists:filter(fun(E) -> E >= 3 end, [1,2,3,4])).</p>
+
+<p>%% reverse/1
+reverse_test() ->
+  ?assertEqual([4,3,2,1], mylists:reverse([1,2,3,4])).</p>
+
+<p>%% min/1
+min_test() ->
+  ?assertEqual(2, mylists:min([3,4,2,5])).</p>
+
+<p>%% zip/2
+zip_2_test() ->
+  ?assertEqual([{1,3},{2,4}], mylists:zip([1,2], [3,4,5])).</p>
+
+<p>%% zip/3
+zip_3_test() ->
+  ?assertEqual([{1,3,5},{2,4,7}], mylists:zip3([1,2], [3,4,5], [5,7])).</p>
+
+<p>%% zipwith/3
+zipwith_test() ->
+  ?assertEqual([5,7,9], mylists:zipwith(fun(X, Y) -> X+Y end, [1,2,3], [4,5,6])).</p>
+
+<p>%% zipwith/4
+zipwith3_test() ->
+  ?assertEqual([[a,x,1],[b,y,2],[c,z,3]], mylists:zipwith3(fun(X, Y, Z) -> [X,Y,Z] end, [a,b,c], [x,y,z], [1,2,3])).
+{% endhighlight %}</p>
+
+<h3>示例代码</h3>
+
+<p>根据上面的测试用例，我写了实现代码，如下所示。注意的时候，我偷懒使用了export_all,
+但是min/2好像默认有一个已经被引入了，所以需要去除这个模块。就export_all本身来说，
+也不是推荐方式，还是应该严格区分public api和local api。
+{% highlight erlang %}
+-module(mylists).
+-compile(export_all).
+-compile({no_auto_import,[min/2]}).</p>
+
+<p>%% all/2
+all(_P, []) ->
+  true;
+all(P, [H|T]) ->
+  case P(H) of</p>
+
+<pre><code>true -&gt; all(P, T);
+false -&gt; false
+</code></pre>
+
+<p>  end.</p>
+
+<p>%% any/2
+any(_P, []) ->
+  false;
+any(P, [H|T]) ->
+  case P(H) of</p>
+
+<pre><code>true -&gt; true;
+false -&gt; any(P, T)
+</code></pre>
+
+<p>  end.</p>
+
+<p>%% append/1
+append(LL) ->
+  [X || L &lt;- LL, X &lt;- L].</p>
+
+<p>%% append/2
+append(LA, LB) ->
+  LA ++ LB.</p>
+
+<p>%% delete/2
+delete(E, L) ->
+  [X || X &lt;- L, E /= X].</p>
+
+<p>%% dropwhile/2
+dropwhile(P, L) ->
+  [X || X &lt;- L, not P(X)].</p>
+
+<p>%% duplicate/2
+duplicate(N, E) ->
+  duplicate(N, E, []).
+duplicate(0, _E, L) ->
+  L;
+duplicate(N, E, L) when N > 0 ->
+  duplicate(N-1, E, [E|L]).</p>
+
+<p>%% filter/2
+filter(P, L) ->
+  [X || X &lt;- L, P(X)].</p>
+
+<p>%% reverse/1
+reverse(L) ->
+  reverse(L, []).
+reverse([], L) ->
+  L;
+reverse([H|T], L) ->
+  reverse(T, [H|L]).</p>
+
+<p>%% min/1
+min([H|T]) ->
+  min(T, H).
+min([], M) ->
+  M;
+min([H|T], M) ->
+  if</p>
+
+<pre><code>H &lt; M -&gt; min(T, H);
+true -&gt; min(T, M)
+</code></pre>
+
+<p>  end.</p>
+
+<p>%% zip/2
+zip(LA, LB) ->
+  reverse(zip(LA, LB, [])).
+zip([], <em>LB, L) ->
+  L;
+zip(</em>LA, [], L) ->
+  L;
+zip([HA|TA], [HB|TB], L) ->
+  zip(TA, TB, [{HA,HB}|L]).</p>
+
+<p>%% zip/3
+zip3(LA, LB, LC) ->
+  reverse(zip3(LA, LB, LC, [])).
+zip3([], <em>LB, </em>LC, L) ->
+  L;
+zip3(<em>LA, [], </em>LC, L) ->
+  L;
+zip3(<em>LA, </em>LB, [], L) ->
+  L;
+zip3([HA|TA], [HB|TB], [HC|TC], L) ->
+  zip3(TA, TB, TC, [{HA,HB,HC}|L]).</p>
+
+<p>%% zipwith/3
+zipwith(P, LA, LB) ->
+  [P(X,Y) || {X,Y} &lt;- zip(LA, LB)].</p>
+
+<p>%% zipwith/4
+zipwith3(P, LA, LB, LC) ->
+  [P(X,Y,Z) || {X,Y,Z} &lt;- zip3(LA, LB, LC)].
+{% endhighlight %}</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[hello erlang, part 3]]></title>
+    <link href="http://mccxj.github.com/blog/20120718_hello-erlang-3.html"/>
+    <updated>2012-07-18T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/hello-erlang-3</id>
+    <content type="html"><![CDATA[<h3>练习重点</h3>
+
+<p>并发编程是erlang的重要话题，所以这次先来热身，熟悉一下erlang中进程的基本用法。</p>
+
+<h3>练习1:进程环</h3>
+
+<p>编写一个程序，它生成N个进程并相连形成一个环，一旦启动，这些进程会环绕发送M个消息。
+然后当收到消息的时候正常终止。调用ring:start(M, N, Message)来启动环。</p>
+
+<h3>思路及编程示例</h3>
+
+<p>首先，为了形成环状，就是让最后一个进程能够给第一个进程发送消息，
+调用spawn生成进程的时候，需要把第一个pid一直传递到最后一个。所以需要有个start的方法，
+但需要多加个第一个进程id的参数，关注参数N=1作为临界点。</p>
+
+<p>还有，需要等待消息，然后给下一个进程发送消息，之后继续等待消息，直到M=0。
+所以需要一个等待消息的方法，同时需要关注参数M=0作为临界点。</p>
+
+<p>最后，整个环，所有的进程一开始都在等待，需要有个消息来启动环，
+可以在第一个进程启动下一个进程之前，往自身邮箱里边发送一条消息，
+这样第一个进程进入等待消息的时候，就能接收到消息，从而启动环。</p>
+
+<p>我的代码示例如下：
+{% highlight erlang %}
+-module(ring).</p>
+
+<p>%% Exported Functions
+-export([start/3]).
+-export([start/4]).</p>
+
+<p>%% API Functions
+start(M, N, Message) ->
+  self() ! {self(), start},
+  start(M, N, Message, self()).</p>
+
+<p>start(M, 1, Message, Rid) ->
+  waitmessage(M, 1, Message, Rid);</p>
+
+<p>start(M, N, Message, Rid) ->
+  Pid = spawn(ring, start, [M, N-1, Message, Rid]),
+  waitmessage(M, N, Message, Pid).</p>
+
+<p>waitmessage(0, <em>N, </em>Message, _Pid) ->
+  receive</p>
+
+<pre><code>{Pd, Msg} -&gt;
+  io:format("pid ~p receive message ~p from ~p~n", [self(), Msg, Pd])
+  ok
+</code></pre>
+
+<p>  end;</p>
+
+<p>waitmessage(M, N, Message, Pid) ->
+  receive</p>
+
+<pre><code>{Pd, Msg} -&gt;
+  io:format("pid ~p receive message ~p from ~p~n", [self(), Msg, Pd]),
+  Pid ! {self(), Message},
+  waitmessage(M-1, N, Message, Pid)
+</code></pre>
+
+<p>  end.
+{% endhighlight %}</p>
+
+<p>通过简单的测试，如果去掉io:format的话，效率会提高不少。IO操作消耗的时间还是不可小视呀。
+另外，测试大数量进程的时候，内存也用得比较厉害，毕竟这个练习更像是一个同步操作。</p>
+]]></content>
+  </entry>
+  
+</feed>

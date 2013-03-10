@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 消息 | 小毛的胡思乱想]]></title>
+  <link href="http://mccxj.github.com/blog/categories/xiao-xi/atom.xml" rel="self"/>
+  <link href="http://mccxj.github.com/"/>
+  <updated>2013-03-10T22:33:16+08:00</updated>
+  <id>http://mccxj.github.com/</id>
+  <author>
+    <name><![CDATA[蔡晓建]]></name>
+    <email><![CDATA[mc02cxj@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[hello erlang, part 3]]></title>
+    <link href="http://mccxj.github.com/blog/20120718_hello-erlang-3.html"/>
+    <updated>2012-07-18T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/hello-erlang-3</id>
+    <content type="html"><![CDATA[<h3>练习重点</h3>
+
+<p>并发编程是erlang的重要话题，所以这次先来热身，熟悉一下erlang中进程的基本用法。</p>
+
+<h3>练习1:进程环</h3>
+
+<p>编写一个程序，它生成N个进程并相连形成一个环，一旦启动，这些进程会环绕发送M个消息。
+然后当收到消息的时候正常终止。调用ring:start(M, N, Message)来启动环。</p>
+
+<h3>思路及编程示例</h3>
+
+<p>首先，为了形成环状，就是让最后一个进程能够给第一个进程发送消息，
+调用spawn生成进程的时候，需要把第一个pid一直传递到最后一个。所以需要有个start的方法，
+但需要多加个第一个进程id的参数，关注参数N=1作为临界点。</p>
+
+<p>还有，需要等待消息，然后给下一个进程发送消息，之后继续等待消息，直到M=0。
+所以需要一个等待消息的方法，同时需要关注参数M=0作为临界点。</p>
+
+<p>最后，整个环，所有的进程一开始都在等待，需要有个消息来启动环，
+可以在第一个进程启动下一个进程之前，往自身邮箱里边发送一条消息，
+这样第一个进程进入等待消息的时候，就能接收到消息，从而启动环。</p>
+
+<p>我的代码示例如下：
+{% highlight erlang %}
+-module(ring).</p>
+
+<p>%% Exported Functions
+-export([start/3]).
+-export([start/4]).</p>
+
+<p>%% API Functions
+start(M, N, Message) ->
+  self() ! {self(), start},
+  start(M, N, Message, self()).</p>
+
+<p>start(M, 1, Message, Rid) ->
+  waitmessage(M, 1, Message, Rid);</p>
+
+<p>start(M, N, Message, Rid) ->
+  Pid = spawn(ring, start, [M, N-1, Message, Rid]),
+  waitmessage(M, N, Message, Pid).</p>
+
+<p>waitmessage(0, <em>N, </em>Message, _Pid) ->
+  receive</p>
+
+<pre><code>{Pd, Msg} -&gt;
+  io:format("pid ~p receive message ~p from ~p~n", [self(), Msg, Pd])
+  ok
+</code></pre>
+
+<p>  end;</p>
+
+<p>waitmessage(M, N, Message, Pid) ->
+  receive</p>
+
+<pre><code>{Pd, Msg} -&gt;
+  io:format("pid ~p receive message ~p from ~p~n", [self(), Msg, Pd]),
+  Pid ! {self(), Message},
+  waitmessage(M-1, N, Message, Pid)
+</code></pre>
+
+<p>  end.
+{% endhighlight %}</p>
+
+<p>通过简单的测试，如果去掉io:format的话，效率会提高不少。IO操作消耗的时间还是不可小视呀。
+另外，测试大数量进程的时候，内存也用得比较厉害，毕竟这个练习更像是一个同步操作。</p>
+]]></content>
+  </entry>
+  
+</feed>
