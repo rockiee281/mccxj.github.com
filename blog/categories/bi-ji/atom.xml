@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 笔记 | 小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/blog/categories/bi-ji/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-03-10T22:33:16+08:00</updated>
+  <updated>2013-03-17T17:29:41+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -71,18 +71,18 @@
 使用异步调用时，try-catch可能会失效<br/>
 使用err来作为回调方法的参数，或者区分success和error的回调方法<br/>
 处理uncaught异常，可以使用:
-{% highlight javascript %}</p>
+<div class="highlight"><pre><code class="javascript"><span class="o">&lt;</span><span class="err">/p&gt;</span>
 
-<h1>Broswer</h1>
+<span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Broswer</span><span class="o">&lt;</span><span class="err">/h1&gt;</span>
 
-<p>window.onerror = function(err){
-}</p>
+<span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nb">window</span><span class="p">.</span><span class="nx">onerror</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+<span class="p">}</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
 
-<h1>Node</h1>
+<span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Node</span><span class="o">&lt;</span><span class="err">/h1&gt;</span>
 
-<p>process.on('uncaughtException', function(err){
-})
-{% endhighlight %}</p>
+<span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+<span class="p">})</span>
+</code></pre></div></p>
 
 <h2>流程控制</h2>
 
@@ -113,23 +113,22 @@
 
 <p>介绍了promises和deferred的区别，deferred是promises一个子集，它不能自己控制状态变更，需要有由其他事件出触发。
 对于node来说，现在是采用回调方法的方式，要采用deferred方式，主要做些改变。例如：
-{% highlight javascript %}
-deferredCallback = function(deferred) {
-  return function(err) {</p>
+<div class="highlight"><pre><code class="javascript"><span class="nx">deferredCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">deferred</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
 
-<pre><code>if (err) {
-  deferred.reject(err);
-} else {
-  deferred.resolve(Array.prototype.slice.call(arguments, 1));
-};
-</code></pre>
+<span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">deferred</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+<span class="p">};</span>
+<span class="o">&lt;</span><span class="err">/code&gt;&lt;/pre&gt;</span>
 
-<p>  };
-}</p>
+<span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="p">};</span>
+<span class="p">}</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
 
-<p>var fileReading = new $.Deferred();
-fs.readFile(filename, 'utf8', deferredCallback(fileReading));
-{% endhighlight %}</p>
+<span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="kd">var</span> <span class="nx">fileReading</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">();</span>
+<span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="nx">deferredCallback</span><span class="p">(</span><span class="nx">fileReading</span><span class="p">));</span>
+</code></pre></div></p>
 
 <h2>Async.js</h2>
 
@@ -248,188 +247,186 @@ wunderlist的功能非常简单，支持多客户端。友情提醒一下，工�
 总的来说，xunit的基本风格都差不多，注意import eunit的包，方法名采用_test结束。
 执行的时候调用模块的test方法就可以了。我简单写了一些测试用例:</p>
 
-<p>{% highlight erlang %}
--module(myliststest).
--include_lib("eunit/include/eunit.hrl").
--import_all(mylists).</p>
+<p><div class="highlight"><pre><code class="erlang"><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">myliststest</span><span class="p">).</span>
+<span class="p">-</span><span class="ni">include_lib</span><span class="p">(</span><span class="s">&quot;eunit/include/eunit.hrl&quot;</span><span class="p">).</span>
+<span class="p">-</span><span class="ni">import_all</span><span class="p">(</span><span class="n">mylists</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% EUnit TestCase</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% EUnit TestCase&lt;/p&gt;</span>
 
-<p>%% all/2
-all_empty_test() ->
-  ?assert(mylists:all(fun(E) -> E > 10 end, [])).
-all_test() ->
-  ?assertNot(mylists:all(fun(E) -> E > 10 end, [11,12,10])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% all/2</span>
+<span class="nf">all_empty_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assert</span><span class="p">(</span><span class="nn">mylists</span><span class="p">:</span><span class="nf">all</span><span class="p">(</span><span class="k">fun</span><span class="p">(</span><span class="nv">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nv">E</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="k">end</span><span class="p">,</span> <span class="p">[])).</span>
+<span class="nf">all_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertNot</span><span class="p">(</span><span class="nn">mylists</span><span class="p">:</span><span class="nf">all</span><span class="p">(</span><span class="k">fun</span><span class="p">(</span><span class="nv">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nv">E</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="k">end</span><span class="p">,</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">10</span><span class="p">])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% any/2
-any_empty_test() ->
-  ?assertNot(mylists:any(fun(E) -> E > 10 end, [])).
-any_test() ->
-  ?assert(mylists:any(fun(E) -> E > 10 end, [11,12,10])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% any/2</span>
+<span class="nf">any_empty_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertNot</span><span class="p">(</span><span class="nn">mylists</span><span class="p">:</span><span class="nf">any</span><span class="p">(</span><span class="k">fun</span><span class="p">(</span><span class="nv">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nv">E</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="k">end</span><span class="p">,</span> <span class="p">[])).</span>
+<span class="nf">any_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assert</span><span class="p">(</span><span class="nn">mylists</span><span class="p">:</span><span class="nf">any</span><span class="p">(</span><span class="k">fun</span><span class="p">(</span><span class="nv">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nv">E</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="k">end</span><span class="p">,</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">10</span><span class="p">])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% append/1
-append_1_test() ->
-  ?assertEqual([1,2,3,a,b,4,5,6], mylists:append([[1, 2, 3], [a, b], [4, 5, 6]])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% append/1</span>
+<span class="nf">append_1_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">append</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% append/2
-append_2_test() ->
-  ?assertEqual("abcdef", mylists:append("abc", "def")).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% append/2</span>
+<span class="nf">append_2_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">&quot;abcdef&quot;</span><span class="p">,</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">append</span><span class="p">(</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;def&quot;</span><span class="p">)).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% delete/2
-delete_test() ->
-  ?assertEqual([1,2,4], mylists:delete(3, [1,2,3,4])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% delete/2</span>
+<span class="nf">delete_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">delete</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% dropwhile/2
-dropwhile_test() ->
-  ?assertEqual([1,2], mylists:dropwhile(fun(E) -> E >= 3 end, [1,2,3,4])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% dropwhile/2</span>
+<span class="nf">dropwhile_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">dropwhile</span><span class="p">(</span><span class="k">fun</span><span class="p">(</span><span class="nv">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nv">E</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="k">end</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% duplicate/2
-duplicate_test() ->
-  ?assertEqual([x, x], mylists:duplicate(2, x)).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% duplicate/2</span>
+<span class="nf">duplicate_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">],</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">duplicate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">x</span><span class="p">)).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% filter/2
-filter_test() ->
-  ?assertEqual([3,4], mylists:filter(fun(E) -> E >= 3 end, [1,2,3,4])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% filter/2</span>
+<span class="nf">filter_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">filter</span><span class="p">(</span><span class="k">fun</span><span class="p">(</span><span class="nv">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nv">E</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="k">end</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% reverse/1
-reverse_test() ->
-  ?assertEqual([4,3,2,1], mylists:reverse([1,2,3,4])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% reverse/1</span>
+<span class="nf">reverse_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">reverse</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% min/1
-min_test() ->
-  ?assertEqual(2, mylists:min([3,4,2,5])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% min/1</span>
+<span class="nf">min_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">min</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% zip/2
-zip_2_test() ->
-  ?assertEqual([{1,3},{2,4}], mylists:zip([1,2], [3,4,5])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% zip/2</span>
+<span class="nf">zip_2_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">([{</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">},{</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">}],</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">zip</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% zip/3
-zip_3_test() ->
-  ?assertEqual([{1,3,5},{2,4,7}], mylists:zip3([1,2], [3,4,5], [5,7])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% zip/3</span>
+<span class="nf">zip_3_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">([{</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">},{</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="p">}],</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">zip3</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% zipwith/3
-zipwith_test() ->
-  ?assertEqual([5,7,9], mylists:zipwith(fun(X, Y) -> X+Y end, [1,2,3], [4,5,6])).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% zipwith/3</span>
+<span class="nf">zipwith_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">9</span><span class="p">],</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">zipwith</span><span class="p">(</span><span class="k">fun</span><span class="p">(</span><span class="nv">X</span><span class="p">,</span> <span class="nv">Y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nv">X</span><span class="o">+</span><span class="nv">Y</span> <span class="k">end</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">])).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% zipwith/4
-zipwith3_test() ->
-  ?assertEqual([[a,x,1],[b,y,2],[c,z,3]], mylists:zipwith3(fun(X, Y, Z) -> [X,Y,Z] end, [a,b,c], [x,y,z], [1,2,3])).
-{% endhighlight %}</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% zipwith/4</span>
+<span class="nf">zipwith3_test</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="o">?</span><span class="n">assertEqual</span><span class="p">([[</span><span class="n">a</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="n">b</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="n">c</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mi">3</span><span class="p">]],</span> <span class="nn">mylists</span><span class="p">:</span><span class="nf">zipwith3</span><span class="p">(</span><span class="k">fun</span><span class="p">(</span><span class="nv">X</span><span class="p">,</span> <span class="nv">Y</span><span class="p">,</span> <span class="nv">Z</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nv">X</span><span class="p">,</span><span class="nv">Y</span><span class="p">,</span><span class="nv">Z</span><span class="p">]</span> <span class="k">end</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">],</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])).</span>
+</code></pre></div></p>
 
 <h3>示例代码</h3>
 
 <p>根据上面的测试用例，我写了实现代码，如下所示。注意的时候，我偷懒使用了export_all,
 但是min/2好像默认有一个已经被引入了，所以需要去除这个模块。就export_all本身来说，
 也不是推荐方式，还是应该严格区分public api和local api。
-{% highlight erlang %}
--module(mylists).
--compile(export_all).
--compile({no_auto_import,[min/2]}).</p>
+<div class="highlight"><pre><code class="erlang"><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">mylists</span><span class="p">).</span>
+<span class="p">-</span><span class="ni">compile</span><span class="p">(</span><span class="n">export_all</span><span class="p">).</span>
+<span class="p">-</span><span class="ni">compile</span><span class="p">({</span><span class="n">no_auto_import</span><span class="p">,[</span><span class="n">min</span><span class="o">/</span><span class="mi">2</span><span class="p">]}).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% all/2
-all(_P, []) ->
-  true;
-all(P, [H|T]) ->
-  case P(H) of</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% all/2</span>
+<span class="nf">all</span><span class="p">(_</span><span class="nv">P</span><span class="p">,</span> <span class="p">[])</span> <span class="o">-&gt;</span>
+  <span class="n">true</span><span class="p">;</span>
+<span class="nf">all</span><span class="p">(</span><span class="nv">P</span><span class="p">,</span> <span class="p">[</span><span class="nv">H</span><span class="p">|</span><span class="nv">T</span><span class="p">])</span> <span class="o">-&gt;</span>
+  <span class="k">case</span> <span class="nv">P</span><span class="p">(</span><span class="nv">H</span><span class="p">)</span> <span class="k">of</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<pre><code>true -&gt; all(P, T);
-false -&gt; false
-</code></pre>
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">true</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">all</span><span class="p">(</span><span class="nv">P</span><span class="p">,</span> <span class="nv">T</span><span class="p">);</span>
+<span class="n">false</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">false</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 
-<p>  end.</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="p">.</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% any/2
-any(_P, []) ->
-  false;
-any(P, [H|T]) ->
-  case P(H) of</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% any/2</span>
+<span class="nf">any</span><span class="p">(_</span><span class="nv">P</span><span class="p">,</span> <span class="p">[])</span> <span class="o">-&gt;</span>
+  <span class="n">false</span><span class="p">;</span>
+<span class="nf">any</span><span class="p">(</span><span class="nv">P</span><span class="p">,</span> <span class="p">[</span><span class="nv">H</span><span class="p">|</span><span class="nv">T</span><span class="p">])</span> <span class="o">-&gt;</span>
+  <span class="k">case</span> <span class="nv">P</span><span class="p">(</span><span class="nv">H</span><span class="p">)</span> <span class="k">of</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<pre><code>true -&gt; true;
-false -&gt; any(P, T)
-</code></pre>
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">true</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">true</span><span class="p">;</span>
+<span class="n">false</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">any</span><span class="p">(</span><span class="nv">P</span><span class="p">,</span> <span class="nv">T</span><span class="p">)</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 
-<p>  end.</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="p">.</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% append/1
-append(LL) ->
-  [X || L &lt;- LL, X &lt;- L].</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% append/1</span>
+<span class="nf">append</span><span class="p">(</span><span class="nv">LL</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="p">[</span><span class="nv">X</span> <span class="p">||</span> <span class="nv">L</span> <span class="err">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="nv">LL</span><span class="p">,</span> <span class="nv">X</span> <span class="err">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="nv">L</span><span class="p">].</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% append/2
-append(LA, LB) ->
-  LA ++ LB.</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% append/2</span>
+<span class="nf">append</span><span class="p">(</span><span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nv">LA</span> <span class="o">++</span> <span class="nv">LB</span><span class="p">.</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% delete/2
-delete(E, L) ->
-  [X || X &lt;- L, E /= X].</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% delete/2</span>
+<span class="nf">delete</span><span class="p">(</span><span class="nv">E</span><span class="p">,</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="p">[</span><span class="nv">X</span> <span class="p">||</span> <span class="nv">X</span> <span class="err">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="nv">L</span><span class="p">,</span> <span class="nv">E</span> <span class="o">/=</span> <span class="nv">X</span><span class="p">].</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% dropwhile/2
-dropwhile(P, L) ->
-  [X || X &lt;- L, not P(X)].</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% dropwhile/2</span>
+<span class="nf">dropwhile</span><span class="p">(</span><span class="nv">P</span><span class="p">,</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="p">[</span><span class="nv">X</span> <span class="p">||</span> <span class="nv">X</span> <span class="err">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="nv">L</span><span class="p">,</span> <span class="ow">not</span> <span class="nv">P</span><span class="p">(</span><span class="nv">X</span><span class="p">)].</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% duplicate/2
-duplicate(N, E) ->
-  duplicate(N, E, []).
-duplicate(0, _E, L) ->
-  L;
-duplicate(N, E, L) when N > 0 ->
-  duplicate(N-1, E, [E|L]).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% duplicate/2</span>
+<span class="nf">duplicate</span><span class="p">(</span><span class="nv">N</span><span class="p">,</span> <span class="nv">E</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">duplicate</span><span class="p">(</span><span class="nv">N</span><span class="p">,</span> <span class="nv">E</span><span class="p">,</span> <span class="p">[]).</span>
+<span class="nf">duplicate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">_</span><span class="nv">E</span><span class="p">,</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nv">L</span><span class="p">;</span>
+<span class="nf">duplicate</span><span class="p">(</span><span class="nv">N</span><span class="p">,</span> <span class="nv">E</span><span class="p">,</span> <span class="nv">L</span><span class="p">)</span> <span class="k">when</span> <span class="nv">N</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">-&gt;</span>
+  <span class="n">duplicate</span><span class="p">(</span><span class="nv">N</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nv">E</span><span class="p">,</span> <span class="p">[</span><span class="nv">E</span><span class="p">|</span><span class="nv">L</span><span class="p">]).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% filter/2
-filter(P, L) ->
-  [X || X &lt;- L, P(X)].</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% filter/2</span>
+<span class="nf">filter</span><span class="p">(</span><span class="nv">P</span><span class="p">,</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="p">[</span><span class="nv">X</span> <span class="p">||</span> <span class="nv">X</span> <span class="err">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="nv">L</span><span class="p">,</span> <span class="nv">P</span><span class="p">(</span><span class="nv">X</span><span class="p">)].</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% reverse/1
-reverse(L) ->
-  reverse(L, []).
-reverse([], L) ->
-  L;
-reverse([H|T], L) ->
-  reverse(T, [H|L]).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% reverse/1</span>
+<span class="nf">reverse</span><span class="p">(</span><span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">reverse</span><span class="p">(</span><span class="nv">L</span><span class="p">,</span> <span class="p">[]).</span>
+<span class="nf">reverse</span><span class="p">([],</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nv">L</span><span class="p">;</span>
+<span class="nf">reverse</span><span class="p">([</span><span class="nv">H</span><span class="p">|</span><span class="nv">T</span><span class="p">],</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">reverse</span><span class="p">(</span><span class="nv">T</span><span class="p">,</span> <span class="p">[</span><span class="nv">H</span><span class="p">|</span><span class="nv">L</span><span class="p">]).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% min/1
-min([H|T]) ->
-  min(T, H).
-min([], M) ->
-  M;
-min([H|T], M) ->
-  if</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% min/1</span>
+<span class="nf">min</span><span class="p">([</span><span class="nv">H</span><span class="p">|</span><span class="nv">T</span><span class="p">])</span> <span class="o">-&gt;</span>
+  <span class="n">min</span><span class="p">(</span><span class="nv">T</span><span class="p">,</span> <span class="nv">H</span><span class="p">).</span>
+<span class="nf">min</span><span class="p">([],</span> <span class="nv">M</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nv">M</span><span class="p">;</span>
+<span class="nf">min</span><span class="p">([</span><span class="nv">H</span><span class="p">|</span><span class="nv">T</span><span class="p">],</span> <span class="nv">M</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="k">if</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<pre><code>H &lt; M -&gt; min(T, H);
-true -&gt; min(T, M)
-</code></pre>
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nv">H</span> <span class="err">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="nv">M</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">min</span><span class="p">(</span><span class="nv">T</span><span class="p">,</span> <span class="nv">H</span><span class="p">);</span>
+<span class="n">true</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">min</span><span class="p">(</span><span class="nv">T</span><span class="p">,</span> <span class="nv">M</span><span class="p">)</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 
-<p>  end.</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="p">.</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% zip/2
-zip(LA, LB) ->
-  reverse(zip(LA, LB, [])).
-zip([], <em>LB, L) ->
-  L;
-zip(</em>LA, [], L) ->
-  L;
-zip([HA|TA], [HB|TB], L) ->
-  zip(TA, TB, [{HA,HB}|L]).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% zip/2</span>
+<span class="nf">zip</span><span class="p">(</span><span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">reverse</span><span class="p">(</span><span class="n">zip</span><span class="p">(</span><span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">,</span> <span class="p">[])).</span>
+<span class="nf">zip</span><span class="p">([],</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">LB</span><span class="p">,</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nv">L</span><span class="p">;</span>
+<span class="nf">zip</span><span class="p">(</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">LA</span><span class="p">,</span> <span class="p">[],</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nv">L</span><span class="p">;</span>
+<span class="nf">zip</span><span class="p">([</span><span class="nv">HA</span><span class="p">|</span><span class="nv">TA</span><span class="p">],</span> <span class="p">[</span><span class="nv">HB</span><span class="p">|</span><span class="nv">TB</span><span class="p">],</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">zip</span><span class="p">(</span><span class="nv">TA</span><span class="p">,</span> <span class="nv">TB</span><span class="p">,</span> <span class="p">[{</span><span class="nv">HA</span><span class="p">,</span><span class="nv">HB</span><span class="p">}|</span><span class="nv">L</span><span class="p">]).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% zip/3
-zip3(LA, LB, LC) ->
-  reverse(zip3(LA, LB, LC, [])).
-zip3([], <em>LB, </em>LC, L) ->
-  L;
-zip3(<em>LA, [], </em>LC, L) ->
-  L;
-zip3(<em>LA, </em>LB, [], L) ->
-  L;
-zip3([HA|TA], [HB|TB], [HC|TC], L) ->
-  zip3(TA, TB, TC, [{HA,HB,HC}|L]).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% zip/3</span>
+<span class="nf">zip3</span><span class="p">(</span><span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">,</span> <span class="nv">LC</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">reverse</span><span class="p">(</span><span class="n">zip3</span><span class="p">(</span><span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">,</span> <span class="nv">LC</span><span class="p">,</span> <span class="p">[])).</span>
+<span class="nf">zip3</span><span class="p">([],</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">LB</span><span class="p">,</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">LC</span><span class="p">,</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nv">L</span><span class="p">;</span>
+<span class="nf">zip3</span><span class="p">(</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">LA</span><span class="p">,</span> <span class="p">[],</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">LC</span><span class="p">,</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nv">L</span><span class="p">;</span>
+<span class="nf">zip3</span><span class="p">(</span><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">LA</span><span class="p">,</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">LB</span><span class="p">,</span> <span class="p">[],</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nv">L</span><span class="p">;</span>
+<span class="nf">zip3</span><span class="p">([</span><span class="nv">HA</span><span class="p">|</span><span class="nv">TA</span><span class="p">],</span> <span class="p">[</span><span class="nv">HB</span><span class="p">|</span><span class="nv">TB</span><span class="p">],</span> <span class="p">[</span><span class="nv">HC</span><span class="p">|</span><span class="nv">TC</span><span class="p">],</span> <span class="nv">L</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">zip3</span><span class="p">(</span><span class="nv">TA</span><span class="p">,</span> <span class="nv">TB</span><span class="p">,</span> <span class="nv">TC</span><span class="p">,</span> <span class="p">[{</span><span class="nv">HA</span><span class="p">,</span><span class="nv">HB</span><span class="p">,</span><span class="nv">HC</span><span class="p">}|</span><span class="nv">L</span><span class="p">]).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% zipwith/3
-zipwith(P, LA, LB) ->
-  [P(X,Y) || {X,Y} &lt;- zip(LA, LB)].</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% zipwith/3</span>
+<span class="nf">zipwith</span><span class="p">(</span><span class="nv">P</span><span class="p">,</span> <span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="p">[</span><span class="nv">P</span><span class="p">(</span><span class="nv">X</span><span class="p">,</span><span class="nv">Y</span><span class="p">)</span> <span class="p">||</span> <span class="p">{</span><span class="nv">X</span><span class="p">,</span><span class="nv">Y</span><span class="p">}</span> <span class="err">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="n">zip</span><span class="p">(</span><span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">)].</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% zipwith/4
-zipwith3(P, LA, LB, LC) ->
-  [P(X,Y,Z) || {X,Y,Z} &lt;- zip3(LA, LB, LC)].
-{% endhighlight %}</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% zipwith/4</span>
+<span class="nf">zipwith3</span><span class="p">(</span><span class="nv">P</span><span class="p">,</span> <span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">,</span> <span class="nv">LC</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="p">[</span><span class="nv">P</span><span class="p">(</span><span class="nv">X</span><span class="p">,</span><span class="nv">Y</span><span class="p">,</span><span class="nv">Z</span><span class="p">)</span> <span class="p">||</span> <span class="p">{</span><span class="nv">X</span><span class="p">,</span><span class="nv">Y</span><span class="p">,</span><span class="nv">Z</span><span class="p">}</span> <span class="err">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="n">zip3</span><span class="p">(</span><span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">,</span> <span class="nv">LC</span><span class="p">)].</span>
+</code></pre></div></p>
 ]]></content>
   </entry>
   
@@ -461,46 +458,45 @@ zipwith3(P, LA, LB, LC) ->
 这样第一个进程进入等待消息的时候，就能接收到消息，从而启动环。</p>
 
 <p>我的代码示例如下：
-{% highlight erlang %}
--module(ring).</p>
+<div class="highlight"><pre><code class="erlang"><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">ring</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% Exported Functions
--export([start/3]).
--export([start/4]).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% Exported Functions</span>
+<span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">start</span><span class="o">/</span><span class="mi">3</span><span class="p">]).</span>
+<span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">start</span><span class="o">/</span><span class="mi">4</span><span class="p">]).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>%% API Functions
-start(M, N, Message) ->
-  self() ! {self(), start},
-  start(M, N, Message, self()).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% API Functions</span>
+<span class="nf">start</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">self</span><span class="p">()</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="n">start</span><span class="p">},</span>
+  <span class="n">start</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="n">self</span><span class="p">()).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>start(M, 1, Message, Rid) ->
-  waitmessage(M, 1, Message, Rid);</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">start</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Rid</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">waitmessage</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Rid</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>start(M, N, Message, Rid) ->
-  Pid = spawn(ring, start, [M, N-1, Message, Rid]),
-  waitmessage(M, N, Message, Pid).</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">start</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Rid</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nv">Pid</span> <span class="o">=</span> <span class="nb">spawn</span><span class="p">(</span><span class="n">ring</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="p">[</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Rid</span><span class="p">]),</span>
+  <span class="n">waitmessage</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Pid</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>waitmessage(0, <em>N, </em>Message, _Pid) ->
-  receive</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">waitmessage</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">N</span><span class="p">,</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">Message</span><span class="p">,</span> <span class="p">_</span><span class="nv">Pid</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="k">receive</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<pre><code>{Pd, Msg} -&gt;
-  io:format("pid ~p receive message ~p from ~p~n", [self(), Msg, Pd])
-  ok
-</code></pre>
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="p">{</span><span class="nv">Pd</span><span class="p">,</span> <span class="nv">Msg</span><span class="p">}</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span>
+  <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;pid </span><span class="si">~p</span><span class="s"> receive message </span><span class="si">~p</span><span class="s"> from </span><span class="si">~p~n</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">self</span><span class="p">(),</span> <span class="nv">Msg</span><span class="p">,</span> <span class="nv">Pd</span><span class="p">])</span>
+  <span class="n">ok</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 
-<p>  end;</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<p>waitmessage(M, N, Message, Pid) ->
-  receive</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">waitmessage</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Pid</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="k">receive</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 
-<pre><code>{Pd, Msg} -&gt;
-  io:format("pid ~p receive message ~p from ~p~n", [self(), Msg, Pd]),
-  Pid ! {self(), Message},
-  waitmessage(M-1, N, Message, Pid)
-</code></pre>
+<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="p">{</span><span class="nv">Pd</span><span class="p">,</span> <span class="nv">Msg</span><span class="p">}</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span>
+  <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;pid </span><span class="si">~p</span><span class="s"> receive message </span><span class="si">~p</span><span class="s"> from </span><span class="si">~p~n</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">self</span><span class="p">(),</span> <span class="nv">Msg</span><span class="p">,</span> <span class="nv">Pd</span><span class="p">]),</span>
+  <span class="nv">Pid</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="nv">Message</span><span class="p">},</span>
+  <span class="n">waitmessage</span><span class="p">(</span><span class="nv">M</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Pid</span><span class="p">)</span>
+<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 
-<p>  end.
-{% endhighlight %}</p>
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="p">.</span>
+</code></pre></div></p>
 
 <p>通过简单的测试，如果去掉io:format的话，效率会提高不少。IO操作消耗的时间还是不可小视呀。
 另外，测试大数量进程的时候，内存也用得比较厉害，毕竟这个练习更像是一个同步操作。</p>

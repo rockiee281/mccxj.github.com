@@ -4,7 +4,7 @@
   <title><![CDATA[小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-03-10T22:32:31+08:00</updated>
+  <updated>2013-03-17T17:29:41+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -12,6 +12,713 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[java性能--降低时间与空间消耗]]></title>
+    <link href="http://mccxj.github.com/blog/20130315_java-performance.html"/>
+    <updated>2013-03-15T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/java-performance</id>
+    <content type="html"><![CDATA[<h3>译者的话</h3>
+
+<p>断断续续的翻译完了，有些地方翻译得比较纠结，很难选择一个合适的表达。
+中文和英文在表达上还是有很多习惯上的不同，我又不想掺杂太多自己的意译上去，搞得有点进退两难。
+有能力的同学还是尽量阅读英文的吧，毕竟这篇文章的英文并不深。</p>
+
+<p><strong>作者: Reter Sestoft(sestoft@dina.kvl.dk)</strong> <br/>
+<strong>对应版本:2005-04-13 Version2</strong><br/>
+<a href="http://www.itu.dk/people/sestoft/papers/performance.pdf">原文链接</a></p>
+
+<h3>前言</h3>
+
+<p>我们提出一些通过降低时间与间消耗来改进java程序运行时间的建议。
+这里没有什么魔术的技巧，仅仅在避免常见问题上提出建议。</p>
+
+<h3>1 降低时间消耗</h3>
+
+<h4>1.1 基本代码优化</h4>
+
+<p>不要期望java编译器(例如javac或jikes)去做许多聪明的优化。
+因为java有比较严格的语句次序和线程语义，所以相对于C或者Fortran等比较少严格定义的语言，
+要安全的提高java程序的性能，编译器能做的事情很有限。但是你可以改进你自己的java源代码，来做到这点。</p>
+
+<p><strong>注: 理解为语句上的次序</strong> <br/>
+<strong>注: 严格定义指语法上限制</strong></p>
+
+<ul>
+<li>把循环不变量的计算移到循环之外。例如，避免重复计算一个for循环里的边界，像这样:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">size</span><span class="o">()*</span><span class="mi">2</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>应该仅计算一次循环边界，然后把结果赋值给一个本地变量，像这样:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">size</span><span class="o">()*</span><span class="mi">2</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">stop</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>不要重复计算同样的子表达式:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="k">if</span> <span class="o">(</span><span class="n">birds</span><span class="o">.</span><span class="na">elementAt</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">isGrower</span><span class="o">())</span> <span class="o">...</span>
+</span><span class='line'><span class="k">if</span> <span class="o">(</span><span class="n">birds</span><span class="o">.</span><span class="na">elementAt</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">isPullet</span><span class="o">())</span> <span class="o">...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>应该计算子表达式一次，然后把结果赋值给一个变量，并且重用这个变量:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Bird</span> <span class="n">bird</span> <span class="o">=</span> <span class="n">birds</span><span class="o">.</span><span class="na">elementAt</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+</span><span class='line'><span class="k">if</span> <span class="o">(</span><span class="n">bird</span><span class="o">.</span><span class="na">isGrower</span><span class="o">())</span> <span class="o">...</span>
+</span><span class='line'><span class="k">if</span> <span class="o">(</span><span class="n">bird</span><span class="o">.</span><span class="na">isPullet</span><span class="o">())</span> <span class="o">...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>每一次数组访问需要一个索引检查，所以降低数据访问次数是值得的。另外，通常java编译器不能
+自动优化多维数组的索引。例如，内循环(j)的每次迭代，重新计算索引rowsum[i]和arr的第一维索引arr[i]:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kt">double</span><span class="o">[]</span> <span class="n">rowsum</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="o">[</span><span class="n">n</span><span class="o">];</span>
+</span><span class='line'><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span>
+</span><span class='line'>  <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">j</span><span class="o">&lt;</span><span class="n">m</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span>
+</span><span class='line'>    <span class="n">rowsum</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">+=</span> <span class="n">arr</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>相反，在外循环的每次迭代中只计算一次这些索引值:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kt">double</span><span class="o">[]</span> <span class="n">rowsum</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="o">[</span><span class="n">n</span><span class="o">];</span>
+</span><span class='line'><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kt">double</span><span class="o">[]</span> <span class="n">arri</span> <span class="o">=</span> <span class="n">arr</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
+</span><span class='line'>  <span class="kt">double</span> <span class="n">sum</span> <span class="o">=</span> <span class="mf">0.0</span><span class="o">;</span>
+</span><span class='line'>  <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">j</span><span class="o">&lt;</span><span class="n">m</span><span class="o">;</span> <span class="n">j</span><span class="o">++)</span>
+</span><span class='line'>    <span class="n">sum</span> <span class="o">+=</span> <span class="n">arri</span><span class="o">[</span><span class="n">j</span><span class="o">];</span>
+</span><span class='line'>  <span class="n">rowsum</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">sum</span><span class="o">;</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意的是，初始化中arri = arr[i]并没有拷贝数组的第i行;它仅仅把数组引用(4个字节)赋给arri.</p>
+
+<ul>
+<li>把不变属性声明为final static，让编译器可以inline它们和预计算不变表达式。</li>
+<li>把不变的变量声明为final，让编译器可以inline它们和不变表达式。</li>
+<li>如果可以的话，把一个长的if-else-if链替换为switch；它要快很多.</li>
+<li>加入一个长的if-else-if链不能替换为switch(例如因为它检测一个String)，
+假如它执行很多次的话，通常值得替换为一个final static的HashMap，或类似的结构。</li>
+<li>使用&#8217;聪明的&#8217;C惯用法没有什么用(除了让代码更隐晦)，例如一个while循环的循环条件中进行所有的计算工作:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kt">int</span> <span class="n">year</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+</span><span class='line'><span class="kt">double</span> <span class="n">sum</span> <span class="o">=</span> <span class="mf">200.0</span><span class="o">;</span>
+</span><span class='line'><span class="kt">double</span><span class="o">[]</span> <span class="n">balance</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="o">[</span><span class="mi">100</span><span class="o">];</span>
+</span><span class='line'><span class="k">while</span> <span class="o">((</span><span class="n">balance</span><span class="o">[</span><span class="n">year</span><span class="o">++]</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">*=</span> <span class="mf">1.05</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mf">1000.0</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>1.2 属性和变量</h4>
+
+<ul>
+<li>访问本地变量和方法中参数，要比访问静态属性或实例属性要快得多。
+对于一个循环中的属性访问，在循环之前可能值得拷贝属性的值到本地变量，
+然后在循环中只是引用本地变量。</li>
+<li>在方法里边的嵌套代码块或循环中，定义变量是没有运行时开销的。
+尽可能的声明为本地变量(尽可能使用小的作用域)通常有助于代码清晰，
+甚至可以帮助编译器改进你的程序。</li>
+</ul>
+
+
+<h4>1.3 字符串操作</h4>
+
+<ul>
+<li>不用通过重复的字符串连接来构建字符串。下面的循环在每次迭代会多花一倍的时间(较上次).
+并且也很可能造成堆碎片化(见第二节):</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">;</span>
+</span><span class='line'><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">s</span> <span class="o">+=</span> <span class="s">&quot;#&quot;</span> <span class="o">+</span> <span class="n">i</span><span class="o">;</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>应该使用StringBuilder对象和它的append方法。这样在每次迭代中的实现消耗都是线性的(较上次)，
+可能有几个数量级速度提升。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">StringBuilder</span> <span class="n">sbuf</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="o">();</span>
+</span><span class='line'><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">sbuf</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="s">&quot;#&quot;</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="n">sbuf</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>另一方面，一个包含一序列字符串连接的表达式会被自动编译成使用StringBuilder.append(&#8230;)的形式，所以也是可行的:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;(&quot;</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span><span class="o">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>不要通过重复查询或修改一个String或StringBuilder来处理字符串。
+而重复使用String的substring和index方法，可能是合理的，但是应该用怀疑的眼光来看待。</li>
+</ul>
+
+
+<p><strong>注: 这一段的翻译很纠结</strong></p>
+
+<h4>1.4 数组中常量表的排序</h4>
+
+<ul>
+<li>在方法中声明一个初始化数组变量，在方法的每次执行中都会导致一个新数组被分配：</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">monthdays</span><span class="o">(</span><span class="kt">int</span> <span class="n">y</span><span class="o">,</span> <span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kt">int</span><span class="o">[]</span> <span class="n">monthlengths</span> <span class="o">=</span> <span class="o">{</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">28</span><span class="o">,</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="mi">31</span> <span class="o">};</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">leapyear</span><span class="o">(</span><span class="n">y</span><span class="o">)</span> <span class="o">?</span> <span class="mi">29</span> <span class="o">:</span> <span class="n">monthlengths</span><span class="o">[</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="o">];</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一个初始化数组变量或者类似的表格应该仅仅声明和分配一次，并且在一个封闭的类中作为一个final static的属性存在：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">monthlengths</span> <span class="o">=</span> <span class="o">{</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">28</span><span class="o">,</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="mi">31</span><span class="o">,</span> <span class="mi">30</span><span class="o">,</span> <span class="mi">31</span> <span class="o">};</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">monthdays</span><span class="o">(</span><span class="kt">int</span> <span class="n">y</span><span class="o">,</span> <span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">leapyear</span><span class="o">(</span><span class="n">y</span><span class="o">)</span> <span class="o">?</span> <span class="mi">29</span> <span class="o">:</span> <span class="n">monthlengths</span><span class="o">[</span><span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="o">];</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>更复杂的初始化可以使用一个静态代码块static { &#8230; }，例如来预计算一个数组的内容:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">double</span><span class="o">[]</span> <span class="n">logFac</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="o">[</span><span class="mi">100</span><span class="o">];</span>
+</span><span class='line'><span class="kd">static</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kt">double</span> <span class="n">logRes</span> <span class="o">=</span> <span class="mf">0.0</span><span class="o">;</span>
+</span><span class='line'>  <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="o">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">logFac</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">stop</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span>
+</span><span class='line'>    <span class="n">logFac</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">logRes</span> <span class="o">+=</span> <span class="n">Math</span><span class="o">.</span><span class="na">log</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kt">double</span> <span class="nf">logBinom</span><span class="o">(</span><span class="kt">int</span> <span class="n">n</span><span class="o">,</span> <span class="kt">int</span> <span class="n">k</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">logFac</span><span class="o">[</span><span class="n">n</span><span class="o">]</span> <span class="o">-</span> <span class="n">logFac</span><span class="o">[</span><span class="n">n</span><span class="o">-</span><span class="n">k</span><span class="o">]</span> <span class="o">-</span> <span class="n">logFac</span><span class="o">[</span><span class="n">k</span><span class="o">];</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>静态初始化块在这个封闭的类被加载的时候执行。
+在这个例子中，它预先计算一个存放阶乘函数(n! = 1.2&#8230;(n-1)*n)的对数的表logFac。
+所以方法logBinomial(n,k)可以有效的计算二项式系数的对数。作为实例，
+从52张卡中选择7张卡，是Math.exp(logBinom(52, 7))，得到133784560。</p>
+
+<h4>1.5 方法</h4>
+
+<ul>
+<li>声明方法为private,final或者static可以让调用更快。当然，只有应用需要时你才应该这么做。</li>
+<li>作为例子，通常一个访问器方法如getSize，当子类无需覆盖它的时候，在类里边有理由作为final存在:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">class</span> <span class="nc">Foo</span> <span class="o">{</span>
+</span><span class='line'><span class="kd">private</span> <span class="kt">int</span> <span class="n">size</span><span class="o">;</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">final</span> <span class="kt">int</span> <span class="nf">getSize</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">size</span><span class="o">;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样可以让o.getSize()和直接访问公有属性o.size一样快。
+做些适当的封装(让属性变成private)不会造成额外的性能影响。</p>
+
+<ul>
+<li>虚方法调用(Virtual method calls) (调用实例方法)是很快的，应该用来替换instanceof测试和强制转换。</li>
+<li>在现代java虚拟机实现中，像Sun的HotSpot JVM和IBM的JVM，接口方法调用和抽象方法调用实例方法是一样快的。
+因此使用接口，而不是他们的实现类作为方法参数，这样的友好编程方式是没有额外的性能影响的。</li>
+</ul>
+
+
+<h4>1.6 排序和搜索</h4>
+
+<ul>
+<li>永远不要使用选择排序、冒泡排序或插入排序，除非是一个非常小的数组或列表。
+使用堆排序(对于数组)或合并排序(对于双向链表)或快速排序(对于数组，但是你需要找个好的参考值)</li>
+<li>更好的选择是，使用能够保证很快的内置的排序例程:对于n个元素是O(nlog(n))，
+当数据接近排序好的时候，有时候乐意更快:</li>
+</ul>
+
+
+<p>对于数组，使用java.util.Arrays.sort，是一个改进过的快速排序；
+它不需要额外的内存，但是它不是稳定的(不能保证相等对象的顺序)。
+现在有所有原生类型和对象的重载版本。</p>
+
+<p>对于ArrayList<T>和LinkedList<T>,他们都实现了接口java.util.List<T>,可以使用
+java.util.Collections.sort来排序，它是稳定的(保证相等对象的顺序)和平滑的(对于接近排好序的列表接近线性时间)，
+但是它使用了额外的内存。</p>
+
+<ul>
+<li>避免在数组和列表里边做线性查询，除非你知道他们非常短。假如你的程序需要频繁的查找某些内容，
+可以从下面的方法中选择:</li>
+</ul>
+
+
+<p>-在排好序的数据上做两分搜索</p>
+
+<p>对于数组，使用java.util.Arrays.binarySearch。数组必须是排好序的，例如经过了java.util.Arrays.sort.
+已经有了所有原生类型和对象的重载版本。</p>
+
+<p>对于ArrayList<T>,使用java.util.Collections.binarySearch.数组列表必须是有序的，
+例如经过了java.util.Collections.sort.</p>
+
+<p>假如你还需要从一个set或者map中插入或删除元素，可以使用下面的方法:</p>
+
+<p>-哈希化(Hashing): 假如你的key对象有很好的hashCode方法，可以使用java.uitl包里边的HashSet<T>或HashMap&lt;K, V>。
+这适用于String和原生类型的包准类Interger,Double等等。</p>
+
+<p>-两分搜索树(Binary search trees)：假如你的key对象有一个很好的比较方法compareTo的话，可以使用
+java.util包里边的TreeSet<T>或TreeMap&lt;K, V>.这同样适用于String和原生类型的包装类Integer,Double等等。</p>
+
+<h4>1.7 异常</h4>
+
+<ul>
+<li>异常对象的构建new Exception(&#8230;)会构造一个调用栈轨迹(stack trace),需要消耗时间和空间，特别
+是在递归方法调用的时候。Exception类或子类的对象的创建要比普通对象慢30~100倍。另外一方面，使用
+try-catch快活着抛出一个异常是很快的。</li>
+<li>像下面演示的，你可以通过在Exception子类中覆盖方法fillInStackTrace，来阻止一个栈轨迹的生成。
+这可以让异常实例的创建要快上大约10倍。</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">class</span> <span class="nc">MyException</span> <span class="kd">extends</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="n">Throwable</span> <span class="nf">fillInStackTrace</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>因此，你应该在真的打算抛出异常的时候才创建一个异常对象。另外，不要使用异常来实现流程控制
+(结束数据处理，跳出循环)；异常应该只是用来通知错误和异常情况(文件没有找到，非法的输入格式等等)。
+假如你的程序真的需要非常频发的抛出异常，可以重用一个预先构造的异常对象。</li>
+</ul>
+
+
+<h4>1.8 集合类</h4>
+
+<p>在包java.util.*的java集合类是设计良好并实现的。使用这些类可以很好的改进你的程序的速度，但是你需要一些陷阱.</p>
+
+<ul>
+<li>如果你使用HashSet<T>或HashMap&lt;K,V>，确保你的key对象有一个好而快的hashCode方法，并且它和equals方法保持一致。</li>
+<li>如果你使用TreeSet<T>或TreeMap&lt;K,V>, 确保你的key对象有一个好而快的compareTo方法，
+或者提供一个Comparator<T>.但创建TreeSet<T>或TreeMap&lt;K,V>的时候需要一个明确的Comparator<K>对象。</li>
+<li>注意通过索引定位ListedList<T>不是一个常量时间操作。因此在下面的循环中，假如lst是一个LinkedList<T>的话，
+在列表1st里边需要花费两倍的时间。(<strong>注:翻译很纠结，不准</strong>)，所以不应该使用:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kt">int</span> <span class="n">size</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+</span><span class='line'><span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">size</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span>
+</span><span class='line'>  <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">lst</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>应该使用增强型for语句来迭代元素，它其实是使用集合的迭代器，所以遍历花费线性的时间:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="k">for</span> <span class="o">(</span><span class="n">T</span> <span class="n">x</span> <span class="o">:</span> <span class="n">lst</span><span class="o">)</span>
+</span><span class='line'>  <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">x</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>应该避免重复调用LinkedList<T>或ArrayList<T>的remove(Object o)方法，因为它使用顺序查找。</li>
+<li>应该避免重复调用LinkedList<T>的add(int i, T x)或者remove(int i)方法，除非i是链表的最后或第一个。
+这些方法都是使用顺序来查找第i个元素的。</li>
+<li>应该避免重复调用ArrayList<T>的add(int i, T x)或remove(int i)方法，除非i是ArrayList<T>的最后一个。
+它需要移动i后面的所有元素。</li>
+<li>尽量避免使用传统的集合类，如Vector,HashTable和Stack，因为它们的方法都是synchronized的，
+每一个集合方法的调用都有获取锁的运行时消耗。假如你真的需要一个同步的集合，请使用synchronizedCollection
+和java.util.Collection类的类似方法来创建。</li>
+<li>集合只能存放引用类型的数据，所以原生类型的值，例如int,double等等在集合中存储或作为key使用的时候，
+必须包准为Integer,Double等。这需要花费时间和空间，在内存受限的嵌入式应用中可能是不可接受的。需要注意的是，
+字符串和数组是引用类型数据，在使用时不需要被包装。</li>
+</ul>
+
+
+<p>假如你需要有原生类型元素或key的集合，考虑使用Trove library,它提供了特殊处理的集合，像用int的哈希Set等等。
+因此，他相对于通用的java集合类，它更快并且使用更少的内存。Trove可以在<a href="http://trove4j.sourceforge.net">http://trove4j.sourceforge.net</a>中找到。</p>
+
+<h4>1.9 输入和输出</h4>
+
+<ul>
+<li>使用带缓冲的输入和输出(包java.io里边的BufferedReader, BufferedWriter, BufferedInputStream,
+BufferedOutputStream)可以让输入/输出提速20倍。</li>
+<li>使用包java.util.zip里边的压缩流ZipInputStream和ZipOutputStream或者
+GZIPInputStream和GZIPOutputStream，可以加速冗长的数据格式如XML的输入输出。压缩和解压缩
+需要CPU时间，但是压缩的数据可以比没压缩的数据小很多，从硬盘或网络中读取的数据更少，
+因此无论如何还是节约了时间。同时它还节约了硬盘上的存储空间。</li>
+</ul>
+
+
+<h4>1.10 空间和对象创建</h4>
+
+<ul>
+<li>假如你的程序使用过多的空间(内存),那么它也会使用过多的时间。对象分配和垃圾回收需要时间，
+并且使用过多的内存导致糟糕的缓存利用率，甚至可能需要使用到虚拟内存(使用硬盘空间而不是RAM)。
+而且，依赖于JVM的垃圾回收器，使用太多内存可能导致长时间的回收停顿。这会让交互系统变得恼人，
+在实时系统更是难以接受(catastrophic).</li>
+<li>对象创建需要时间(分配，初始化，垃圾回收)，所以不要在没必要的时候创建对象。
+然而不要考虑对象池(在工厂方法里边)，除非真的有需要。
+最有可能的是,你只会添加代码和维护问题，你的对象池在回收一个池中对象的时候，可能引发微妙的错误，
+虽然它仍然被引用着并且被在程序的其他部分中被修改。</li>
+<li>小心不要创建从来没有被使用的对象。例如，创建一个错误消息字符串，当从来没有被真正使用过，这就是一个典型的错误。
+因为嵌入这个消息的异常被一个try-catch捕获之后，但它忽略了这个消息。</li>
+<li>GUI组件(通过AWT或Swing创建)可能要求更多的空间，并且可能没有被充分的回收。
+不要创建你不一定需要的GUI组件。</li>
+</ul>
+
+
+<h4>1.11 大数组操作</h4>
+
+<p>对于在数组上进行大量操作，有一些特别的方法。它们通常要比等同的for循环快很多，
+在某种程度上是因为它们只需要一次边界检查。</p>
+
+<ul>
+<li>static void java.lang.System.arrayCopy(src, si, dst, di, n)会把数组片段src[si..si+n-1]
+的元素拷贝到数组片段dst[di..di+n-1].</li>
+<li>static bool java.util.Arrays.equals(arr1, arr2)会返回true，当数组arr1和arr2有同样的长度
+并且它们的元素成对相等(pairwise equal)。还有参数类型为boolean[], byte[], char[],
+double[], float[],int[], long[], Object[]和short[]的重载方法。</li>
+<li>static void java.util.Arrays.fill(arr, x)会把数组arr的所有元素设置为x.这个方法拥有和
+Arrays.equals一样的重载方法。</li>
+<li>static void java.util.Arrays.fill(arr, i, j, x)会把元素arr[i..j-1]设置为x.这个方法拥有和
+Arrays.equals一样的重载方法。</li>
+<li>static int java.util.Arrays.hashcode(arr)会返回一个由数组元素的hashcode计算出来
+的数组的hashcode。这个方法拥有和Arrays.equals一样的重载方法。</li>
+</ul>
+
+
+<h4>1.12 科学计算</h4>
+
+<p>假如你需要在java中使用科学计算，Colt开源库提供了许多高性能和高质量的例程(routine)，用来处理
+线性代数、稀疏/稠密矩阵、数据分析统计工具、随机数生成器、数组算法、数学函数和复数。
+如果你需要的已经在这里存在了，就不要在写一个新的低效的、不精确的数值例程了。Colt在
+<a href="http://hoschek.home.cern.ch/hoschek/colt/">http://hoschek.home.cern.ch/hoschek/colt/</a>可以找到。</p>
+
+<h4>1.13 反射</h4>
+
+<ul>
+<li>反射方法调用，反射属性访问和反射对象创建(使用包java.lang.reflect)要比普通方法调用、属性访问、对象创建慢非常多。</li>
+<li>访问检查会拖慢一些反射调用；部分消耗或许可以通过把调用方法声明为public进行避免。这可以将反射调用加速8倍。</li>
+</ul>
+
+
+<h4>1.14 编译器和运行平台</h4>
+
+<ul>
+<li>正如上面提到的，许多C或者Fortran编译器可以做到的优化，java编译器做不到。另外一方面，在执行字节码的时候，
+Java虚拟机(JVM)里边的即时编译器(JIT)可以做到传统编译器不能做到的许多优化。</li>
+<li>例如，在cast(C)后面的一个测试条件(x instanceof C)可以被JVM优化，以致于最多只有一个测试会被执行。
+所以重写你的程序来避免instanceof测试或者cast的麻烦事，是没有必要去做的。</li>
+<li>许多不同的Java虚拟机(JVM)有着非常不同的特性:</li>
+</ul>
+
+
+<p>-Sun的HotSpot Client JVM会做一些优化，但是通常优先于快速启动，而不是深度优化。</p>
+
+<p>-Sun的HotSpot Server JVM(使用-server参数，在微软Windows不可用)会牺牲很长的启动时间来做非常深度的优化。</p>
+
+<p>-相对于Sun的HotSpot Server JVM，IBM的JVM会做非常深度的优化。</p>
+
+<p>-J2ME(移动手机)和PersonalJava(一些PDA)实现的JVM不会包括JIT编译器，很可能不会做任何的优化。
+所以，在这种情况下，在你的java代码中尽可能地做自我优化就显得更加重要了。</p>
+
+<p>-对于Oracle的JVM，Kaffe JVM,Intel的Open Runtime Platform,IBM的Jikes RVM等等，我不知道它们的优化特性。</p>
+
+<p>你可以命令行提示符中敲入java -version来看看你正在使用的什么样的JVM。</p>
+
+<h4>1.15 性能分析(Profiling)</h4>
+
+<p>假如一个java程序好像很慢，尝试对程序的运行进行性能分析。假设1.3节里边进行重复字符串连接的例子存放在文件MyExample.java
+里边。可以使用Sun的HostSpot JVM来进行编译和性能分析,像下面这样:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>javac -g MyExample.java
+</span><span class='line'>java -Xprof MyExample 10000
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>性能分析的结果会展示在标准输出里边(控制台):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Flat profile of 19.00 secs <span class="o">(</span>223 total ticks<span class="o">)</span>: main
+</span><span class='line'>  Interpreted + native Method
+</span><span class='line'>  1.3% 1      + 0      java.lang.AbstractStringBuilder.append
+</span><span class='line'>  1.3% 1      + 0      java.lang.String.&lt;init&gt;
+</span><span class='line'>  2.6% 2      + 0      Total interpreted
+</span><span class='line'>
+</span><span class='line'>  Compiled + native Method
+</span><span class='line'>  51.3% 0  + 40     java.lang.AbstractStringBuilder.expandCapacity
+</span><span class='line'>  29.5% 23 + 0      java.lang.AbstractStringBuilder.append
+</span><span class='line'>  10.3% 8  + 0      java.lang.StringBuilder.toString
+</span><span class='line'>  6.4% 0   + 5      java.lang.String.&lt;init&gt;
+</span><span class='line'>  97.4% 31 + 45     Total compiled
+</span><span class='line'>
+</span><span class='line'>  Thread-local ticks:
+</span><span class='line'>  65.0% 145 Blocked <span class="o">(</span>of total<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>Flat profile of 0.01 secs <span class="o">(</span>1 total ticks<span class="o">)</span>: DestroyJavaVM
+</span><span class='line'>  Thread-local ticks:
+</span><span class='line'>  100.0% 1 Blocked <span class="o">(</span>of total<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  Global summary of 19.01 seconds:
+</span><span class='line'>  100.0% 929 Received ticks
+</span><span class='line'>  74.6%  693 Received GC ticks
+</span><span class='line'>  0.8%     7 Other VM operations
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>它表示有51.%的计算时间花费在原生(native)方法expandCapacity,
+而且有29.5%花费在方法append上，这些方法都是出自类AbstractStringBuilder的。
+这看上去是String的+和=惹的祸，因为它被编译成append方法调用。</p>
+
+<p>但是下面部分的内容更有意义，它指出总时间的74.6%花费在垃圾回收上，
+因此只有25%的时间用于实际计算。这指出一个严重的问题:几乎马上会变成垃圾的数据分配得太多了。</p>
+
+<h3>2 降低空间消耗</h3>
+
+<ul>
+<li>在一个JVM中,数据是分配在调用栈(方法参数和本地变量)和堆(对象,包括字符串和数组)上的。
+对于每个线程的执行都有隔离的栈，并且所有的线程使用共同的堆。一个线程的栈随着方法调用的
+深度增长和收缩。对象，字符串和数组通过执行中的线程在堆中分配。他们的回收(垃圾回收)是通过
+一个自发的垃圾回收器来处理的。</li>
+<li>关于空间使用，这里有三个重要的方面: 分配率、保留区和碎片化:</li>
+</ul>
+
+
+<p>-分配率是指你的程序创建对象、字符串、数组的频率。
+一个高的分配率会消耗时间(分配，对象初始化和销毁)和空间(因为垃圾回收可能会为了效率的原因留出更多的内存)，
+即使分配的数据只有非常短的生命周期。</p>
+
+<p>–保留区(Retention)是指活动的堆数据的总量，也就是说，在任何时间点，调用栈可以企及的堆数据。
+高的保留区消耗空间(明显地)和时间(垃圾回收器必需对分配和消耗做更多的管理工作).</p>
+
+<p>–碎片化是碎片的产生:小的、不使用的内存块。持续更大对象的分配，例如增长字符串或者数组，
+可能会引起内存碎片化，留下很多没法使用的小内存片。
+这样的碎片化消耗时间(在分配的时候寻找一个足够大的hole)和空间(因为碎片变得没用)。
+大多数垃圾回收器小心避免碎片化，但是它可能需要花费时间和空间，在嵌入式JVM实现中可能做不到。</p>
+
+<ul>
+<li><p>空间泄露属于不需要或者意外的保留区(retention)，常常随着运行时间的增长引起内存消耗也直线上涨。
+空间泄露是由活动变量的可企及的对象，字符串或数组引起的，而那些对象事实上不会再被使用到。
+例如，假如你在HashMap中使用缓存计算结果，这就有可能出现:即使你不再需要这些计算结果，
+但是她们在HashMap中还是可访问的。这可以通过使用WeakHashMap替代来避免这个问题。</p></li>
+<li><p>一个深度尾递归(tail-recursive)方法可能造成空间泄露，所有应该写成一个循环。
+但一个java编译器不会自动优化一个尾递归方法为一个循环，所以执行堆栈中可企及的所有数据将会被保留着，
+直到方法返回。</p></li>
+<li><p>垃圾回收器(通用的，标记-清除, 引用计数, two-space(注: 不知怎么翻译), 增量式, 压缩式 &#8230;)的类型
+很影响分配率(allocation rate), 保留区(retention)和碎片化(fragmentation)的时间和空间效果。
+然而，一个起作用的垃圾回收器就其本身而言，从来不会引起空间泄露。空间泄露是由你程序里边的错误引起的。</p></li>
+<li><p>确保一个类所有对象中共享的不变属性是static的。这样始终只有一个属性被创建。
+当所有Car对象有同样的icon时，不要这么写:</p></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Car</span> <span class="o">{</span>
+</span><span class='line'>  <span class="n">ImageIcon</span> <span class="n">symbol</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageIcon</span><span class="o">(</span><span class="s">&quot;porsche.gif&quot;</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">...</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>应该像这样:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Car</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">final</span> <span class="kd">static</span> <span class="n">ImageIcon</span> <span class="n">symbol</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ImageIcon</span><span class="o">(</span><span class="s">&quot;porsche.gif&quot;</span><span class="o">);</span>
+</span><span class='line'>  <span class="o">...</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>当你不确定是否需要真的需要一个对象的时候，可以延迟分配:把分配推迟到它真正需要的时候(只分配一次)。
+因为像下面这样的话，将会对每一个Car对象无条件创建一个Button，而Button可能永远不会通过getButton调用来访问:</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Car</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">Button</span> <span class="n">button</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JButton</span><span class="o">();</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="nf">Car</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="o">...</span> <span class="n">initialize</span> <span class="n">button</span> <span class="o">...</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">final</span> <span class="n">JButton</span> <span class="nf">getButton</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">button</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你可以在getButton中延迟分配Button:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Car</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">private</span> <span class="n">Button</span> <span class="n">button</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="nf">Car</span><span class="o">()</span> <span class="o">{</span> <span class="o">...</span> <span class="o">}</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">final</span> <span class="n">JButton</span> <span class="nf">getButton</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span><span class="n">button</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// button not yet created, so create it</span>
+</span><span class='line'>      <span class="n">button</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JButton</span><span class="o">();</span>
+</span><span class='line'>      <span class="o">...</span> <span class="n">initialize</span> <span class="n">button</span> <span class="o">...</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">button</span><span class="o">;</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样会节省空间(Button对象)和时间(分配和初始化)。另一方面，假如button早知道是一定需要的话，
+提前分配和初始化会更有效，可以避免getButton里边的判断(判空)。</p>
+
+<h3>3 其他资源</h3>
+
+<p>J.Noble和C.Weir的著作Small Memory Software,Addison-Wesley 2001,展示了一些受限内存系统的设计模式。
+虽然不是所有建议都适用于java(例如它需要指示字运算(pointer arithmetics))，
+即使有点模式说(pattern-speak)的问题，但是大多数还是有用的。</p>
+
+<h3>4 致谢</h3>
+
+<p>感谢Morten Larsen，Jyrki Katajainen和Eirik Maus提供的有用的建议。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[重复代码处理模式]]></title>
@@ -1397,301 +2104,6 @@ SingleThreadModel，因为Servlet并非线程安全，所以才有这么个东�
 但是如何补充flash报表在功能上的缺陷?这才是我们要考虑的问题吧。我的想法是，一套flash报表不行，我用多一套其他的总可以了吧？
 现在服务端主要的功能是提供数据，而客户端做的是接受数据并展示。如果使用多套客户端技术的话，那么服务端的数据再经过一套适配器转换即可。
 管你使用的是flash，还是css/js，你只要定义数据适配器即可。虽然现在这些只是一些想法，而FusionChart也的确是满足了我所有的需求，但是我还是觉得这是完全可行的。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[sinatra分析(旧)]]></title>
-    <link href="http://mccxj.github.com/blog/20121202_sinatra.html"/>
-    <updated>2012-12-02T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/sinatra</id>
-    <content type="html"><![CDATA[<p>这是10年初写的了:)</p>
-
-<h2>sinatra简介</h2>
-
-<ul>
-<li>Sinatra is a DSL for quickly creating web applications in Ruby with minimal。</li>
-<li>Fewer classes, less inheritance</li>
-<li>controller object mapping &amp; routes vs. URLs&#8212;Dont&#8217;s fear the URLs</li>
-<li>Exposed Simplicity instead of hidden complexity</li>
-<li>Small things, loosely joined, written fast</li>
-</ul>
-
-
-<h2>sinatra分析</h2>
-
-<h3>Rack机制</h3>
-
-<p>sinatra 作为一个web框架，是基于rack规范的。rack规范和Java的servlet规范有点类似，Rack中间件和filter机制有些类似，
-都是能够拦截request/response做一些事情。所谓的rack兼容的中间件无非是一个可以执行 call(env) 的对象，详细关于rack的内容可以参考rack官网，还有这个rack入门文档也很好。
-在源码中可以看到，sinatra的Request和Response都是基于rack扩展的，并对Rack::Request和Rack::Response分别做了一些调整。
-sinatra是通过Application.run!来启动服务器的</p>
-
-<div class="highlight"><pre><code class="ruby">         <span class="k">def</span> <span class="nf">run!</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{})</span>
-            <span class="n">set</span> <span class="n">options</span>
-            <span class="n">handler</span>      <span class="o">=</span> <span class="n">detect_rack_handler</span>
-            <span class="n">handler_name</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/.*::/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-            <span class="nb">puts</span> <span class="s2">&quot;== Sinatra/</span><span class="si">#{</span><span class="ss">Sinatra</span><span class="p">:</span><span class="ss">:VERSION</span><span class="si">}</span><span class="s2"> has taken the stage &quot;</span> <span class="o">+</span>
-              <span class="s2">&quot;on </span><span class="si">#{</span><span class="n">port</span><span class="si">}</span><span class="s2"> for </span><span class="si">#{</span><span class="n">environment</span><span class="si">}</span><span class="s2"> with backup from </span><span class="si">#{</span><span class="n">handler_name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">unless</span> <span class="n">handler_name</span> <span class="o">=~</span><span class="sr">/cgi/i</span>
-            <span class="n">handler</span><span class="o">.</span><span class="n">run</span> <span class="nb">self</span><span class="p">,</span> <span class="ss">:Host</span> <span class="o">=&gt;</span> <span class="n">bind</span><span class="p">,</span> <span class="ss">:Port</span> <span class="o">=&gt;</span> <span class="n">port</span> <span class="k">do</span> <span class="o">|</span><span class="n">server</span><span class="o">|</span>
-              <span class="nb">trap</span><span class="p">(</span><span class="ss">:INT</span><span class="p">)</span> <span class="k">do</span>
-                <span class="c1">## Use thins&#39; hard #stop! if available, otherwise just #stop</span>
-                <span class="n">server</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:stop!</span><span class="p">)</span> <span class="p">?</span> <span class="n">server</span><span class="o">.</span><span class="n">stop!</span> <span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">stop</span>
-                <span class="nb">puts</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">== Sinatra has ended his set (crowd applauds)&quot;</span> <span class="k">unless</span> <span class="n">handler_name</span> <span class="o">=~</span><span class="sr">/cgi/i</span>
-              <span class="k">end</span>
-              <span class="n">set</span> <span class="ss">:running</span><span class="p">,</span> <span class="kp">true</span>
-            <span class="k">end</span>
-          <span class="k">rescue</span> <span class="ss">Errno</span><span class="p">:</span><span class="ss">:EADDRINUSE</span> <span class="o">=&gt;</span> <span class="n">e</span>
-            <span class="nb">puts</span> <span class="s2">&quot;== Someone is already performing on port </span><span class="si">#{</span><span class="n">port</span><span class="si">}</span><span class="s2">!&quot;</span>
-          <span class="k">end</span>
-</code></pre></div>
-
-
-<p>其中detect_rack_handler是通过 Rack::Handler.get来检测rack处理器的，默认的server有thin/mongrel/webrick,绑定的地址是 0.0.0.0，端口是4567</p>
-
-<div class="highlight"><pre><code class="ruby">    <span class="k">module</span> <span class="nn">Sinatra</span>
-        <span class="k">class</span> <span class="nc">Base</span>
-            <span class="n">set</span> <span class="ss">:server</span><span class="p">,</span> <span class="sx">%w[thin mongrel webrick]</span>
-            <span class="n">set</span> <span class="ss">:bind</span><span class="p">,</span> <span class="s1">&#39;0.0.0.0&#39;</span>
-            <span class="n">set</span> <span class="ss">:port</span><span class="p">,</span> <span class="mi">4567</span>
-        <span class="k">end</span>
-    <span class="k">end</span>
-</code></pre></div>
-
-
-<p>注意到handler.run self, :Host =&gt; bind, :Port =&gt; port do |server|,这个self指的是Sinatra::Base，根据rack规范，最终的请求的入口就是 Sinatra::Base.call(env)方法</p>
-
-<div class="highlight"><pre><code class="ruby">          <span class="k">def</span> <span class="nf">prototype</span>
-            <span class="vi">@prototype</span> <span class="o">||=</span> <span class="kp">new</span>
-          <span class="k">end</span>
-
-          <span class="c1"># Create a new instance of the class fronted by its middleware</span>
-          <span class="c1"># pipeline. The object is guaranteed to respond to #call but may not be</span>
-          <span class="c1"># an instance of the class new was called on.</span>
-          <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">bk</span><span class="p">)</span>
-            <span class="n">builder</span> <span class="o">=</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Builder</span><span class="o">.</span><span class="n">new</span>
-            <span class="n">builder</span><span class="o">.</span><span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Session</span><span class="o">::</span><span class="no">Cookie</span> <span class="k">if</span> <span class="n">sessions?</span>
-            <span class="n">builder</span><span class="o">.</span><span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:CommonLogger</span>    <span class="k">if</span> <span class="n">logging?</span>
-            <span class="n">builder</span><span class="o">.</span><span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:MethodOverride</span>  <span class="k">if</span> <span class="n">method_override?</span>
-            <span class="n">builder</span><span class="o">.</span><span class="n">use</span> <span class="no">ShowExceptions</span>        <span class="k">if</span> <span class="n">show_exceptions?</span>
-            <span class="n">middleware</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">c</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="o">|</span> <span class="n">builder</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span> <span class="p">}</span>
-
-            <span class="n">builder</span><span class="o">.</span><span class="n">run</span> <span class="k">super</span>
-            <span class="n">builder</span><span class="o">.</span><span class="n">to_app</span>
-          <span class="k">end</span>
-
-          <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-            <span class="n">synchronize</span> <span class="p">{</span> <span class="n">prototype</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span> <span class="p">}</span>
-          <span class="k">end</span>
-</code></pre></div>
-
-
-<p>从call方法可以看到，是通过生成一个Sinatra::Base实例对象来运行的，最终会调用的是call(env) -> call!(env)，
-接下去的工作就是等客户端发送请求过来就可以了。在生成这个实例对象@prototype的时候,直接引入rack中间件机制，
-同样，sinatra允许你使用use方法来增加新的中间件(use只是把中间件加入@middleware变量中去而已)。这样sinatra就已经启动起来了。</p>
-
-<h3>路由机制</h3>
-
-<p>sinatra 的路由机制和rails不大一样，sinatra是在controller里边用get/post path这样来指定的。
-而rails是把controller和map分开处理，通过map来找到对应的controller和action。
-rails当初这么搞主要是为了兼容controller和路由不匹配的情况,个人觉得sinatra的写法是非常直观的，也非常的灵活。</p>
-
-<div class="highlight"><pre><code class="ruby">    <span class="n">delegate</span> <span class="ss">:get</span><span class="p">,</span> <span class="ss">:put</span><span class="p">,</span> <span class="ss">:post</span><span class="p">,</span> <span class="ss">:delete</span><span class="p">,</span> <span class="ss">:head</span><span class="p">,</span> <span class="ss">:template</span><span class="p">,</span> <span class="ss">:layout</span><span class="p">,</span>
-                 <span class="ss">:before</span><span class="p">,</span> <span class="ss">:after</span><span class="p">,</span> <span class="ss">:error</span><span class="p">,</span> <span class="ss">:not_found</span><span class="p">,</span> <span class="ss">:configure</span><span class="p">,</span> <span class="ss">:set</span><span class="p">,</span> <span class="ss">:mime_type</span><span class="p">,</span>
-                 <span class="ss">:enable</span><span class="p">,</span> <span class="ss">:disable</span><span class="p">,</span> <span class="ss">:use</span><span class="p">,</span> <span class="ss">:development?</span><span class="p">,</span> <span class="ss">:test?</span><span class="p">,</span> <span class="ss">:production?</span><span class="p">,</span>
-                 <span class="ss">:helpers</span><span class="p">,</span> <span class="ss">:settings</span>
-</code></pre></div>
-
-
-<p>看 main.rb可以看到include Sinatra::Delegator，可以把get/post等众多方法代理给Sinatra::Application去执行，
-在后面使用get &#8216;/&#8217; do xxx end的时候其实会调用Sinatra::Application(即Sinatra::Base)的get方法。</p>
-
-<div class="highlight"><pre><code class="ruby">      <span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
-      <span class="nb">require</span> <span class="s1">&#39;sinatra&#39;</span>
-      <span class="n">get</span> <span class="s1">&#39;/&#39;</span> <span class="k">do</span>
-        <span class="s1">&#39;Hello world!&#39;</span>
-      <span class="k">end</span>
-</code></pre></div>
-
-
-<p>例如这样一个简单的web应用就可以响应&#8217;/&#8217;的请求路径，那么Sinatra::Base是怎么识别到这个路由的呢?我们继续来看看上面的get方法做了什么事情，
-可以看到最终是调用route方法的(同时，从代码可以看到sinatra支持get/post/put/post/delete/head几种method的请求)。
-按照我们的大概思路，在看到某个请求方法的时候，sinatra会把{请求类型<em>路径 => 代码块}放到一个专门放路由的地方上去，然后在每一次请求调用call(env)的时候，
-根据“请求类型</em>路径”来获得需要执行的代码块。好，继续看看 route的代码是怎么实现的?</p>
-
-<div class="highlight"><pre><code class="ruby">          <span class="k">def</span> <span class="nf">route</span><span class="p">(</span><span class="n">verb</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
-            <span class="c1"># Because of self.options.host</span>
-            <span class="n">host_name</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="ss">:bind</span><span class="p">))</span> <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">key?</span><span class="p">(</span><span class="ss">:host</span><span class="p">)</span>
-            <span class="n">options</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">option</span><span class="p">,</span> <span class="n">args</span><span class="o">|</span> <span class="nb">send</span><span class="p">(</span><span class="n">option</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)}</span>
-
-            <span class="n">pattern</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">compile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-            <span class="n">conditions</span><span class="p">,</span> <span class="vi">@conditions</span> <span class="o">=</span> <span class="vi">@conditions</span><span class="p">,</span> <span class="o">[]</span>
-
-           <span class="n">define_method</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">verb</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span>
-            <span class="n">unbound_method</span> <span class="o">=</span> <span class="nb">instance_method</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">verb</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">block</span> <span class="o">=</span>
-              <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">arity</span> <span class="o">!=</span> <span class="mi">0</span>
-                <span class="nb">proc</span> <span class="p">{</span> <span class="n">unbound_method</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="o">*</span><span class="vi">@block_params</span><span class="p">)</span> <span class="p">}</span>
-              <span class="k">else</span>
-                <span class="nb">proc</span> <span class="p">{</span> <span class="n">unbound_method</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span><span class="o">.</span><span class="n">call</span> <span class="p">}</span>
-              <span class="k">end</span>
-
-            <span class="n">invoke_hook</span><span class="p">(</span><span class="ss">:route_added</span><span class="p">,</span> <span class="n">verb</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
-
-            <span class="p">(</span><span class="vi">@routes</span><span class="o">[</span><span class="n">verb</span><span class="o">]</span> <span class="o">||=</span> <span class="o">[]</span><span class="p">)</span><span class="o">.</span>
-              <span class="n">push</span><span class="p">(</span><span class="o">[</span><span class="n">pattern</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">block</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">last</span>
-          <span class="k">end</span>
-</code></pre></div>
-
-
-<p>这个代码处理的事情比较多，我们来仔细分析分析，前面两句代码是用来记录能够处理的请求的约束(例如特定的host_name,user_agent),
-然后compile(path)的工作是把path换成一个正则表达式(这样通过match就可以获得匹配的组)，还有提取keys(例如*的就变成 splat，:name就变成name)。
-重要的是把get &#8216;/&#8217; do xxx end动态生成一个&#8221;#{verb} #{path}&#8221;的方法并最终封装成一个带有上下文状态的proc对象，
-最终是把[pattern, keys, conditions, block]加入@routes[verb]里边去。而call(env)能够处理请求就得靠这个@routes来实现。</p>
-
-<p>先来看看call(env) -&gt; call!(env)，最重要的部分是invoke { dispatch! }，可以看到dispatch!的整个流程是
-判断并处理static文件 -&gt; before_filter! -&gt; route! -&gt; after_filter!，主要的处理过程是route!方法</p>
-
-<div class="highlight"><pre><code class="ruby">       <span class="k">def</span> <span class="nf">route!</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="p">,</span> <span class="n">pass_block</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
-          <span class="k">if</span> <span class="n">routes</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">routes</span><span class="o">[</span><span class="vi">@request</span><span class="o">.</span><span class="n">request_method</span><span class="o">]</span>
-            <span class="n">original_params</span> <span class="o">=</span> <span class="vi">@params</span>
-            <span class="n">path</span>            <span class="o">=</span> <span class="n">unescape</span><span class="p">(</span><span class="vi">@request</span><span class="o">.</span><span class="n">path_info</span><span class="p">)</span>
-
-            <span class="n">routes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">pattern</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">block</span><span class="o">|</span>
-              <span class="k">if</span> <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-                <span class="n">values</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">captures</span><span class="o">.</span><span class="n">to_a</span>
-                <span class="n">params</span> <span class="o">=</span>
-                  <span class="k">if</span> <span class="n">keys</span><span class="o">.</span><span class="n">any?</span>
-                    <span class="n">keys</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span><span class="o">|</span>
-                      <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;splat&#39;</span>
-                        <span class="p">(</span><span class="nb">hash</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">||=</span> <span class="o">[]</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">values</span><span class="p">}</span>
-                  <span class="k">else</span>
-                    <span class="p">{}</span>
-                  <span class="k">end</span>
-                <span class="vi">@params</span> <span class="o">=</span> <span class="n">original_params</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-                <span class="vi">@block_params</span> <span class="o">=</span> <span class="n">values</span>
-
-                <span class="n">pass_block</span> <span class="o">=</span> <span class="kp">catch</span><span class="p">(</span><span class="ss">:pass</span><span class="p">)</span> <span class="k">do</span>
-                  <span class="n">conditions</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">cond</span><span class="o">|</span>
-                    <span class="kp">throw</span> <span class="ss">:pass</span> <span class="k">if</span> <span class="nb">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cond</span><span class="p">)</span> <span class="o">==</span> <span class="kp">false</span> <span class="p">}</span>
-                  <span class="n">route_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
-                <span class="k">end</span>
-              <span class="k">end</span>
-            <span class="k">end</span>
-
-            <span class="vi">@params</span> <span class="o">=</span> <span class="n">original_params</span>
-          <span class="k">end</span>
-</code></pre></div>
-
-
-<p>首先sinatra先从＠routes里边取得符合请求类型的[pattern, keys, conditions, block]列表，然后逐个扫描，
-通过pattern来match路径，如果符合的话，取得通配符，命名参数的值并封装到params去(得益于 compile(path)的工作)。
-接下去判断conditions是否符合，如果都符合，则执行业务，即block。整个流程处理完之后，把 params恢复为原本的状态。</p>
-
-<h3>拦截器</h3>
-
-<p>在上面已经提到，sinatra的拦截器是通过before_filter!和after_filter!来执行的，如下所示:</p>
-
-<div class="highlight"><pre><code class="ruby">        <span class="k">def</span> <span class="nf">before_filter!</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="p">)</span>
-          <span class="n">before_filter!</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">superclass</span><span class="p">)</span> <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">superclass</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:before_filters</span><span class="p">)</span>
-          <span class="n">base</span><span class="o">.</span><span class="n">before_filters</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">block</span><span class="o">|</span> <span class="nb">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span> <span class="p">}</span>
-        <span class="k">end</span>
-</code></pre></div>
-
-
-<p>配置过滤器也非常简单，定义一个前置过滤器，例如</p>
-
-<div class="highlight"><pre><code class="ruby">      <span class="n">before</span> <span class="k">do</span>
-        <span class="vi">@note</span> <span class="o">=</span> <span class="s1">&#39;Hi!&#39;</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">path_info</span> <span class="o">=</span> <span class="s1">&#39;/foo/bar/baz&#39;</span>
-      <span class="k">end</span>
-</code></pre></div>
-
-
-<p>sinatra通过Sinatra::Base的before把block加入到@before_filters中去，这个应该很容易明白的。
-不过，这个拦截器功能比起rails那个显得简陋了，毕竟不能直接针对某些路径进行拦截处理。</p>
-
-<h3>模板渲染</h3>
-
-<p>sinatra通过Tilt实现多模板的渲染机制，生成页面的过程是在业务代码块那里注明的，例如</p>
-
-<div class="highlight"><pre><code class="ruby">      <span class="nb">require</span> <span class="s1">&#39;erb&#39;</span>
-      <span class="n">get</span> <span class="s1">&#39;/&#39;</span> <span class="k">do</span>
-        <span class="n">erb</span> <span class="ss">:index</span>
-      <span class="k">end</span>
-</code></pre></div>
-
-
-<p>sinatra的模板方法是在Sinatra::Templates模块里边定义的，能够支持erb,erubis,haml,sass,less,builder,具体的实现如下：</p>
-
-<div class="highlight"><pre><code class="ruby">        <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{},</span> <span class="n">locals</span><span class="o">=</span><span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
-          <span class="c1"># merge app-level options</span>
-          <span class="n">options</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
-
-          <span class="c1"># extract generic options</span>
-          <span class="n">locals</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="ss">:locals</span><span class="p">)</span> <span class="o">||</span> <span class="n">locals</span> <span class="o">||</span> <span class="p">{}</span>
-          <span class="n">views</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="ss">:views</span><span class="p">)</span> <span class="o">||</span> <span class="n">settings</span><span class="o">.</span><span class="n">views</span> <span class="o">||</span> <span class="s2">&quot;./views&quot;</span>
-          <span class="n">layout</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="ss">:layout</span><span class="p">)</span>
-          <span class="n">layout</span> <span class="o">=</span> <span class="ss">:layout</span> <span class="k">if</span> <span class="n">layout</span><span class="o">.</span><span class="n">nil?</span> <span class="o">||</span> <span class="n">layout</span> <span class="o">==</span> <span class="kp">true</span>
-
-          <span class="c1"># compile and render template</span>
-          <span class="n">template</span> <span class="o">=</span> <span class="n">compile_template</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">views</span><span class="p">)</span>
-          <span class="n">output</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">locals</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
-
-          <span class="c1"># render layout</span>
-          <span class="k">if</span> <span class="n">layout</span>
-            <span class="k">begin</span>
-              <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="ss">:views</span> <span class="o">=&gt;</span> <span class="n">views</span><span class="p">,</span> <span class="ss">:layout</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">)</span>
-              <span class="n">output</span> <span class="o">=</span> <span class="n">render</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">locals</span><span class="p">)</span> <span class="p">{</span> <span class="n">output</span> <span class="p">}</span>
-            <span class="k">rescue</span> <span class="ss">Errno</span><span class="p">:</span><span class="ss">:ENOENT</span>
-            <span class="k">end</span>
-          <span class="k">end</span>
-
-          <span class="n">output</span>
-        <span class="k">end</span>
-</code></pre></div>
-
-
-<p>具体的流程是先找到template engine，通过template的render方法渲染子页面，然后在把子页面的内容作为一个block参数放到渲染layout的render方法上去，
-这样在父页面里边的yield就会被子页面的内容所取代，从而实现整体页面的渲染。</p>
-
-<h3>错误及状态处理</h3>
-
-<p>sinatra在这方面的处理，我觉得非常巧妙，还认识了一些从来没用过的api。几个重要的特性：</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="ss">halt</span><span class="p">:</span>
-
-      <span class="n">halt</span> <span class="mi">410</span>
-      <span class="n">halt</span> <span class="s1">&#39;this will be the body&#39;</span>
-      <span class="n">halt</span> <span class="mi">401</span><span class="p">,</span> <span class="s1">&#39;go away!&#39;</span>
-<span class="ss">error</span><span class="p">:</span>
-
-      <span class="n">error</span> <span class="k">do</span>
-        <span class="s1">&#39;Sorry there was a nasty error - &#39;</span> <span class="o">+</span> <span class="n">env</span><span class="o">[</span><span class="s1">&#39;sinatra.error&#39;</span><span class="o">].</span><span class="n">name</span>
-      <span class="k">end</span>
-      <span class="n">error</span> <span class="no">MyCustomError</span> <span class="k">do</span>
-        <span class="s1">&#39;So what happened was...&#39;</span> <span class="o">+</span> <span class="n">request</span><span class="o">.</span><span class="n">env</span><span class="o">[</span><span class="s1">&#39;sinatra.error&#39;</span><span class="o">].</span><span class="n">message</span>
-      <span class="k">end</span>
-      <span class="n">error</span> <span class="mi">400</span><span class="o">.</span><span class="n">.</span><span class="mi">510</span> <span class="k">do</span>
-        <span class="s1">&#39;Boom&#39;</span>
-      <span class="k">end</span>
-</code></pre></div>
-
-
-<p>error的实现很简单，只是把error code和block记录到＠errors上去，而not_found其实就是404的error了。halt从代码实现上看，它是throw一个halt的异常。
-这些处理方式在sinatra最终是怎么处理的呢？我们先回到dispatch!这个主方法，从源码中可以看到如果是静态页面，会抛出halt(line 173),到了route!方法的时候，如下</p>
-
-<div class="highlight"><pre><code class="ruby">                <span class="n">pass_block</span> <span class="o">=</span> <span class="kp">catch</span><span class="p">(</span><span class="ss">:pass</span><span class="p">)</span> <span class="k">do</span>
-                  <span class="n">conditions</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">cond</span><span class="o">|</span>
-                    <span class="kp">throw</span> <span class="ss">:pass</span> <span class="k">if</span> <span class="nb">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cond</span><span class="p">)</span> <span class="o">==</span> <span class="kp">false</span> <span class="p">}</span>
-                    <span class="n">route_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
-                <span class="k">end</span>
-</code></pre></div>
-
-
-<p>catch(args,&amp;block) 这个方法是会忽视在遇到pass异常的时候忽略异常并跳出block的运行，所以conditions验证不通过的时候，
-就会转入下一个pattern验证，而在验证通过后到了route_eval(&amp;block) 就会抛出halt从而跳出循环，表示已经匹配成功。
-抛出异常之后会在dispatch!通过rescue来处理。error_block!(*keys) 就是用来处理error的，＠errors根据error code来获取block，这样就可以输出自定义的错误页面了。</p>
 ]]></content>
   </entry>
   

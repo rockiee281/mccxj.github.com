@@ -9,8 +9,9 @@
   <meta name="author" content="蔡晓建">
 
   
-  <meta name="description" content="Wunderlist是一个TODO管理工具，支持多种客户端的同步，在多个客户端中的界面风格不会差别很大，实用性、可操作性都相当不错。
-关于这类TODO工具的具体使用，我就不再长篇累牍了。这里主要结合wundeler，讲讲自己对TODO管理的经验教训。 首先，要焦距于你需要处理的事情， &hellip;">
+  <meta name="description" content="github page不支持.htaccess功能(参考Blogging on Jekyll: URL Redirects)，
+所以发生URL调整的时候，无法让原有路径自动跳转到新路径。
+Alias generator这个插件提供了一个解决方案，就是生成多一个页面，采用auto &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -71,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/20130103_how-to-wunderlist.html">使用wunderlist进行TODO管理</a></h1>
+      <h1 class="entry-title"><a href="/blog/20130127_jekyll-alias-generator.html">jekyll插件:支持URL跳转</a></h1>
     
     
       <p class="meta">
@@ -87,35 +88,122 @@
   
 
 
-<time datetime="2013-01-03T00:00:00+08:00" pubdate data-updated="true">Jan 3<span>rd</span>, 2013</time>
+<time datetime="2013-01-27T00:00:00+08:00" pubdate data-updated="true">Jan 27<span>th</span>, 2013</time>
         
-         | <a href="/blog/20130103_how-to-wunderlist.html#disqus_thread">Comments</a>
+         | <a href="/blog/20130127_jekyll-alias-generator.html#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><img src="/assets/images/2013/wunderlist.jpg" alt="Wunderlist" /></p>
+  <div class="entry-content"><p><img src="/assets/images/2013/jekyll-alias-generator.png" alt="jekyll插件:支持URL跳转" /></p>
 
-<p>Wunderlist是一个TODO管理工具，支持多种客户端的同步，在多个客户端中的界面风格不会差别很大，实用性、可操作性都相当不错。
-关于这类TODO工具的具体使用，我就不再长篇累牍了。<strong>这里主要结合wundeler，讲讲自己对TODO管理的经验教训</strong>。</p>
+<p>github page不支持.htaccess功能(参考<a href="http://rawsyntax.com/blog/blogging-on-jekyll-url-redirects/">Blogging on Jekyll: URL Redirects</a>)，
+所以发生URL调整的时候，无法让原有路径自动跳转到新路径。
+<a href="http://github.com/tsmango/jekyll_alias_generator">Alias generator</a>这个插件提供了一个解决方案，就是生成多一个页面，采用auto refresh的方式跳转到新路径。</p>
 
-<p>首先，要焦距于你需要处理的事情，而不是你使用的工具。无论使用怎样的工具，都应该把焦点放在TODO事项上。
-有些人喜欢玩弄软件的新功能，我也经常迷恋于寻找软件的功能而忽略事情的本身，导致浪费在使用软件上的时间太多。
-所以使用TODO工具，<strong>关键是TODO事项是否能够有计划的进行</strong>。</p>
+<p>这次我也调整了一些博客的路径，我也采用了这个方式。不过我只对当前已有的页面生成一次，以后的就不用这个插件了。
+另外，我不想去修改每个页面的alias标签，所以我调整了代码，只对我的url规则进行处理。下面是我使用的版本。</p>
 
-<p>其次，<strong>工具尽量要简单实用</strong>，在使用某个工具的时候，有时候感觉功能有所缺失，所以有些人可能会尝试不同的工具或者在多个工具换来换去，
-试图寻找那完美的工具。说实在，这个成本太高了，多关注待处理的问题本身吧，多反向思考:真的需要这个功能么?频繁使用么?
-就wunderlist来说，我也感觉缺少些功能，例如结合日历功能，有时候同步会有些问题。不过这些都不影响我使用关键功能，也让我能够
-焦距于TODO本身。</p>
+<div><script src='https://gist.github.com/4645990.js?file=alias_generator.rb'></script>
+<noscript><pre><code># Alias Generator for Posts.
+#
+# Example:
+#   alias /20121010_hello.html to /blog/20121010_hello.html
+#   alias /hello.html to /pages/20121010_hello.html
+#
+# Place the full path of the alias (place to redirect from) inside the
+# destination post's YAML Front Matter. One or more aliases may be given.
+#
+# Forked from Thomas Mango 's jekyll_alias_generator
+# At http://github.com/tsmango/jekyll_alias_generator
+# PLugin License: MIT
 
-<p>最后，说说我使用wunderlist的方式吧。一般来说，我会在某天当做一个周期的开始，<strong>把我能够想到的TODO事项记录上去</strong>，不区分轻重缓急，
-也不考虑工作量和时间因素，也不管是工作、生活还是学习的范畴。总之有多少就写多少，如果事项比较大并且有些明显的分割点，<strong>我也会拆分成多个TODO</strong>。
-然后开始对任务进行挑选，得到需要处理的事情列表，如果列表太长，会把某些重要和紧急的进行加星。这样就可以<strong>让关注的事情就在一定的范围之内</strong>。
-从这部分列表中挑选事项，<strong>集中精神逐项处理</strong>。周而复始，这样<strong>让每天都可以看到成果</strong>，激发自己的动力。</p>
+module Jekyll
 
-<p>ps: 我不是什么GTD专家，仅供参考。不过wunderlist真的是不错的TODO工具，推荐使用。</p>
+  class AliasGenerator &lt; Generator
+
+    def generate(site)
+      @site = site
+
+      process_posts
+      process_pages
+    end
+
+    def process_posts
+      # alias /20121010_hello.html to /blog/20121010_hello.html
+      @site.posts.each do |post|
+        generate_aliases(post.url, &quot;\/#{$1}&quot;) if /^\/blog\/(.+)$/ =~ post.url
+      end
+    end
+
+    def process_pages
+      # alias /hello.html to /pages/20121010_hello.html
+      @site.pages.each do |page|
+        dest = page.destination('')
+        generate_aliases(dest, &quot;\/#{$1}&quot;)  if /^\/pages\/(.+)$/ =~ dest
+      end
+    end
+
+    def generate_aliases(destination_path, aliases)
+      alias_paths ||= Array.new
+      alias_paths &lt;&lt; aliases
+      alias_paths.compact!
+
+      alias_paths.flatten.each do |alias_path|
+        alias_path = alias_path.to_s
+
+        alias_dir  = File.extname(alias_path).empty? ? alias_path : File.dirname(alias_path)
+        alias_file = File.extname(alias_path).empty? ? &quot;index.html&quot; : File.basename(alias_path)
+        fs_path_to_dir   = File.join(@site.dest, alias_dir)
+        alias_index_path = File.join(alias_dir, alias_file)
+
+        FileUtils.mkdir_p(fs_path_to_dir)
+
+        File.open(File.join(fs_path_to_dir, alias_file), 'w') do |file|
+          file.write(alias_template(destination_path))
+        end
+
+        (alias_index_path.split('/').size + 1).times do |sections|
+          @site.static_files &lt;&lt; Jekyll::AliasFile.new(@site, @site.dest, alias_index_path.split('/')[0, sections].join('/'), nil)
+        end
+      end
+    end
+
+    def alias_template(destination_path)
+      &lt;&lt;-EOF
+      &lt;!DOCTYPE html&gt;
+      &lt;html&gt;
+      &lt;head&gt;
+      &lt;link rel=&quot;canonical&quot; href=&quot;#{destination_path}&quot;/&gt;
+      &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;
+      &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0;url=#{destination_path}&quot; /&gt;
+      &lt;/head&gt;
+      &lt;/html&gt;
+      EOF
+    end
+  end
+
+  class AliasFile &lt; StaticFile
+    require 'set'
+
+    def destination(dest)
+      File.join(dest, @dir)
+    end
+
+    def modified?
+      return false
+    end
+
+    def write(dest)
+      return true
+    end
+  end
+end</code></pre></noscript></div>
+
+
+
 </div>
   
   
@@ -128,7 +216,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/20130102_nodejs-best-practices.html">Node.js Best Practices</a></h1>
+      <h1 class="entry-title"><a href="/blog/20130127_gist-tag-blog.html">Jekyll插件:嵌入github Gist</a></h1>
     
     
       <p class="meta">
@@ -144,239 +232,132 @@
   
 
 
-<time datetime="2013-01-02T00:00:00+08:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+<time datetime="2013-01-27T00:00:00+08:00" pubdate data-updated="true">Jan 27<span>th</span>, 2013</time>
         
-         | <a href="/blog/20130102_nodejs-best-practices.html#disqus_thread">Comments</a>
+         | <a href="/blog/20130127_gist-tag-blog.html#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><strong>完整的ppt来源于<a href="http://www.slideshare.net/the_undefined/nodejs-best-practices-10428790">Node.js Best practices</a>,作者<a href="http://www.slideshare.net/the_undefined">Felix Geisendörfer</a>,需翻越</strong></p>
+  <div class="entry-content"><p><img src="/assets/images/2013/gist-tag-blog.png" alt="jekyll插件:嵌入github gist" /></p>
 
-<h3>Callbacks</h3>
+<p>gist是gtihub的一个代码块功能，用来粘贴一些比较长的代码还是挺有用的。
+github page可以直接嵌入gist，并且能显示高亮。
+不过我不想太依赖gist，所以<strong>修改成使用pygments高亮的方式</strong>。
+看看下面gist_tag.rb这个插件的效果:</p>
 
-<p>下面是关于解析json文件的示例代码:</p>
+<div><script src='https://gist.github.com/4648237.js?file=gist_tag.rb'></script>
+<noscript><pre><code>require 'cgi'
+require 'digest/md5'
+require 'net/https'
+require 'uri'
 
-<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs);</span>
-<span class="s1">function readJSON(path, cb){</span>
-<span class="s1">  fs.readFile(path, &#39;</span><span class="nx">utf8</span><span class="err">&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
-    <span class="nx">cb</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+module Jekyll
+  class GistTag &lt; Liquid::Tag
+    include Liquid::StandardFilters
+    def initialize(tag_name, text, token)
+      super
+      @text           = text
+      @options        = {:encoding =&gt; &quot;utf-8&quot;}
+      @cache_disabled = false
+      @cache_folder   = File.expand_path &quot;../_gist_cache&quot;, File.dirname(__FILE__)
+      FileUtils.mkdir_p @cache_folder
+    end
 
+    def render(context)
+      if parts = @text.match(/([\d]*) lang=(.+) (.*)/)
+        gist, @lang, file = parts[1].strip, parts[2].strip, parts[3].strip
+        script_url = script_url_for gist, file
+        code       = get_cached_gist(gist, file) || get_gist_from_web(gist, file)
 
-<p>显然，上面的代码没有处理异常情况，因此再加个异常处理逻辑上去:</p>
+        context.registers[:site].pygments
+        html_output_for context, script_url, code
+      else
+        &quot;&quot;
+      end
+    end
 
-<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs);</span>
-<span class="s1">function readJSON(path, cb){</span>
-<span class="s1">  fs.readFile(path, &#39;</span><span class="nx">utf8</span><span class="err">&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
-    <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="nx">cb</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+    def html_output_for(context, script_url, code)
+      if context.registers[:site].pygments
+        output = add_code_tags(Pygments.highlight(code, :lexer =&gt; @lang, :options =&gt; @options))
+      else
+        render_codehighlighter(code)
+      end
+    end
 
+    def add_code_tags(code)
+      # Add nested &lt;code&gt; tags to code blocks
+      code = code.sub(/&lt;pre&gt;/,'&lt;pre&gt;&lt;code class=&quot;#{@lang}&quot;&gt;')
+      code = code.sub(/&lt;\/pre&gt;/,&quot;&lt;/code&gt;&lt;/pre&gt;&quot;)
+    end
 
-<p>还没有结束，我们还没考虑到文件内容不是json这种情况，会导致parse出现异常，因此再处理一下：</p>
+    def render_codehighlighter(code)
+      #The div is required because RDiscount blows ass
+      &lt;&lt;-HTML
+&lt;div&gt;
+  &lt;pre&gt;&lt;code class='#{@lang}'&gt;#{h(code).strip}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+      HTML
+    end
 
-<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs);</span>
-<span class="s1">function readJSON(path, cb){</span>
-<span class="s1">  fs.readFile(path, &#39;</span><span class="nx">utf8</span><span class="err">&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
-    <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="k">try</span><span class="p">{</span>
-      <span class="nx">cb</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
-    <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-      <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+    def script_url_for(gist_id, filename)
+      &quot;https://gist.github.com/#{gist_id}.js?file=#{filename}&quot;
+    end
 
+    def get_gist_url_for(gist, file)
+      &quot;https://raw.github.com/gist/#{gist}/#{file}&quot;
+    end
 
-<p>对于cb来说，仍然无法区分正常结果和异常内容，这个问题通常可以通过增加一个err参数来处理，如:</p>
+    def cache(gist, file, data)
+      cache_file = get_cache_file_for gist, file
+      File.open(cache_file, &quot;w&quot;) do |io|
+        io.write data
+      end
+    end
 
-<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs);</span>
-<span class="s1">function readJSON(path, cb){</span>
-<span class="s1">  fs.readFile(path, &#39;</span><span class="nx">utf8</span><span class="err">&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
-    <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="k">try</span><span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">json</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-    <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-      <span class="k">return</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="nx">cb</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">json</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
+    def get_cached_gist(gist, file)
+      return nil if @cache_disabled
+      cache_file = get_cache_file_for gist, file
+      File.read cache_file if File.exist? cache_file
+    end
 
+    def get_cache_file_for(gist, file)
+      bad_chars = /[^a-zA-Z0-9\-_.]/
+      gist      = gist.gsub bad_chars, ''
+      file      = file.gsub bad_chars, ''
+      md5       = Digest::MD5.hexdigest &quot;#{gist}-#{file}&quot;
+      File.join @cache_folder, &quot;#{gist}-#{file}-#{md5}.cache&quot;
+    end
 
-<p><strong>这个示例告诉我们，对于callback，需要时刻准备应付正常结果和异常情况的处理。</strong></p>
+    def get_gist_from_web(gist, file)
+      gist_url          = get_gist_url_for gist, file
+      raw_uri           = URI.parse gist_url
+      https             = Net::HTTP.new raw_uri.host, raw_uri.port
+      https.use_ssl     = true
+      https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      request           = Net::HTTP::Get.new raw_uri.request_uri
+      data              = https.request request
+      data              = data.body
+      cache gist, file, data unless @cache_disabled
+      data
+    end
+  end
 
-<p>再来看看另外一个常见错误:</p>
+  class GistTagNoCache &lt; GistTag
+    def initialize(tag_name, text, token)
+      super
+      @cache_disabled = true
+    end
+  end
+end
 
-<div class="highlight"><pre><code class="javascript"><span class="kd">function</span> <span class="nx">readJSONFiles</span><span class="p">(</span><span class="nx">files</span><span class="p">,</span> <span class="nx">cb</span><span class="p">){</span>
-  <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">{};</span>
-  <span class="kd">var</span> <span class="nx">remaining</span> <span class="o">=</span> <span class="nx">files</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-  
-  <span class="nx">files</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">){</span>
-    <span class="nx">readJSON</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">json</span><span class="p">){</span>
-      <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-      
-      <span class="nx">results</span><span class="p">[</span><span class="nx">file</span><span class="p">]</span> <span class="o">=</span> <span class="nx">json</span><span class="p">;</span>
-      <span class="k">if</span><span class="p">(</span><span class="o">!--</span><span class="nx">remaining</span><span class="p">)</span> <span class="nx">cb</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">results</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
-<p>这里隐含了一个常见的场景:<strong>批量处理时，任意一个失败，及时退出</strong>。有时候可以用标识符，这里采用另外一种手法：<strong>重置回调方法</strong>。</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">function</span> <span class="nx">readJSONFiles</span><span class="p">(</span><span class="nx">files</span><span class="p">,</span> <span class="nx">cb</span><span class="p">){</span>
-  <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">{};</span>
-  <span class="kd">var</span> <span class="nx">remaining</span> <span class="o">=</span> <span class="nx">files</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-  
-  <span class="nx">files</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">){</span>
-    <span class="nx">readJSON</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">json</span><span class="p">){</span>
-      <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-        <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-        <span class="nx">cb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){};</span>
-        <span class="k">return</span><span class="p">;</span>
-      <span class="p">}</span>
-      
-      <span class="nx">results</span><span class="p">[</span><span class="nx">file</span><span class="p">]</span> <span class="o">=</span> <span class="nx">json</span><span class="p">;</span>
-      <span class="k">if</span><span class="p">(</span><span class="o">!--</span><span class="nx">remaining</span><span class="p">)</span> <span class="nx">cb</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">results</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
-<h3>Nested Callbacks</h3>
-
-<p>先看看一个恐怖的例子:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT A ...&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-  <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT B ...&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-    <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT C ...&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-      <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT D ...&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-      <span class="p">});</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">});</span>
-</code></pre></div>
-
-
-<p>活生生就是一个怪物:)，多层嵌套的回调不是很好的风格，我们需要一些流程控制的东西来辅助，例如Control Flow Libs:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">async</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
-
-<span class="nx">async</span><span class="p">.</span><span class="nx">series</span><span class="p">({</span>
-  <span class="nx">queryA</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">next</span><span class="p">){</span>
-    <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT A ...&#39;</span><span class="p">,</span> <span class="nx">next</span><span class="p">);</span>
-  <span class="p">},</span>
-  <span class="nx">queryB</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">next</span><span class="p">){</span>
-    <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT B ...&#39;</span><span class="p">,</span> <span class="nx">next</span><span class="p">);</span>
-  <span class="p">},</span>
-  <span class="nx">queryA</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">next</span><span class="p">){</span>
-    <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT C ...&#39;</span><span class="p">,</span> <span class="nx">next</span><span class="p">);</span>
-  <span class="p">}</span>
-  <span class="c1">// ...</span>
-<span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">results</span><span class="p">){</span>
-  <span class="c1">//...</span>
-<span class="p">});</span>
-</code></pre></div>
+Liquid::Template.register_tag('gist', Jekyll::GistTag)
+Liquid::Template.register_tag('gistnocache', Jekyll::GistTagNoCache)</code></pre></noscript></div>
 
 
-<p>像上面的代码，最明显的地方就是异常处理被完全隔离出来。<strong>如果要把代码分布到很多小方法里边的话，Node.js的确不是很容易做到</strong>。</p>
 
-<h3>Exceptions</h3>
-
-<p>通常throw new Error(msg)可以让你的程序进行异常退出，并在控制台上输入错误信息和堆栈信息。</p>
-
-<p>但有时候我们要考虑的是，<strong>一些未知的bug</strong>，例如下面一个有bug的示例:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">function</span> <span class="nx">MyClass</span><span class="p">(){}</span>
-
-<span class="nx">MyClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">myMethod</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">myOtherMethod</span><span class="p">();</span>
-  <span class="p">},</span> <span class="mi">10</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="nx">MyClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">myOtherMethod</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){};</span>
-
-<span class="p">(</span><span class="k">new</span> <span class="nx">MyClass</span><span class="p">).</span><span class="nx">myMethod</span><span class="p">();</span>
-</code></pre></div>
-
-
-<p>我们可以采用Global Catch的方式:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;uncaught exception: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">.</span><span class="nx">stack</span><span class="p">);</span> 
-<span class="p">});</span>
-</code></pre></div>
-
-
-<p>更好的处理方式是:<strong>进程挂了，认栽了，到更高层面上去处理</strong>。</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-  <span class="c1">// You could use node-airbake for this</span>
-  <span class="nx">sendErrorToLog</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-    <span class="c1">// Once the error was logged, kill the process</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">stack</span><span class="p">);</span>
-    <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-</code></pre></div>
-
-
-<h3>Deployment</h3>
-
-<p>比较初级的方式是采用node直接运行或在后台运行。老手可能会采用一个脚本来搞:</p>
-
-<div class="highlight"><pre><code class="bash"><span class="c">#! /bin/bash</span>
-
-<span class="k">while</span> :
-<span class="k">do</span>
-<span class="k">  </span>node server.js
-  <span class="nb">echo</span> <span class="s2">&quot;Server crashed!&quot;</span>
-  sleep 1
-<span class="k">done</span>
-</code></pre></div>
-
-
-<p>专家级采用的方式可能是(借助成熟的集成工具):</p>
-
-<div class="highlight"><pre><code class="bash"><span class="c">#!upstart</span>
-
-description <span class="s2">&quot;myapp&quot;</span>
-author <span class="s2">&quot;felix&quot;</span>
-
-start on<span class="o">(</span><span class="nb">local</span>-filesystems and net-device-up <span class="nv">IFACE</span><span class="o">=</span>eth0<span class="o">)</span>
-stop on shutdown
-
-respawn <span class="c"># restart when job dies</span>
-respawn limit 5 60 <span class="c"># give up restart after 5 respawns in 60 seconds</span>
-
-script
-  <span class="nb">exec </span>sudo -u www-data /path/to/server.js &gt;&gt; /var/log/myapp.log 2&gt;&amp;1
-end script
-</code></pre></div>
-
-
-<p>当然，还有些创新风格的(基于托管平台的):</p>
-
-<div class="highlight"><pre><code class="bash"><span class="nv">$git</span> push joyent master
-<span class="nv">$git</span> push nodejitsu master
-<span class="nv">$git</span> push heroku master
-</code></pre></div>
-
-
-<p><strong>没有托管平台的话，借助成熟的工具应该是最好的选择，性价比高。</strong></p>
 </div>
   
   
@@ -389,7 +370,7 @@ end script
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/20130101_2012.html">2012年总结</a></h1>
+      <h1 class="entry-title"><a href="/blog/20130121_async-javascript.html">Async Javascript读书笔记</a></h1>
     
     
       <p class="meta">
@@ -405,134 +386,147 @@ end script
   
 
 
-<time datetime="2013-01-01T00:00:00+08:00" pubdate data-updated="true">Jan 1<span>st</span>, 2013</time>
+<time datetime="2013-01-21T00:00:00+08:00" pubdate data-updated="true">Jan 21<span>st</span>, 2013</time>
         
-         | <a href="/blog/20130101_2012.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>转眼2012年就结束了，开启2013年的旅程了。按照惯例还是要给2012年做个总结，
-顺便给2013年定些目标和计划。</p>
-
-<h3>2012年的工作</h3>
-
-<p>2012年工作的情况还是比较顺利的，大概是完全习惯了公司的工作环境和节奏的原因吧，
-在项目的开发工作上没什么特别的变化，主要是在日常需求开发外有了比较大的变化。</p>
-
-<p>其中有个变化点，就是参与部门招聘的面试比较多，有段时间几乎天天都要花时间出来面试。
-整个过程让自己对应聘员工(主要是应届-2年内)的就业心态有了更多的了解，
-虽然我偏重的还是技能方面的考察，但也会尽量的从多方面去考察对方的能力，
-希望给一些愿意干的人的机会。另外一方面，看到太多应聘员工对技术浮于表面，
-在基础上欠缺太多，这些人大多出自于培训机构，
-这也是我一直以来对北x青x类培训有些反感的原因吧。</p>
-
-<p>还有就是，为了激发大家对技术的热情，在部门内组织多次的技术分享活动。
-搞这些活动，主要用来锻炼自己的执行力和演讲能力，扩大自己在部门内的影响力。
-我觉得，在2012年算是做得不错的一件事吧，效果也不错。</p>
-
-<p>关于工作上的事情，跟外围系统、厂商、客户打交道的次数多了起来，的确挺烦人的，
-处理不好还容易惹麻烦，我自己在这方面就吃了几次亏，虽然最终都是化险为夷，
-以后在这方面还是得多跟有经验的同事讨教。</p>
-
-<h3>2012年的生活</h3>
-
-<p>2012年，总算把户口的事情搞定，把拖了许久的结婚证给搞定了，
-所以今年初要把婚假也给处理了，先放松一下吧，公司的整个氛围的确是挺压抑的。</p>
-
-<p>在公司的杂事多了起来，有时候弄得本职工作必须得快下班才处理，在时间、任务管理上不注意，
-没有太多时间陪伴家人，真的感到愧疚。更大的问题是，公司的问题有时候会影响自己的情绪，
-常常回想起来感觉很纠结。</p>
-
-<p>自从有了ipad之后，我也不需要经常跑图书馆了，虽然纸质书很不错
-(12年我在oschina的读书活动中捞了好几本书)，但大多数书籍毕竟不是经久耐读的，
-电子版足够了。12年没统计看过多少本书，感觉20+应该有的。</p>
-
-<p>12年下半年之后重新在github上开了博客，因为公司网络限制的原因，几乎是2年没写过了。
-到现在，差不多是每周1到2篇的样子，按照以前的写作经验和习惯，这个数量应该可以翻一翻。
-不过考虑到现在的工作状况，每周2篇左右是一个比较实际的数字。</p>
-
-<h3>2012年的技术</h3>
-
-<p>重拾了ruby，在公司内部为团队开发了一个每日code diff的应用，效果不错。<br/>
-主要学习了golang、html5和node。<br/>
-对服务化api与多客户端的架构非常感兴趣。</p>
-
-<h3>TODO 2013</h3>
-
-<p>多点时间锻炼身体。<br/>
-在时间、任务管理上多多下工夫，重实效、轻形式。希望能够更好掌握自己的时间。<br/>
-13年完成100篇原创博文。<br/>
-13年完成50本书的阅读目标(不一定就技术的)，过几天整个列表，好跟踪。<br/>
-完成对codediff的改进工作，有机会的话多做些内部工具。<br/>
-与同事、应聘人员、合作厂商、客户的交流上，多积累经验和技巧。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/20121225_arrange.html">超级整理术简单笔记</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-12-25T00:00:00+08:00" pubdate data-updated="true">Dec 25<span>th</span>, 2012</time>
-        
-         | <a href="/blog/20121225_arrange.html#disqus_thread">Comments</a>
+         | <a href="/blog/20130121_async-javascript.html#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>今天去体育西那边，看到戴玉堆了一桌子的书，挖了本超级整理术的书，在坐地铁的时间看完了。
-内容非常浅显直白，原则就是让信息自动化，让工作规则化，让大脑有更多时间思考。</p>
+  <div class="entry-content"><p><img src="/assets/images/2013/async-javascript.jpg" alt="Async Javascript" /></p>
 
-<p>下面简单记录了比较可行的操作。</p>
+<p>这篇读书笔记的主要内容是在家里用ipad上输入的，感觉输入还是比较吃力呀。</p>
+
+<p>本书的副标题是Build More Responsive Apps with Less Code，
+关键词是异步、响应式，主要是对如何书写异步js代码提供一些指导意见，描述js的异步特性，回调代码的书写，还介绍了PubSub、Promises等通用模式。
+最后介绍了worker多线程模型，js异步加载等内容。书的页数可谓少得可怜，内容还算比较实在，
+提供了大量的开源库实现供读者参考，对于框架选型的话倒是可以参考一下。</p>
+
+<h2>js事件</h2>
+
+<p>主要是了解事件背后的本质。提供了象setTimeout document.onready都是事件的典型案例。
+因为js基本都是单线程模型，所以事件的触发和代码的执行有时候并不一致，而是有些时间差。即使是setTimeout(fn,0)这样的代码。
+这样的逻辑也不是立即执行的。它的执行模型大概是这样的(在ipad上手绘的)。
+<img src="/assets/images/2013/runjs.jpg" alt="js执行模型" /></p>
+
+<p>任何回调方法的执行都是需要按队列顺序来执行。如果当前代码没有执行完,就不会执行其他回调方法。
+因此理解js的异步处理模型非常重要，<strong>代码应该尽快执行完毕，避免阻塞其他代码的执行</strong>。</p>
+
+<h2>哪些是异步逻辑</h2>
+
+<p>主要是一些io操作。例如</p>
 
 <ol>
-<li><p>使用谷歌搜索来处理文件查找，桌面搜索的好处是可以直接查找内容，另外找文件名的话，
-everything也不错，我通常让它自动启动，另外用快捷方式操作程序的话，ctrl+r或launchy都是非常实用的工具。</p></li>
-<li><p>使用rss订阅，通常有邮箱订阅或者鲜果之类的客户端，google reader也有很多人推荐，
-不过鲜果没有展示博文列表的功能，很难看到哪些更新过。所以最好还是使用google reader，
-客户端的话，我发现FeedDemon非常不错，和reader配合天衣无缝。rss订阅有很多好处，主要是信息自动飞进来，
-通过阅读大量的信息，开阔视野，增强判断力，有助于在信息大爆炸时代辨别那少量的有用信息。
-有个遗憾就是，reader在公司用不了，只能在家里用。</p></li>
-<li><p>邮件只读一遍，尽快回复，对邮件分门别类。我通常是把没处理完的标红，然后消灭之。
-书中提到说，养成这个习惯，让别人对你有好的印象，有助于推动别人和协作。</p></li>
-<li><p>将大脑清空，把所有要做的事记录到TODO上，这个非常重要。
-我通常使用wunderlist来处理，无论工作事情还是生活事情，
-无论大事小事，急事闲事，都记录到上面去。即使这件事情很琐碎或者很紧急，记录上去也是好处多多的。
-wunderlist的功能非常简单，支持多客户端。友情提醒一下，工具这东西，不要挑复杂的。
-当然，有时候我还借助番茄钟来管理。</p></li>
-<li><p>利用TODO整理时间，使用节约的时间提升自己。做事的时候按照TODO的列表弄，就不至于手忙脚乱了。
-我通常是使用wunderlist的加星功能，只是关注加星的事项。
-因为TODO帮助我们把时间分配到合理的事情上去，防止时间碎片化，所以不至于瞎忙了。</p></li>
-<li><p>工作台和电脑桌面要整洁。作者提倡的是整一个整理日，定期清理。</p></li>
-<li><p>开会议题要具体，责任要落实，使用会议纪要并用TODO跟踪。
-作者还提到，开会要注意成本，所以开会前就要把讨论事宜详细列出，记录会议纪要并跟踪完成情况，我们公司的会就是效率不行呀。</p></li>
+<li>ajax调用</li>
+<li>webkit里边的console.log</li>
+<li>dom操作，浏览器可能会延迟的效果出现</li>
+<li>Node服务端里边比比皆是</li>
 </ol>
 
+
+<p>当然还有些是时间片操作。例如</p>
+
+<ol>
+<li>setTimeout或setInterval</li>
+<li>node的<a href="http://nodejs.org/docs/latest/api/process.html">process.nextTick</a></li>
+<li>html5提供的requestAnimationFrame等特性</li>
+</ol>
+
+
+<h2>异步逻辑注意</h2>
+
+<p>如果使用回调方法进行异步处理，就不要在后面的代码中按同步的逻辑来考虑。<br/>
+异步回调方法中用到的对象也应该先定义，避免由于缓存等造成奇怪的问题。<br/>
+可以使用web worker api或异步调用来生成缓存数据。<br/>
+避免超过两层的回调方法。</p>
+
+<h2>处理错误</h2>
+
+<p>使用异步调用时，stack trace可能会不全<br/>
+使用异步调用时，try-catch可能会失效<br/>
+使用err来作为回调方法的参数，或者区分success和error的回调方法<br/>
+处理uncaught异常，可以使用:</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="err">#</span> <span class="nx">Broswer</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">onerror</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+<span class="p">}</span>
+
+<span class="err">#</span> <span class="nx">Node</span> 
+<span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+<span class="p">})</span>
+</code></pre></div>
+
+
+<h2>流程控制</h2>
+
+<p>回调方法太多，流程控制变得异常困难，很容易造成错误，应该避免超过两层的回调方法。
+比较常用的办法有PubSub、Promises等解决方案/模式。</p>
+
+<h3>PubSub</h3>
+
+<p>就是publish/subscribe,发布订阅，常见的监听器模式。通常是把回调方法组织为带名字的事件，模拟事件触发。例如</p>
+
+<ol>
+<li>Node的<a href="http://nodejs.org/api/events.html">EventEmitter</a></li>
+<li>Backbone的<a href="http://backbonejs.org/#Events">Event</a>模型</li>
+<li>jQuery的<a href="http://api.jquery.com/on/">自定义事件</a></li>
+</ol>
+
+
+<p>需要注意的是，<strong>PubSub模式的逻辑不一定是异步的</strong>。
+如果trigger是同步逻辑，应该注意避免在回调方法中再次trigger某个事件而造成死循环，
+例如jQuery就可能出现这个问题，而像<a href="http://backbonejs.org/">backbone</a>在值没有变化时不再触发change事件，也提供了slient的选项。而<a href="http://emberjs.com/">Ember</a>之类是采用setTimeout的方式
+加入队列进行处理的方式，就是采用了异步的方式。</p>
+
+<h3>Promises</h3>
+
+<p>书中主要使用了jquery做例子，显示了<a href="http://api.jquery.com/jQuery.Deferred/">deferred</a>的用法，对callback的用法有个比较。
+熟悉jquery的童鞋通过Deferred的用法就有个大体的印象了。我个人的感觉就是，Promises模型是对PubSub常用功能的抽象，
+有点规范的意思，事实上也的确有commonjs的<a href="http://wiki.commonjs.org/wiki/Promises/A">Promises/A</a>规范。</p>
+
+<p>介绍了promises和deferred的区别，deferred是promises一个子集，它不能自己控制状态变更，需要有由其他事件出触发。
+对于node来说，现在是采用回调方法的方式，要采用deferred方式，主要做些改变。例如：</p>
+
+<div class="highlight"><pre><code class="javascript"><span class="nx">deferredCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">deferred</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">deferred</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">deferred</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+    <span class="p">};</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">fileReading</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">$</span><span class="p">.</span><span class="nx">Deferred</span><span class="p">();</span>
+<span class="nx">fs</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">,</span> <span class="nx">deferredCallback</span><span class="p">(</span><span class="nx">fileReading</span><span class="p">));</span>
+</code></pre></div>
+
+
+<h2>Async.js</h2>
+
+<p>介绍了async.js的用法，用来解决异步处理中的流程控制问题，例如iterator的问题。包括串行和并行的控制。
+这个库还提供了更加复杂的并发性控制。具体的用法还是看<a href="https://github.com/caolan/async">官方的介绍</a>吧。还提供了另外一个库<a href="https://github.com/creationix/step">step</a>的介绍</p>
+
+<h2>Worker</h2>
+
+<p>提供<a href="http://www.w3.org/TR/workers/">worker</a>的功能，在浏览器上worker还是有一些受限制的地方，例如不能涉及DOM。
+而在node上，可以用<a href="http://nodejs.org/api/cluster.html">cluster</a>来支持类似worker的功能。</p>
+
+<h2>异步加载js</h2>
+
+<p>主要探讨了几种方案，如在head加载，缺点是页面显示太慢。在body末尾加载，问题是还是要等js结束还能让事件生效，并且同样需要顺序加载。
+解决方案有<a href="http://www.w3schools.com/tags/att_script_defer.asp">defer</a>/<a href="http://www.w3schools.com/tags/att_script_async.asp">async</a>和ajax加载等方案。</p>
+
+<p>对于比较现代的浏览器，支持defer关键字用于异步js加载，还有async关键字，区别是后者不会顺序加载，先加载完先处理。
+async在有些插件化的js时async可能可以用到，其他就很难用到，因为很多js都是存在依赖的关系。</p>
+
+<p>当然，还有一些介绍了自定义的异步加载方案，如html5对象有onready事件,还有ajax加载方式。
+不过业界已经有些比较成熟的异步加载库了，如<a href="http://yepnopejs.com/">yepnope</a></p>
+
+<p>最后还介绍了一些异步加载的其他方案，例如增强的语法来支持异步逻辑。这种预编译的方式，我感觉不如在coffeescript上增加关键字的预处理方式，
+类似coffeescript的class关键字。另外还介绍<a href="https://developer.mozilla.org/en-US/docs/JavaScript/New_in_JavaScript/1.7?redirectlocale=en-US&amp;redirectslug=New_in_JavaScript_1.7">js1.7</a>关于异步逻辑的新特性:Generator。</p>
 </div>
   
   
@@ -545,7 +539,7 @@ wunderlist的功能非常简单，支持多客户端。友情提醒一下，工�
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/20121215_hello-coffeescript.html">Hello,coffeescript</a></h1>
+      <h1 class="entry-title"><a href="/blog/20130120_how-to-blog.html">博客写作小结</a></h1>
     
     
       <p class="meta">
@@ -561,70 +555,40 @@ wunderlist的功能非常简单，支持多客户端。友情提醒一下，工�
   
 
 
-<time datetime="2012-12-15T00:00:00+08:00" pubdate data-updated="true">Dec 15<span>th</span>, 2012</time>
+<time datetime="2013-01-20T00:00:00+08:00" pubdate data-updated="true">Jan 20<span>th</span>, 2013</time>
         
-         | <a href="/blog/20121215_hello-coffeescript.html#disqus_thread">Comments</a>
+         | <a href="/blog/20130120_how-to-blog.html#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>周五下午的时候，花了大半个小时在团队里边介绍了CoffeeScript，使用的是<a href="http://sstephenson.s3.amazonaws.com/presentations/fowa-2011-coffeescript.pdf">Sam Stephenson的ppt</a>。
-这里再把相关的内容总结一下。</p>
+  <div class="entry-content"><p><img src="/assets/images/2013/howtoblog.jpg" alt="博客写作" />
+这是前两天在家里用手机敲的文字记录，小小的总结，希望对<strong>写作信心不足</strong>的童鞋有所帮助。</p>
 
-<h2>Why CoffeeScript</h2>
+<p>写博客，<strong>不需要太在意写作技巧</strong>，文学性的问题，只需要<strong>把事情描述出来</strong>就可以了。
+假如有个场景是水龙头漏水，写下来的是什么偷税漏税，积少成多的东西，那是文学。不需要想得那么远，能赶紧把事情描述好，赶紧修理好就行了。
+单纯的记录，本身已经很难能可贵了，但很多时候我们连这个都做不到。</p>
 
-<p><a href="http://coffeescript.org/">CoffeeScript</a>关注的是Good Part Of Javascript,可以和javascript无缝结合。
-CoffeeScript借鉴了ruby的语法，参考python的缩进规范，让代码更为简洁，规范性更强，适合以javascript为主的应用,如Node应用。
-<em>以我的经历(弄个html5 canvas+node的应用)，语法入门很简单(如果熟悉ruby，简直就似曾相识)，代码量可以少30%~50%，但对像Extjs这样的巨无霸UI代码，由于嵌套太深，不是很合适。</em></p>
+<p>我以前写过很多博文，里边有很多是<strong>流水账的记录方式</strong>，有个基本的格式:
+今天发生什么了，我觉得怎么样，假如这样的话会怎那样。基本是想到什么就敲什么，很简单吧。
+我觉得这个方法的好处是<strong>培养写作的信心</strong>，因为这样比较容易出内容嘛。坚持写，<strong>写得越久越容易有信心写下去</strong>。</p>
 
-<h2>JavaScript’s Good Parts</h2>
+<p>虽然读者对象很重要，但是一开始也没有多少读者，所以不需要太在意读者是谁，<strong>把自己当成唯一的读者</strong>就好了，
+对自己负责，不求内容精妙，但求格式工整，不是火星文。<strong>字数多少不在意</strong>，能写多少就写多少。</p>
 
-<p><strong>It’s private by default. </strong><br/>
-所有编译后的代码都会在一个自执行的闭包中，所以不会渗漏出全局变量。还记得在js文件中定义的变量在外边还能访问到吧? 在coffeescript中，全局变量必须要显示指出。</p>
+<p>一开始很难写出什么内容，只要坚持写就行了，慢慢就会写好了。
+经常回顾，<strong>多看看自己写的内容</strong>，<strong>对比别人写的内容</strong>，找到差距，有针对性的提高写作技巧，例如多模仿。</p>
 
-<p><strong>No more “var” keyword.</strong><br/>
-在js中变量只有在全局或函数内有效，没有局部变量这种，而且没有声明var的话，就会变成全局的。在coffeescript中遵循了这套规则，给所有变量加上var，并在全局开头或方法开始全部声明。
-这样可以减少一些粗心导致的bug。</p>
+<p>如果有可能，<strong>为自己的博客做一下分享推广</strong>，让别人参与讨论，可以增强自己写作的信心，也可能得到很多的灵感，在以后写的更好。
+推广的方式可以考虑rss订阅，邮件分享，微博等。</p>
 
-<p><strong>Strict comparisons.</strong><br/>
-严格相等有了专门的语法is。对于javascript来说，相等这东西让不少初学者踩地雷，特别是对false这东西的理解。</p>
+<p><strong>博客系统尽量找简单点的</strong>，以前我使用blogspot就是因为界面比较简洁，还有像<a href="http://svbtle.com/">Svbtle</a>/<a href="http://natewienert.com/codename-obtvse">Obtvse</a>这样的<a href="http://www.36kr.com/p/93438.html">简约风格博客平台</a>
+像wordpress之类的系统，适合喜欢折腾的人:) 最近比较流行的是像<a href="http://pages.github.com">github page</a>和<a href="http://jekyllrb.com/">jekyll</a>这样的静态页面生成方式，还是比较适合it人的,
+我现在也是使用<a href="/blog/20120622_new-blog-in-github.html">这套系统</a>。</p>
 
-<h2>有趣的语法</h2>
-
-<p>对着ppt或者coffeescript的官方指南看看就行了。我挑一些自己特别喜欢的：</p>
-
-<ul>
-<li>Significant white space 空白是有意义的，纠结于编码格式规范真是扯淡的事，这下好了不用争了</li>
-<li>Comprehensions 这是非常有用的语法糖</li>
-<li>Classes and Inheritance 内置的类和继承，不用纠结与用什么方式实现类比较好</li>
-<li>Bound functions 解决this应用的内置方案</li>
-<li>Conditionals 写过ruby的童鞋就知道了，后置的if和unless语句爽呆了，对可能为undefined和null的对象调用方法也优雅许多了</li>
-<li>String Syntax 多行字符串，可内嵌参数的字符串，拼接字符串的时代过去了</li>
-</ul>
-
-
-<h2>How to Use</h2>
-
-<ul>
-<li>CoffeeScript.org有一个<a href="http://coffeescript.org/#try:1">实时编译成js的工具</a>(页面)</li>
-<li>Rails3.1已经支持CoffeeScript</li>
-<li>使用<a href="http://coffeescript.org/extras/coffee-script.js">js版的编译器</a>,并使用type为text/coffeescript的script标签，嵌入CoffeeScript代码或文件</li>
-<li>使用Node.js,可以用npm install -g coffee-script,然后使用coffee命令编译成js文件</li>
-<li>可以使用监控工具来实时编译js文件，例如使用watchr</li>
-</ul>
-
-
-<div class="highlight"><pre><code class="bash">gem install watchr
-watchr project.watchr
-
-<span class="c"># project.watchr</span>
-watch<span class="o">(</span><span class="s1">&#39;src\/.*\.coffee&#39;</span><span class="o">)</span> <span class="o">{</span>|match| system <span class="s2">&quot;coffee --compile --output js/ src/&quot;</span><span class="o">}</span>
-</code></pre></div>
-
-
-
+<p>最后，<strong>马上动手，enjoy it</strong>!</p>
 </div>
   
   
@@ -637,7 +601,7 @@ watch<span class="o">(</span><span class="s1">&#39;src\/.*\.coffee&#39;</span><s
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/20121208_unzip-big-file.html">Unzip引起disk Full问题(旧)</a></h1>
+      <h1 class="entry-title"><a href="/blog/20130120_github-across-gfw.html">抢票插件搞得上github Page都要轻功</a></h1>
     
     
       <p class="meta">
@@ -653,684 +617,33 @@ watch<span class="o">(</span><span class="s1">&#39;src\/.*\.coffee&#39;</span><s
   
 
 
-<time datetime="2012-12-08T00:00:00+08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2012</time>
+<time datetime="2013-01-20T00:00:00+08:00" pubdate data-updated="true">Jan 20<span>th</span>, 2013</time>
         
-         | <a href="/blog/20121208_unzip-big-file.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>很早的记录了，以前瞎整过很多东西，还好很多资料有整理，所以看上去还有点小用的就迁移过来吧。:)</p>
-
-<p>因为184解压一个oracle dmp文件的时候出错，导致数据无法同步。今天尝试解决这个问题，在日志中看到是解压的时候，
-出现write error (disk full?).continue?(y/m/<sup>C)&#8221;。发现db.dmp原大小是2.05g，压缩后400m，但是使用unzip解压到2g的时候，就出现上述错误。</sup>
-但是通过df也没有看到磁盘空间不足。这就有几样可能，有可能是系统限制了或者解压工具限制了。使用ulimit发现文件大小是没有做特别限制的。
-搜索一番,有可能是出现unzip的对大文件解压的限制，参考http://osde.info/HowToUnzipLargeFiles，对unzip进行重新编译，结果就可以了。
-后来使用which的时候，发现oracle的bin自带了一个unzip，而这个版本也是不支持大文件解压的，但是有人却把这个路径放到path上去了。
-最后嘛，我担心改动path路径对oracle造成影响，就修改了恢复脚本的unzip路径。结果总算搞定了。</p>
-
-<p>简略翻译修改版:</p>
-
-<div class="highlight"><pre><code class="bash"><span class="c"># 从http://www.info-zip.org/下载源代码</span>
-<span class="nb">cd </span>unzip-5.52
-vi unix/Makefile
-
-<span class="c"># 使用:/Linux on查找到下面这段描述</span>
-<span class="c"># Linux on 386 platform, using the assembler replacement for crc32.c. (-O4 and</span>
-<span class="c"># -fno-strength-reduce have virtually no effect beyond -O3. Add &quot;-m486</span>
-<span class="c"># -malign-functions=2 -malign-jumps=2 -malign-loops=2&quot; for Pentium [Pro]</span>
-<span class="c"># systems.)</span>
-linux: unix_make
-
-<span class="c"># 在这段的下面可以找到并进行替换</span>
-<span class="nv">CF</span><span class="o">=</span><span class="s2">&quot;-O3 -Wall -I. -DASM_CRC $(LOC)&quot;</span><span class="se">\</span>
-<span class="nv">CF</span><span class="o">=</span><span class="s2">&quot;-O3 -Wall -I. -DASM_CRC -DLARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 $(LOC)&quot;</span><span class="se">\</span>
-
-<span class="c"># 保存后下面就是一些编译替换的后续工作了</span>
-make -f unix/Makefile linux
-which unzip
-cp unzip /usr/bin/unzip
-</code></pre></div>
-
-
-<h3>关于gcc -D_FILE_OFFSET_BITS=64的描述(找不到原始出处了)</h3>
-
-<p>In a nutshell for using LFS you can choose either of the following: Compile your programs with
-&#8220;gcc -D_FILE_OFFSET_BITS=64&#8221;. This forces all file access calls to use the 64 bit variants.
-Several types change also, e.g. off_t becomes off64_t. It&#8217;s therefore important to always
-use the correct types and to not use e.g. int instead of off_t. For portability with other
-platforms you should use getconf LFS_CFLAGS which will return -D_FILE_OFFSET_BITS=64 on Linux
-platforms but might return something else on e.g. Solaris. For linking, you should use the link
-flags that are reported via getconf LFS_LDFLAGS. On Linux systems, you do not need special link flags.
-Define <em>LARGEFILE_SOURCE and </em>LARGEFILE64_SOURCE. With these defines you can use the LFS functions like open64 directly.
-Use the O_LARGEFILE flag with open to operate on large files. A complete documentation of the feature test macros like <em>FILE_OFFSET_BITS
-and </em>LARGEFILE_SOURCE is in the glibc manual (run e.g. &#8220;info libc &#8216;Feature Test Macros&#8217;&#8221;).</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/20121208_servlet-study-log.html">学习和理解servlet(旧)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-12-08T00:00:00+08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2012</time>
-        
-         | <a href="/blog/20121208_servlet-study-log.html#disqus_thread">Comments</a>
+         | <a href="/blog/20130120_github-across-gfw.html#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>08年写的笔记，看上去很不是太烂:)</p>
+  <div class="entry-content"><p><img src="/assets/images/2013/acrossgfw.jpg" alt="抢票插件搞得上github page都要轻功" /></p>
 
-<h2>简单应用服务器</h2>
+<p>春运临近，浏览器抢票软件也变得流行，没回来那几天就看到新闻说:<a href="http://www.oschina.net/news/36770/12306_ticket_helper">12306 抢票版插件拖垮 Github 服务器</a>
+，没想到回来之后就发现github page不能用了，正确的说应该是github的子域名都不能用了，看来是贴倒部和宫刑部的新春贺礼来的。</p>
 
-<p>经常会听到应用服务器的说法，主要作用就是能够根据http请求来分配资源。在java里边，就是跟java.net.*相关的socket编程。
-更详细的内容需要查看相关内容。这里只是不想上当受骗，以为是某某魔术来着。</p>
+<h2>抢票插件和github什么关系</h2>
 
-<h2>什么是规范</h2>
+<p>抢票插件引用了github上的一个js文件，但github有个安全检测，当访问比较频繁的时候就会直接返回403 forbidden。
+然后作者没多想就在插件里加了个重试机制。如果返回的是403就每5秒重试一次，并且是永久重试，结果github认为你访问的更频繁了于是一直返回403。
+可想而知这就成了死循环，使用插件的用户一多，对github而言就产生DDOS了。
+换句话说，这是github的一种安全机制而已，抢票插件和github基本没什么关系，有关部门的做法更是弱智得不行呀。:)</p>
 
-<p>为了方便开发，应用服务器开发商只要实现相关的规范，使用者在使用这些api的时候根本不用考虑对应的服务器是怎样的。
-简单来说，就是定义好的接口。而servlet和jsp就是这样一类规范。tomcat6.0.18是支持servlet2.5和jsp2.1的规范的。在源码里边实现了这套规范，相关的包是javax.servlet.*.</p>
+<h2>轻功之ssh</h2>
 
-<h2>学习和理解servlet</h2>
-
-<p>servlet是一套比较简单的规范，单从tomcat的实现代码就可以知道。从可以得到的资料上看，
-也没有多少复杂的内容。窃以为从书上就可以获取到基本的内容了，有个感性印象的基础读一遍
-api doc就基本ok了。再多的东西，具体的应用实现，查阅cookbook之类的guice。
-这部分内容相当重要，是java web最重要的基础</p>
-
-<p>接下去的部分，基本上是api doc和tomcat实现的内容的梳理。即使再怎样，我都要经常翻阅资料，这是免不了的。
-可以注意到servlet一共有两个包，javax.servlet和javax.servlet.http,明显就是一个是基础接口，一个是http协议的实现，
-从里边的类名也可以看出，http包的类前面基本都加上Http前缀的。先对他们进行更详细的分类，
-大概就是各个基础组件(context,request,response,servlet,filter,stream,listener)，还有一系列对应的listener,几个http特殊的东西(session,cookie).下面分别来说，就怕有些乱，请见谅：</p>
-
-<h4>ServletConfig</h4>
-
-<p>servlet初始化的时候，web容器传递的一个servlet configuration object。</p>
-
-<h4>ServletContext</h4>
-
-<p>我们知道，每个jvm里边一个web应用（通常是一个war包，具有特定的部署结构）就对应一个context，
-这个接口就是定义了context和servlet容器交互的一些方法。context是web应用全局可见的，因此ServletConfig就有个方法getServletContext来获取对应的context。</p>
-
-<h4>Servlet</h4>
-
-<p>所有的Servlet必须实现Servlet接口。一个servlet是一个跑在web服务器的java程序，用来接受请求，并做出响应，
-对应的请求和响应就是ServletRequest和ServletResponse了。这个生命周期主要有三部分，对于一个jvm来说，
-servlet初始化的时候会调用init方法，容器负责把ServletConfig作为参数传递给这个方法，这个步骤对于一个生命周期来说只会做一次。
-初始化之后，任何请求调用都会调用service方法，而ServletRequest和ServletResponse就作为两个参数传递进去了。
-在容器关闭的时候，servlet将会给销毁，这个时候就会调用destroy方法，这个步骤跟init一样，也是调用一次的。
-为了方便使用，已经GenericServlet和HttpServlet做了部分的实现，特别是HttpServlet，根据Http请求方法，分发给doGet，doPost等方法，
-这就是为什么继承HttpServlet做servlet实现的时候，一般只是覆盖doGet或doPost方法就可以的原因，</p>
-
-<h4>ServletRequest,ServletResponse</h4>
-
-<p>在调用Servlet的service的方法时，会涉及ServletRequest和ServletResponse，这两个object是
-由容器负责生成并传递进来的。简单的解释，ServletRequest是用来提供客户端的请求信息的，例如请求方法，参数，ip等等，
-而ServletResponse就是用来返回给客户端的响应信息，一般来说，我们会通过getWriter(字符数据)或者getOutputStream(二进制)来输出信息。
-当然，character encoding和content type也是放在ServletResponse的，你可以进行改变。一般来说，我们处理浏览器请求，几乎都是http协议，
-所以几乎都是HttpServletRequest和HttpServletResponse。</p>
-
-<h4>FilterConfig,Filter，FilterChain</h4>
-
-<p>过滤器，在web.xml经常看到元素，它就是实现Filter的一些类而已。。可以注意到Filter接口跟Servlet有些像，
-在初始化的时候，容器传递一个FilterConfig对象作为init方法的参数，而在销毁的时候会调用destroy方法。当有请求过来的时候，容器会拦截符合要求的请求（根据请求路径），
-并调用doFilter方法，可以注意到除了平时看到的request和response参数，还有个FilterChain参数。这个对象是由容器负责维护，可以看做是这次请求需要经过的filter链。一般来说</p>
-
-<div class="highlight"><pre><code class="bash">before_filter :dosoming with request and response
-chain.doFilter<span class="o">(</span>request,response<span class="o">)</span>;//进入其他Filter
-after_filter :dosoming with request and response
-</code></pre></div>
-
-
-<p>上面前后两部分不一定都会存在，大家有机会看看例子就知道了。filter的作用范围很大，一般用来做验证权限，记录日志，响应内容压缩，内容加密，特殊参数过滤，转换编码格式等等</p>
-
-<h4>Cookie,HttpSession</h4>
-
-<p>Http协议是一种无状态协议，所以有必要做点其他东西来保留状态。cookie带有简单信息的东东（key/value对，看起来就像个Map），
-用来保存在浏览器的，然后每次请求的时候，又把cookie发送到服务器。可以通过ServletResponse的addCookie方法加入cookie。
-需要注意的是，cookie具有一些特殊性，可以设置保留时间，是否加密等等，鉴于安全性考虑，一般只用来对付那些不是很重要的数据。
-HttpSession说的是session，他的数据其实是保存在服务器的，服务器根据每个sessionid，保留一份对应的数据，客户端就是根据这个sessionid来作为钥匙的。
-这个钥匙也是要像cookie那样传来传去的，这个时候的sessionid一般有两种交互方式，基于cookie（作为cookie的key/value对）
-和基于url rewrite（在url后边带上个参数而已），常用的方法：setAttribute,getAttribute（跟ServletRequest的方法差不多）,invalidate等等</p>
-
-<h4>Listener,Event</h4>
-
-<p>经常会在web.xml里边看到元素，对应的类是实现ServletContextListener接口的。其实这类Listener有不少，在servlet2.5规范里边有8个，而且有对应的Event类</p>
-
-<p><strong>ServletContextListener,ServletContextEvent</strong>
-这是用来监听servlet context的，是在初始化和销毁的时候会触发相应的事件，并会有个ServletContextEvent对象
-参数，通过这个参数的getServletContext方法就可以获取相应的ServletContext对象了。</p>
-
-<p><strong>ServletContextAttributeListener，ServletContextAttributeEvent</strong>
-这个也是用来监听servlet context的，关注点是它里边的attribute的改变。一个类如果实现了
-这个接口，那么在attribut发生变化的时候，就会触发相应的方法。</p>
-
-<p><strong>ServletRequestListener,ServletRequestEvent,ServletRequestAttributeListener,ServletRequestAttributeEvent</strong>
-这些都是类似的，只不过这里是ServletRequest</p>
-
-<p><strong>HttpSessionListener,HttpSessionEvent,HttpSessionAttributeListener,HttpSessionEvent</strong>
-类似，就是这两个listener用的是同一个Event</p>
-
-<p><strong>HttpSessionBindingListener,HttpSessionBindingEvent</strong>
-一个类如果实现了这个接口，那么在他和session绑定或者解绑的时候就会触发相应的方法。</p>
-
-<p><strong>HttpSessionActivationListener,HttpSessionEvent</strong>
-注意这里使用的也是那个Event。此接口处理从一个服务器移动到另一个服务器的会话，貌似是用在分布式环境的。</p>
-
-<p>监听器还是很多类型的，注意区分，貌似需要用到的时候也不是很多，感觉没filter用得多</p>
-
-<h4>RequestDispatcher,SingleThreadModel</h4>
-
-<p>貌似这个dispatcher经常用来做请求转发(forward)或者资源内嵌(include)的工作。可以通过ServletRequest来获得一个转发对象。
-使用forward可以确保attribute里边的信息不丢失，实现信息传递。
-SingleThreadModel，因为Servlet并非线程安全，所以才有这么个东东来保证一个jvm只有一个线程可以同时访问。具体的看资料，这个东西是不推荐使用的，
-理由很简单，性能不好罗。既然非线程安全，那么就要保留servlet的无状态性。。。。</p>
-
-<p><strong>要点：区分各个对象的生命周期和作用</strong></p>
-
-<h4>其他讨论</h4>
-
-<ul>
-<li>能否在一个ServletRequest对象中获取ServletConfig对象，为什么?</li>
-<li>讨论何时使用context,cookie，session，request传递信息。他们的存活期是怎样的？</li>
-<li>SingleThreadModel的弊端和解决办法？</li>
-<li>上传文件和提交普通表单的处理方式？如何避免重复sumbit form？</li>
-<li>重定向和转发的区别，在servlet的里边的使用方法？</li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/20121208_gst-upgrade.html">小议研究生系统升迁(旧)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-12-08T00:00:00+08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2012</time>
-        
-         | <a href="/blog/20121208_gst-upgrade.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><blockquote><p>09年底写的小文,记录一下。回想起来，别有一番滋味。再描述一下，项目小组共5人,3个写代码1个整理需求1个迁移数据，除了我还有2个女孩是写代码。
-老系统大约20w行c sharp,改造后1w行不到的ruby。这么少的代码主要得益于ruby的简洁和rails高开发效率。现在认为，在数据库方面没有做大多努力，
-有些sql效率需要改进(不过一般的表就也不是百万级的)，有信心可以让整体性能提升一个级别。后来，我对oracle印象有改观(我本不愿意使用oracle)，
-另一同事对ruby印象也大为改观(他认为ruby只能小打小闹)，总的来说，这次项目收获很多。</p></blockquote>
-
-<p>虽然我们还在忙乎着这个系统的升级工作，还在为客户没完没了的需求做努力，我们真是又累又烦了。真是因为这样，我们大多数人（我想应该说团队所有人）都希望逃离这个泥塘。
-项目现状虽然是这样，但是咱们也要摆脱这些东西，来说说技术方面的东西。</p>
-
-<p>有幸在项目中担任小小架构师的角色，应该说，我们在这次升级过程中技术上遇到了许多问题，但最终都算解决了，应该不会有什么不满吧？
-其实对这样的项目，一开始也是徘徊在所谓强大的j2ee技术和所谓前卫的ruby on rails之间，也不知道最后是哪个领导拍板上ruby on rails了。
-对于这种升级性系统(从.net到xx),需求方面还是比较稳定的，用所谓j2ee貌似也是可行的，至少我在前期也的确看不到ruby on rails有太明显的优势。
-可是我还是对选择ruby on rails没什么意见，也正好是可以证明一下并非架构只此一家，这也算一个不错的机会吧。</p>
-
-<p>再说到具体的点上，假如你见过原来系统数据库设计的蜘蛛网，就会明白我们在数据迁移方面的工作有多么艰难。
-还有其他一些原因，我们没有选择耳熟能详的mysql，而是选择了oracle。也正因为数据方面的原因，我们不得不在程序方面做出让步（即使这样，ruby还算比较优雅）。
-至少，我们让程序兼容了数据。ruby on rails+oracle的探索也是比较漫长的，前前后后也修改了几次适配器(如数据类型识别，一些数据库选项)，
-增加了一些插件来增加特性(如存储过程)。逆其道而行，真是吃力不讨好。虽然相对java来说，这些做法就像无聊的笑话一样，但是至少我们顺利的解决问题了。</p>
-
-<p>随着项目深入带来的多如雨点的细节方面的调整，ruby on rails的优势才逐渐凸显出来。至少从我这个javaer来，区别是很明显的(俺也做过java项目维护,知道那是怎样一种体力活动)。
-你不要好奇为什么细如牛毛的调整会这么多，可是事实就是这样了，咱也不解释了。在语言层面的强大真的可以节省不少精力，算起来也有n多功能，也才1w行代码。
-按照我的经验，如果不幸用的是java，在这样战乱纷纷，弹尽粮绝的情况下，我们肯定会给java这门大炮压垮了。
-在需求变更处理方面，动态语言的优势是相当明显呀，感谢MATZ，感谢DHH,感谢C-C-A-V。</p>
-
-<p>现在项目逐渐稳定下来，我们考虑更多的是如果让我们的系统高效稳定的运行，能够及时处理bug。
-关于性能方面，我们的项目是基于流行的lighttpd+fastcgi部署的，也算一个LAMP架构(最大的区别就是oracle代替mysql了)，
-而作为业务系统，流量到现在最多也是20w动态pv那样子。我们也没有使用什么特别的缓存策略，运行还是相当流畅的(这还是在内存从原来16g减少一半的情况下做到的)。
-基本繁忙的时候，都是oracle在那忙活着，这也是普遍情况，瓶颈大多首先出现在数据库IO。
-所以，这样的架构性能方面也是没有什么问题，稳定性也很好。还有一次好处，我们的更新非常频繁，而每次更新只用短短3s左右，几乎是无痛更新。
-得益于Linux平台，我们在监控，流量分析方面也是游刃有余(不得不赞叹一下shell)，另外得益于ruby on rails架构的灵活性，
-可以做些调整方便我们监视运行状况（例如在top中查看真实URL，在单独的log中记录exception），这些都大大提高我们的效率。
-这方面，大体上是windows和linux之间在服务器端的比较优势了。</p>
-
-<p>现在回过头来看，在一开始打造的时候，我还是有些担心的,担心oracle和ruby的兼容，担心性能，担心处理ms格式(还好，excel和sqlserver至少是没什么大问题的)。
-这也是一步步走过来的，现在就淡定多了。在项目前期，任何东西都不会有太大优势，只有到了中后期，才会有强烈的感觉。
-另外，也杂七杂八的把以前自学的东西用上了一些，算是厚积薄发了一下，学以致用吧，感觉还是不错的。呵呵，感谢xy，感谢hnjk，感谢C-C-A-V :）</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/20121208_graph-report.html">话说图形报表(旧)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-12-08T00:00:00+08:00" pubdate data-updated="true">Dec 8<span>th</span>, 2012</time>
-        
-         | <a href="/blog/20121208_graph-report.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p class="lead">
-这个是09年底写的。这几年更多看到关于html5、css3、javascript的图形展现显示，效果更好，功能也很强大，
-随着html5、css3的普及，以后会有更多的应用出现。例如淘宝团队可视化JavaScript库[Datav.js][2]，在数据分析展示方面效果就很不错。
-</p>
-
-
-<p>在javaeye上看到有个新闻<a href="http://www.javaeye.com/news/12109-highcharts-charting-api">Highcharts:非常漂亮的图表API</a>，自己也做过图形报表相关的工作，就此对图形报表发表一点自己的想法：</p>
-
-<h2>图形报表非常醒目</h2>
-
-<p>图形报表是一种富格式，粗粒度的报表表现方式。表格样式的报表容纳的信息比较细，没法像图形那样直观。
-在一些不需要非常详细统计的情况下，图形报表的优势是非常明显的。在业务系统中融合图形报表，几乎就变成了一个必备需求。
-一个普遍的可以想象的场景是，能够简单明了的展现统计信息趋势等，又能在必要的时候得到详细的统计数据，这就使得系统拥有混合多种报表表现形式的能力。</p>
-
-<h2>服务端与客户端的图形报表</h2>
-
-<p>我认为图形报表可以分成两部分，数据和渲染引擎。渲染引擎就主要是提供接口接受数据并把数据显示出来，或许还提供了一些接口让用户参与交互。
-现在这个引擎的实现方式可谓多种多样，有些是语言相关的，例如birt，jreport等，他们大体上是通过数据源定制描述文件(例如通用的xml格式)，然后自己解析并展现。
-这种方式的通用性不是很强，因为他比较依赖于服务端环境，就是说你必须要在添加一套组件，多跑一套应用才能使用。
-另外还有一些是基于客户端技术的，例如flash，css/js等，对于服务端来说只要提供数据就可以了，非常方便。因为这个原因，我更加推荐使用客户端技术。</p>
-
-<h2>flash图形报表的可用性</h2>
-
-<p>看了一些基于客户端的实现方式，个人是比较赞赏flash实现方式的。我是看重flash表现力非常强大，组件化，不懂flash也可以轻松弄出非常漂亮的报表。
-如果要推荐一个的话，我觉得基于flash技术的FusionChart可以满足绝大多数的需求。像什么直线图，曲线图、区域图、区域曲线图、柱状图、饼图都可以轻松实现。
-如果使用收费版本的话还有更加强大的功能(当然你也可以选择在网上找破解版)，这类工具还可以轻松打印，提供多种格式转换，还可以动态改变报表。
-这样你就发挥你的创造力了，例如配合ajax来展示个股分时图等等。</p>
-
-<h2>集成不是个问题</h2>
-
-<p>接上面的flash报表的话题。如果我们选择flash报表的话，我们可以预见的是，它本身就提供了一套适用性非常强的接口。
-再加上这本来就是服务端语言无关的实现方式，从我的工作经验上看，单单这点不会是什么难题的。我觉得flash报表能解决90%的问题，
-但是如何补充flash报表在功能上的缺陷?这才是我们要考虑的问题吧。我的想法是，一套flash报表不行，我用多一套其他的总可以了吧？
-现在服务端主要的功能是提供数据，而客户端做的是接受数据并展示。如果使用多套客户端技术的话，那么服务端的数据再经过一套适配器转换即可。
-管你使用的是flash，还是css/js，你只要定义数据适配器即可。虽然现在这些只是一些想法，而FusionChart也的确是满足了我所有的需求，但是我还是觉得这是完全可行的。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/20121202_sinatra.html">Sinatra分析(旧)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-12-02T00:00:00+08:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2012</time>
-        
-         | <a href="/blog/20121202_sinatra.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>这是10年初写的了:)</p>
-
-<h2>sinatra简介</h2>
-
-<ul>
-<li>Sinatra is a DSL for quickly creating web applications in Ruby with minimal。</li>
-<li>Fewer classes, less inheritance</li>
-<li>controller object mapping &amp; routes vs. URLs&#8212;Dont&#8217;s fear the URLs</li>
-<li>Exposed Simplicity instead of hidden complexity</li>
-<li>Small things, loosely joined, written fast</li>
-</ul>
-
-
-<h2>sinatra分析</h2>
-
-<h3>Rack机制</h3>
-
-<p>sinatra 作为一个web框架，是基于rack规范的。rack规范和Java的servlet规范有点类似，Rack中间件和filter机制有些类似，
-都是能够拦截request/response做一些事情。所谓的rack兼容的中间件无非是一个可以执行 call(env) 的对象，详细关于rack的内容可以参考rack官网，还有这个rack入门文档也很好。
-在源码中可以看到，sinatra的Request和Response都是基于rack扩展的，并对Rack::Request和Rack::Response分别做了一些调整。
-sinatra是通过Application.run!来启动服务器的</p>
-
-<div class="highlight"><pre><code class="ruby">         <span class="k">def</span> <span class="nf">run!</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{})</span>
-            <span class="n">set</span> <span class="n">options</span>
-            <span class="n">handler</span>      <span class="o">=</span> <span class="n">detect_rack_handler</span>
-            <span class="n">handler_name</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/.*::/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-            <span class="nb">puts</span> <span class="s2">&quot;== Sinatra/</span><span class="si">#{</span><span class="ss">Sinatra</span><span class="p">:</span><span class="ss">:VERSION</span><span class="si">}</span><span class="s2"> has taken the stage &quot;</span> <span class="o">+</span>
-              <span class="s2">&quot;on </span><span class="si">#{</span><span class="n">port</span><span class="si">}</span><span class="s2"> for </span><span class="si">#{</span><span class="n">environment</span><span class="si">}</span><span class="s2"> with backup from </span><span class="si">#{</span><span class="n">handler_name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">unless</span> <span class="n">handler_name</span> <span class="o">=~</span><span class="sr">/cgi/i</span>
-            <span class="n">handler</span><span class="o">.</span><span class="n">run</span> <span class="nb">self</span><span class="p">,</span> <span class="ss">:Host</span> <span class="o">=&gt;</span> <span class="n">bind</span><span class="p">,</span> <span class="ss">:Port</span> <span class="o">=&gt;</span> <span class="n">port</span> <span class="k">do</span> <span class="o">|</span><span class="n">server</span><span class="o">|</span>
-              <span class="nb">trap</span><span class="p">(</span><span class="ss">:INT</span><span class="p">)</span> <span class="k">do</span>
-                <span class="c1">## Use thins&#39; hard #stop! if available, otherwise just #stop</span>
-                <span class="n">server</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:stop!</span><span class="p">)</span> <span class="p">?</span> <span class="n">server</span><span class="o">.</span><span class="n">stop!</span> <span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">stop</span>
-                <span class="nb">puts</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">== Sinatra has ended his set (crowd applauds)&quot;</span> <span class="k">unless</span> <span class="n">handler_name</span> <span class="o">=~</span><span class="sr">/cgi/i</span>
-              <span class="k">end</span>
-              <span class="n">set</span> <span class="ss">:running</span><span class="p">,</span> <span class="kp">true</span>
-            <span class="k">end</span>
-          <span class="k">rescue</span> <span class="ss">Errno</span><span class="p">:</span><span class="ss">:EADDRINUSE</span> <span class="o">=&gt;</span> <span class="n">e</span>
-            <span class="nb">puts</span> <span class="s2">&quot;== Someone is already performing on port </span><span class="si">#{</span><span class="n">port</span><span class="si">}</span><span class="s2">!&quot;</span>
-          <span class="k">end</span>
-</code></pre></div>
-
-
-<p>其中detect_rack_handler是通过 Rack::Handler.get来检测rack处理器的，默认的server有thin/mongrel/webrick,绑定的地址是 0.0.0.0，端口是4567</p>
-
-<div class="highlight"><pre><code class="ruby">    <span class="k">module</span> <span class="nn">Sinatra</span>
-        <span class="k">class</span> <span class="nc">Base</span>
-            <span class="n">set</span> <span class="ss">:server</span><span class="p">,</span> <span class="sx">%w[thin mongrel webrick]</span>
-            <span class="n">set</span> <span class="ss">:bind</span><span class="p">,</span> <span class="s1">&#39;0.0.0.0&#39;</span>
-            <span class="n">set</span> <span class="ss">:port</span><span class="p">,</span> <span class="mi">4567</span>
-        <span class="k">end</span>
-    <span class="k">end</span>
-</code></pre></div>
-
-
-<p>注意到handler.run self, :Host =&gt; bind, :Port =&gt; port do |server|,这个self指的是Sinatra::Base，根据rack规范，最终的请求的入口就是 Sinatra::Base.call(env)方法</p>
-
-<div class="highlight"><pre><code class="ruby">          <span class="k">def</span> <span class="nf">prototype</span>
-            <span class="vi">@prototype</span> <span class="o">||=</span> <span class="kp">new</span>
-          <span class="k">end</span>
-
-          <span class="c1"># Create a new instance of the class fronted by its middleware</span>
-          <span class="c1"># pipeline. The object is guaranteed to respond to #call but may not be</span>
-          <span class="c1"># an instance of the class new was called on.</span>
-          <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">bk</span><span class="p">)</span>
-            <span class="n">builder</span> <span class="o">=</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Builder</span><span class="o">.</span><span class="n">new</span>
-            <span class="n">builder</span><span class="o">.</span><span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Session</span><span class="o">::</span><span class="no">Cookie</span> <span class="k">if</span> <span class="n">sessions?</span>
-            <span class="n">builder</span><span class="o">.</span><span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:CommonLogger</span>    <span class="k">if</span> <span class="n">logging?</span>
-            <span class="n">builder</span><span class="o">.</span><span class="n">use</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:MethodOverride</span>  <span class="k">if</span> <span class="n">method_override?</span>
-            <span class="n">builder</span><span class="o">.</span><span class="n">use</span> <span class="no">ShowExceptions</span>        <span class="k">if</span> <span class="n">show_exceptions?</span>
-            <span class="n">middleware</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">c</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="o">|</span> <span class="n">builder</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span> <span class="p">}</span>
-
-            <span class="n">builder</span><span class="o">.</span><span class="n">run</span> <span class="k">super</span>
-            <span class="n">builder</span><span class="o">.</span><span class="n">to_app</span>
-          <span class="k">end</span>
-
-          <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-            <span class="n">synchronize</span> <span class="p">{</span> <span class="n">prototype</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span> <span class="p">}</span>
-          <span class="k">end</span>
-</code></pre></div>
-
-
-<p>从call方法可以看到，是通过生成一个Sinatra::Base实例对象来运行的，最终会调用的是call(env) -> call!(env)，
-接下去的工作就是等客户端发送请求过来就可以了。在生成这个实例对象@prototype的时候,直接引入rack中间件机制，
-同样，sinatra允许你使用use方法来增加新的中间件(use只是把中间件加入@middleware变量中去而已)。这样sinatra就已经启动起来了。</p>
-
-<h3>路由机制</h3>
-
-<p>sinatra 的路由机制和rails不大一样，sinatra是在controller里边用get/post path这样来指定的。
-而rails是把controller和map分开处理，通过map来找到对应的controller和action。
-rails当初这么搞主要是为了兼容controller和路由不匹配的情况,个人觉得sinatra的写法是非常直观的，也非常的灵活。</p>
-
-<div class="highlight"><pre><code class="ruby">    <span class="n">delegate</span> <span class="ss">:get</span><span class="p">,</span> <span class="ss">:put</span><span class="p">,</span> <span class="ss">:post</span><span class="p">,</span> <span class="ss">:delete</span><span class="p">,</span> <span class="ss">:head</span><span class="p">,</span> <span class="ss">:template</span><span class="p">,</span> <span class="ss">:layout</span><span class="p">,</span>
-                 <span class="ss">:before</span><span class="p">,</span> <span class="ss">:after</span><span class="p">,</span> <span class="ss">:error</span><span class="p">,</span> <span class="ss">:not_found</span><span class="p">,</span> <span class="ss">:configure</span><span class="p">,</span> <span class="ss">:set</span><span class="p">,</span> <span class="ss">:mime_type</span><span class="p">,</span>
-                 <span class="ss">:enable</span><span class="p">,</span> <span class="ss">:disable</span><span class="p">,</span> <span class="ss">:use</span><span class="p">,</span> <span class="ss">:development?</span><span class="p">,</span> <span class="ss">:test?</span><span class="p">,</span> <span class="ss">:production?</span><span class="p">,</span>
-                 <span class="ss">:helpers</span><span class="p">,</span> <span class="ss">:settings</span>
-</code></pre></div>
-
-
-<p>看 main.rb可以看到include Sinatra::Delegator，可以把get/post等众多方法代理给Sinatra::Application去执行，
-在后面使用get &#8216;/&#8217; do xxx end的时候其实会调用Sinatra::Application(即Sinatra::Base)的get方法。</p>
-
-<div class="highlight"><pre><code class="ruby">      <span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
-      <span class="nb">require</span> <span class="s1">&#39;sinatra&#39;</span>
-      <span class="n">get</span> <span class="s1">&#39;/&#39;</span> <span class="k">do</span>
-        <span class="s1">&#39;Hello world!&#39;</span>
-      <span class="k">end</span>
-</code></pre></div>
-
-
-<p>例如这样一个简单的web应用就可以响应&#8217;/&#8217;的请求路径，那么Sinatra::Base是怎么识别到这个路由的呢?我们继续来看看上面的get方法做了什么事情，
-可以看到最终是调用route方法的(同时，从代码可以看到sinatra支持get/post/put/post/delete/head几种method的请求)。
-按照我们的大概思路，在看到某个请求方法的时候，sinatra会把{请求类型<em>路径 => 代码块}放到一个专门放路由的地方上去，然后在每一次请求调用call(env)的时候，
-根据“请求类型</em>路径”来获得需要执行的代码块。好，继续看看 route的代码是怎么实现的?</p>
-
-<div class="highlight"><pre><code class="ruby">          <span class="k">def</span> <span class="nf">route</span><span class="p">(</span><span class="n">verb</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
-            <span class="c1"># Because of self.options.host</span>
-            <span class="n">host_name</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="ss">:bind</span><span class="p">))</span> <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">key?</span><span class="p">(</span><span class="ss">:host</span><span class="p">)</span>
-            <span class="n">options</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">option</span><span class="p">,</span> <span class="n">args</span><span class="o">|</span> <span class="nb">send</span><span class="p">(</span><span class="n">option</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)}</span>
-
-            <span class="n">pattern</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">compile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-            <span class="n">conditions</span><span class="p">,</span> <span class="vi">@conditions</span> <span class="o">=</span> <span class="vi">@conditions</span><span class="p">,</span> <span class="o">[]</span>
-
-           <span class="n">define_method</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">verb</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span>
-            <span class="n">unbound_method</span> <span class="o">=</span> <span class="nb">instance_method</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">verb</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">block</span> <span class="o">=</span>
-              <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">arity</span> <span class="o">!=</span> <span class="mi">0</span>
-                <span class="nb">proc</span> <span class="p">{</span> <span class="n">unbound_method</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="o">*</span><span class="vi">@block_params</span><span class="p">)</span> <span class="p">}</span>
-              <span class="k">else</span>
-                <span class="nb">proc</span> <span class="p">{</span> <span class="n">unbound_method</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span><span class="o">.</span><span class="n">call</span> <span class="p">}</span>
-              <span class="k">end</span>
-
-            <span class="n">invoke_hook</span><span class="p">(</span><span class="ss">:route_added</span><span class="p">,</span> <span class="n">verb</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
-
-            <span class="p">(</span><span class="vi">@routes</span><span class="o">[</span><span class="n">verb</span><span class="o">]</span> <span class="o">||=</span> <span class="o">[]</span><span class="p">)</span><span class="o">.</span>
-              <span class="n">push</span><span class="p">(</span><span class="o">[</span><span class="n">pattern</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">block</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">last</span>
-          <span class="k">end</span>
-</code></pre></div>
-
-
-<p>这个代码处理的事情比较多，我们来仔细分析分析，前面两句代码是用来记录能够处理的请求的约束(例如特定的host_name,user_agent),
-然后compile(path)的工作是把path换成一个正则表达式(这样通过match就可以获得匹配的组)，还有提取keys(例如*的就变成 splat，:name就变成name)。
-重要的是把get &#8216;/&#8217; do xxx end动态生成一个&#8221;#{verb} #{path}&#8221;的方法并最终封装成一个带有上下文状态的proc对象，
-最终是把[pattern, keys, conditions, block]加入@routes[verb]里边去。而call(env)能够处理请求就得靠这个@routes来实现。</p>
-
-<p>先来看看call(env) -&gt; call!(env)，最重要的部分是invoke { dispatch! }，可以看到dispatch!的整个流程是
-判断并处理static文件 -&gt; before_filter! -&gt; route! -&gt; after_filter!，主要的处理过程是route!方法</p>
-
-<div class="highlight"><pre><code class="ruby">       <span class="k">def</span> <span class="nf">route!</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="p">,</span> <span class="n">pass_block</span><span class="o">=</span><span class="kp">nil</span><span class="p">)</span>
-          <span class="k">if</span> <span class="n">routes</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">routes</span><span class="o">[</span><span class="vi">@request</span><span class="o">.</span><span class="n">request_method</span><span class="o">]</span>
-            <span class="n">original_params</span> <span class="o">=</span> <span class="vi">@params</span>
-            <span class="n">path</span>            <span class="o">=</span> <span class="n">unescape</span><span class="p">(</span><span class="vi">@request</span><span class="o">.</span><span class="n">path_info</span><span class="p">)</span>
-
-            <span class="n">routes</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">pattern</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">block</span><span class="o">|</span>
-              <span class="k">if</span> <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-                <span class="n">values</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">captures</span><span class="o">.</span><span class="n">to_a</span>
-                <span class="n">params</span> <span class="o">=</span>
-                  <span class="k">if</span> <span class="n">keys</span><span class="o">.</span><span class="n">any?</span>
-                    <span class="n">keys</span><span class="o">.</span><span class="n">zip</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">inject</span><span class="p">({})</span> <span class="k">do</span> <span class="o">|</span><span class="nb">hash</span><span class="p">,(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span><span class="o">|</span>
-                      <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;splat&#39;</span>
-                        <span class="p">(</span><span class="nb">hash</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">||=</span> <span class="o">[]</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">values</span><span class="p">}</span>
-                  <span class="k">else</span>
-                    <span class="p">{}</span>
-                  <span class="k">end</span>
-                <span class="vi">@params</span> <span class="o">=</span> <span class="n">original_params</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-                <span class="vi">@block_params</span> <span class="o">=</span> <span class="n">values</span>
-
-                <span class="n">pass_block</span> <span class="o">=</span> <span class="kp">catch</span><span class="p">(</span><span class="ss">:pass</span><span class="p">)</span> <span class="k">do</span>
-                  <span class="n">conditions</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">cond</span><span class="o">|</span>
-                    <span class="kp">throw</span> <span class="ss">:pass</span> <span class="k">if</span> <span class="nb">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cond</span><span class="p">)</span> <span class="o">==</span> <span class="kp">false</span> <span class="p">}</span>
-                  <span class="n">route_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
-                <span class="k">end</span>
-              <span class="k">end</span>
-            <span class="k">end</span>
-
-            <span class="vi">@params</span> <span class="o">=</span> <span class="n">original_params</span>
-          <span class="k">end</span>
-</code></pre></div>
-
-
-<p>首先sinatra先从＠routes里边取得符合请求类型的[pattern, keys, conditions, block]列表，然后逐个扫描，
-通过pattern来match路径，如果符合的话，取得通配符，命名参数的值并封装到params去(得益于 compile(path)的工作)。
-接下去判断conditions是否符合，如果都符合，则执行业务，即block。整个流程处理完之后，把 params恢复为原本的状态。</p>
-
-<h3>拦截器</h3>
-
-<p>在上面已经提到，sinatra的拦截器是通过before_filter!和after_filter!来执行的，如下所示:</p>
-
-<div class="highlight"><pre><code class="ruby">        <span class="k">def</span> <span class="nf">before_filter!</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="p">)</span>
-          <span class="n">before_filter!</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">superclass</span><span class="p">)</span> <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">superclass</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:before_filters</span><span class="p">)</span>
-          <span class="n">base</span><span class="o">.</span><span class="n">before_filters</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">block</span><span class="o">|</span> <span class="nb">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span> <span class="p">}</span>
-        <span class="k">end</span>
-</code></pre></div>
-
-
-<p>配置过滤器也非常简单，定义一个前置过滤器，例如</p>
-
-<div class="highlight"><pre><code class="ruby">      <span class="n">before</span> <span class="k">do</span>
-        <span class="vi">@note</span> <span class="o">=</span> <span class="s1">&#39;Hi!&#39;</span>
-        <span class="n">request</span><span class="o">.</span><span class="n">path_info</span> <span class="o">=</span> <span class="s1">&#39;/foo/bar/baz&#39;</span>
-      <span class="k">end</span>
-</code></pre></div>
-
-
-<p>sinatra通过Sinatra::Base的before把block加入到@before_filters中去，这个应该很容易明白的。
-不过，这个拦截器功能比起rails那个显得简陋了，毕竟不能直接针对某些路径进行拦截处理。</p>
-
-<h3>模板渲染</h3>
-
-<p>sinatra通过Tilt实现多模板的渲染机制，生成页面的过程是在业务代码块那里注明的，例如</p>
-
-<div class="highlight"><pre><code class="ruby">      <span class="nb">require</span> <span class="s1">&#39;erb&#39;</span>
-      <span class="n">get</span> <span class="s1">&#39;/&#39;</span> <span class="k">do</span>
-        <span class="n">erb</span> <span class="ss">:index</span>
-      <span class="k">end</span>
-</code></pre></div>
-
-
-<p>sinatra的模板方法是在Sinatra::Templates模块里边定义的，能够支持erb,erubis,haml,sass,less,builder,具体的实现如下：</p>
-
-<div class="highlight"><pre><code class="ruby">        <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{},</span> <span class="n">locals</span><span class="o">=</span><span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
-          <span class="c1"># merge app-level options</span>
-          <span class="n">options</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
-
-          <span class="c1"># extract generic options</span>
-          <span class="n">locals</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="ss">:locals</span><span class="p">)</span> <span class="o">||</span> <span class="n">locals</span> <span class="o">||</span> <span class="p">{}</span>
-          <span class="n">views</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="ss">:views</span><span class="p">)</span> <span class="o">||</span> <span class="n">settings</span><span class="o">.</span><span class="n">views</span> <span class="o">||</span> <span class="s2">&quot;./views&quot;</span>
-          <span class="n">layout</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="ss">:layout</span><span class="p">)</span>
-          <span class="n">layout</span> <span class="o">=</span> <span class="ss">:layout</span> <span class="k">if</span> <span class="n">layout</span><span class="o">.</span><span class="n">nil?</span> <span class="o">||</span> <span class="n">layout</span> <span class="o">==</span> <span class="kp">true</span>
-
-          <span class="c1"># compile and render template</span>
-          <span class="n">template</span> <span class="o">=</span> <span class="n">compile_template</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">views</span><span class="p">)</span>
-          <span class="n">output</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">locals</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
-
-          <span class="c1"># render layout</span>
-          <span class="k">if</span> <span class="n">layout</span>
-            <span class="k">begin</span>
-              <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="ss">:views</span> <span class="o">=&gt;</span> <span class="n">views</span><span class="p">,</span> <span class="ss">:layout</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">)</span>
-              <span class="n">output</span> <span class="o">=</span> <span class="n">render</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">layout</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">locals</span><span class="p">)</span> <span class="p">{</span> <span class="n">output</span> <span class="p">}</span>
-            <span class="k">rescue</span> <span class="ss">Errno</span><span class="p">:</span><span class="ss">:ENOENT</span>
-            <span class="k">end</span>
-          <span class="k">end</span>
-
-          <span class="n">output</span>
-        <span class="k">end</span>
-</code></pre></div>
-
-
-<p>具体的流程是先找到template engine，通过template的render方法渲染子页面，然后在把子页面的内容作为一个block参数放到渲染layout的render方法上去，
-这样在父页面里边的yield就会被子页面的内容所取代，从而实现整体页面的渲染。</p>
-
-<h3>错误及状态处理</h3>
-
-<p>sinatra在这方面的处理，我觉得非常巧妙，还认识了一些从来没用过的api。几个重要的特性：</p>
-
-<div class="highlight"><pre><code class="ruby"><span class="ss">halt</span><span class="p">:</span>
-
-      <span class="n">halt</span> <span class="mi">410</span>
-      <span class="n">halt</span> <span class="s1">&#39;this will be the body&#39;</span>
-      <span class="n">halt</span> <span class="mi">401</span><span class="p">,</span> <span class="s1">&#39;go away!&#39;</span>
-<span class="ss">error</span><span class="p">:</span>
-
-      <span class="n">error</span> <span class="k">do</span>
-        <span class="s1">&#39;Sorry there was a nasty error - &#39;</span> <span class="o">+</span> <span class="n">env</span><span class="o">[</span><span class="s1">&#39;sinatra.error&#39;</span><span class="o">].</span><span class="n">name</span>
-      <span class="k">end</span>
-      <span class="n">error</span> <span class="no">MyCustomError</span> <span class="k">do</span>
-        <span class="s1">&#39;So what happened was...&#39;</span> <span class="o">+</span> <span class="n">request</span><span class="o">.</span><span class="n">env</span><span class="o">[</span><span class="s1">&#39;sinatra.error&#39;</span><span class="o">].</span><span class="n">message</span>
-      <span class="k">end</span>
-      <span class="n">error</span> <span class="mi">400</span><span class="o">.</span><span class="n">.</span><span class="mi">510</span> <span class="k">do</span>
-        <span class="s1">&#39;Boom&#39;</span>
-      <span class="k">end</span>
-</code></pre></div>
-
-
-<p>error的实现很简单，只是把error code和block记录到＠errors上去，而not_found其实就是404的error了。halt从代码实现上看，它是throw一个halt的异常。
-这些处理方式在sinatra最终是怎么处理的呢？我们先回到dispatch!这个主方法，从源码中可以看到如果是静态页面，会抛出halt(line 173),到了route!方法的时候，如下</p>
-
-<div class="highlight"><pre><code class="ruby">                <span class="n">pass_block</span> <span class="o">=</span> <span class="kp">catch</span><span class="p">(</span><span class="ss">:pass</span><span class="p">)</span> <span class="k">do</span>
-                  <span class="n">conditions</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">cond</span><span class="o">|</span>
-                    <span class="kp">throw</span> <span class="ss">:pass</span> <span class="k">if</span> <span class="nb">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cond</span><span class="p">)</span> <span class="o">==</span> <span class="kp">false</span> <span class="p">}</span>
-                    <span class="n">route_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
-                <span class="k">end</span>
-</code></pre></div>
-
-
-<p>catch(args,&amp;block) 这个方法是会忽视在遇到pass异常的时候忽略异常并跳出block的运行，所以conditions验证不通过的时候，
-就会转入下一个pattern验证，而在验证通过后到了route_eval(&amp;block) 就会抛出halt从而跳出循环，表示已经匹配成功。
-抛出异常之后会在dispatch!通过rescue来处理。error_block!(*keys) 就是用来处理error的，＠errors根据error code来获取block，这样就可以输出自定义的错误页面了。</p>
+<p>以前用过free gate这种东西，不过不大稳定，而且感觉风险比较高。呵呵，你懂的。<br/>
+<a href="http://www.ssh110.com/help.html">ssh使用帮助</a>,跟人感觉用ssh命令行配合chrome插件是最方便的。<br/>
+<a href="http://blog.onlybird.com/%E5%85%8D%E8%B4%B9ssh%E4%BB%A3%E7%90%86">免费ssh代理</a>,速度还不错，不过不是特别稳定。<br/>
+<a href="http://wendal.net/2013/0108.html">Nutz福利之轻功</a>,应该不错,不过我还没用上。</p>
 </div>
   
   
@@ -1355,6 +668,10 @@ rails当初这么搞主要是为了兼容controller和路由不匹配的情况,�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/20130315_java-performance.html">java性能&#8211;降低时间与空间消耗</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/20130306_duplicate-code.html">重复代码处理模式</a>
       </li>
     
@@ -1368,10 +685,6 @@ rails当初这么搞主要是为了兼容controller和路由不匹配的情况,�
     
       <li class="post">
         <a href="/blog/20130127_jekyll-plugin-with-git-branch.html">git分支让github page用上jekyll插件</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/20130127_jekyll-alias-generator.html">jekyll插件:支持URL跳转</a>
       </li>
     
   </ul>
