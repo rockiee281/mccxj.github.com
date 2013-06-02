@@ -4,7 +4,7 @@
   <title><![CDATA[小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-05-31T22:23:24+08:00</updated>
+  <updated>2013-06-02T22:01:56+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -12,6 +12,310 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[性能优化:Trove集合库]]></title>
+    <link href="http://mccxj.github.com/blog/20130602_introduce-to-trove.html"/>
+    <updated>2013-06-02T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/introduce-to-trove</id>
+    <content type="html"><![CDATA[<h2>1 初见Trove</h2>
+
+<p>昨天在<a href="http://news.dbanotes.net/news">Startup News</a>上看到一篇文章:<a href="http://blog.jobbole.com/40666/">优化技巧分享：把内存消耗降低至原来的1/20</a>。里边提到了一个案例，Java应用中如何降低内存消耗，总结了他的优化过程:</p>
+
+<ul>
+<li>开始时,存放1.3M个Person对象，消耗堆空间1.5GB</li>
+<li>修改为java.util.HashMap&lt;Long, Person>进行缓存,从1.5GB降低为214MB</li>
+<li>修改HashMap为Trove的TLongObjectHashMap<Person>，从214MB降低为143MB</li>
+<li>优化Person内部结构,减少重复字段,从143MB降低为93MB</li>
+<li>开启64位JDK的XX:UseCompressedOops参数进行指针压缩,从93MB降低为73MB</li>
+</ul>
+
+
+<p>优化经常得针对具体的场景、数据特性来优化，上述提到的<a href="http://trove.starlight-systems.com/">Trove</a>集合库就是这么一个典型例子,它针对的是JDK集合类中处理原生类型的场景。</p>
+
+<h2>2 使用Trove</h2>
+
+<ul>
+<li>如果使用Maven的话,可使用下面的配置</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;dependency&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;groupId&gt;</span>net.sf.trove4j<span class="nt">&lt;/groupId&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;artifactId&gt;</span>trove4j<span class="nt">&lt;/artifactId&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;version&gt;</span>3.0.3<span class="nt">&lt;/version&gt;</span>
+</span><span class='line'><span class="nt">&lt;/dependency&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>常用方法和JDK集合类是一样的，方便迁移</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">TIntObjectMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">ints</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TIntObjectHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+</span><span class='line'><span class="n">ints</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">100</span><span class="o">,</span> <span class="s">&quot;John&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="n">ints</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">101</span><span class="o">,</span> <span class="s">&quot;Tom&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">ints</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">100</span><span class="o">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Trove相当于把JDK集合类都针对原生类型处理了一遍，例如int，常见的类有
+TIntList、TIntObjectMap<V>、TObjectIntMap<K>、TIntSet，可想而知，<strong>维护Trove的工作量是挺大的</strong>。</p>
+
+<p>Trove还提供了开放寻址法的Map,Set,LinkedList实现,可以参考<a href="http://www.onjava.com/pub/a/onjava/2002/06/12/trove.html?page=2">Enhance Collection Performance with this Treasure Trove</a>的做法,类似于:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CollectionFactory</span> <span class="o">{</span>
+</span><span class='line'>  <span class="kd">static</span> <span class="kt">boolean</span> <span class="n">useTrove</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">  *  Return a hashmap based on the properties</span>
+</span><span class='line'><span class="cm">  */</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="n">Map</span> <span class="nf">getHashMap</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span> <span class="n">useTrove</span> <span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">THashMap</span><span class="o">();</span>
+</span><span class='line'>      <span class="k">else</span>            <span class="k">return</span> <span class="k">new</span> <span class="nf">HashMap</span><span class="o">();</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">  *  Return a hashset based on the properties</span>
+</span><span class='line'><span class="cm">  */</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="n">Set</span> <span class="nf">getHashSet</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span> <span class="n">useTrove</span> <span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">THashSet</span><span class="o">();</span>
+</span><span class='line'>      <span class="k">else</span>            <span class="k">return</span> <span class="k">new</span> <span class="nf">HashSet</span><span class="o">();</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">  *  Return a linkedlist based on the properties</span>
+</span><span class='line'><span class="cm">  */</span>
+</span><span class='line'>  <span class="kd">public</span> <span class="kd">static</span> <span class="n">List</span> <span class="nf">getLinkedList</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span> <span class="n">useTrove</span> <span class="o">)</span> <span class="k">return</span> <span class="k">new</span> <span class="n">TLinkedList</span><span class="o">();</span>
+</span><span class='line'>      <span class="k">else</span>            <span class="k">return</span> <span class="k">new</span> <span class="nf">LinkedList</span><span class="o">();</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>迭代集合中的元素</li>
+</ul>
+
+
+<p><strong>Trove不推荐JDK的entryXX的做法，而是采用了forEach的回调方式</strong>。
+代码显得更好看些，另外内存方面也有优势，因为使用entryXX的做法，需要创建一个新的数组。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">TIntObjectMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">ints</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TIntObjectHashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;();</span>
+</span><span class='line'><span class="n">ints</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">100</span><span class="o">,</span> <span class="s">&quot;John&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="n">ints</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">101</span><span class="o">,</span> <span class="s">&quot;Tom&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="n">ints</span><span class="o">.</span><span class="na">forEachEntry</span><span class="o">(</span><span class="k">new</span> <span class="n">TIntObjectProcedure</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">execute</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span> <span class="n">String</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;key: &quot;</span> <span class="o">+</span> <span class="n">a</span> <span class="o">+</span> <span class="s">&quot;, val: &quot;</span> <span class="o">+</span> <span class="n">b</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">});</span>
+</span><span class='line'><span class="n">ints</span><span class="o">.</span><span class="na">forEachKey</span><span class="o">(</span><span class="k">new</span> <span class="n">TIntProcedure</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">execute</span><span class="o">(</span><span class="kt">int</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;key: &quot;</span> <span class="o">+</span> <span class="n">value</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">});</span>
+</span><span class='line'><span class="n">ints</span><span class="o">.</span><span class="na">forEachValue</span><span class="o">(</span><span class="k">new</span> <span class="n">TObjectProcedure</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">execute</span><span class="o">(</span><span class="n">String</span> <span class="n">object</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;val: &quot;</span> <span class="o">+</span> <span class="n">object</span><span class="o">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>自定义Hash策略</li>
+</ul>
+
+
+<p>我们知道，在JDK集合类里边，有时候是没法自定义Hash策略的，例如String。
+<strong>不过Trove提供了自定义Hash策略的功能，让你可以根据数据特性进行优化</strong>。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kt">char</span><span class="o">[]</span> <span class="n">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="o">[]{</span><span class="sc">&#39;a&#39;</span><span class="o">,</span> <span class="sc">&#39;b&#39;</span><span class="o">,</span> <span class="sc">&#39;c&#39;</span><span class="o">};</span>
+</span><span class='line'>    <span class="kt">char</span><span class="o">[]</span> <span class="n">bar</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="o">[]{</span><span class="sc">&#39;a&#39;</span><span class="o">,</span> <span class="sc">&#39;b&#39;</span><span class="o">,</span> <span class="sc">&#39;c&#39;</span><span class="o">};</span>
+</span><span class='line'>    <span class="n">TCustomHashMap</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">[],</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">ch</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TCustomHashMap</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">[],</span> <span class="n">String</span><span class="o">&gt;(</span><span class="k">new</span> <span class="n">CharArrayStrategy</span><span class="o">());</span>
+</span><span class='line'>    <span class="n">ch</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">foo</span><span class="o">,</span> <span class="s">&quot;John&quot;</span><span class="o">);</span>
+</span><span class='line'>    <span class="n">ch</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">bar</span><span class="o">,</span> <span class="s">&quot;Tom&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">class</span> <span class="nc">CharArrayStrategy</span> <span class="kd">implements</span> <span class="n">HashingStrategy</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">[]&gt;</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">computeHashCode</span><span class="o">(</span><span class="kt">char</span><span class="o">[]</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="c1">// use the shift-add-xor class of string hashing functions</span>
+</span><span class='line'>        <span class="c1">// cf. Ramakrishna and Zobel, &quot;Performance in Practice</span>
+</span><span class='line'>        <span class="c1">// of String Hashing Functions&quot;</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">h</span> <span class="o">=</span> <span class="mi">31</span><span class="o">;</span> <span class="c1">// seed chosen at random</span>
+</span><span class='line'>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">c</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span> <span class="c1">// could skip invariants</span>
+</span><span class='line'>            <span class="n">h</span> <span class="o">=</span> <span class="n">h</span> <span class="o">^</span> <span class="o">((</span><span class="n">h</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span><span class="o">)</span> <span class="o">+</span> <span class="o">(</span><span class="n">h</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="o">)</span> <span class="o">+</span> <span class="n">c</span><span class="o">[</span><span class="n">i</span><span class="o">]);</span> <span class="c1">// L=5, R=2 works well for</span>
+</span><span class='line'>                                                  <span class="c1">// ASCII input</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">h</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">equals</span><span class="o">(</span><span class="kt">char</span><span class="o">[]</span> <span class="n">c1</span><span class="o">,</span> <span class="kt">char</span><span class="o">[]</span> <span class="n">c2</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">c1</span><span class="o">.</span><span class="na">length</span> <span class="o">!=</span> <span class="n">c2</span><span class="o">.</span><span class="na">length</span><span class="o">)</span> <span class="o">{</span> <span class="c1">// could drop this check for fixed-length</span>
+</span><span class='line'>                                      <span class="c1">// keys</span>
+</span><span class='line'>            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">,</span> <span class="n">len</span> <span class="o">=</span> <span class="n">c1</span><span class="o">.</span><span class="na">length</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span> <span class="c1">// could skip</span>
+</span><span class='line'>                                                         <span class="c1">// invariants</span>
+</span><span class='line'>            <span class="k">if</span> <span class="o">(</span><span class="n">c1</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">!=</span> <span class="n">c2</span><span class="o">[</span><span class="n">i</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+</span><span class='line'>            <span class="o">}</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>3 Trove内幕</h2>
+
+<p>Trove是以减少内存消耗为主要目的的，同时也要保持性能。我们这里简单描述一下Trove的实现内幕。
+这里有有另外一篇文章可以参考：<a href="http://www.ibm.com/developerworks/cn/java/j-perf09284.html">性能观察: Trove 集合类</a></p>
+
+<ul>
+<li>直接使用原生类型,而不是包装类型</li>
+</ul>
+
+
+<p>JDK5的自动封箱机制，让我们可以暂时忽略原生类型和包准类型的区别。自动封箱机制只是一种语法糖，实际上并没有提高效率。
+直接使用原生类型替代包装类型，明显可以占用更小的内存、运行起来也更有效率。对于基本类型的集合组合，Trove都提供了
+等价的集合类。</p>
+
+<ul>
+<li>使用开放寻址法，而不是链地址法</li>
+</ul>
+
+
+<p>大多数的JDK集合类都是采用链地址法实现的，它需要一个地址表，并且元素之间需要链表结点，而Trove采用开放寻址法，
+虽然需要保持足够的空闲位置(装载因子小于0.5),但因为不需要链表结点，所以总体上内存占用要更少，性能还要更快一些。</p>
+
+<ul>
+<li>HashSet不再通过内置HashMap实现</li>
+</ul>
+
+
+<p>JDK的HashSet是通过内置一个HashSet来实现的，所以白白浪费了value的空间。
+Trove提供的THashSet和其他基本类型的HashSet,都不再采用这种方式，直接使用开放地址存储。</p>
+
+<ul>
+<li>采用素数长度大小的数组</li>
+</ul>
+
+
+<p>为了最大程度避免hash冲突，除了保持较小的装载因子，还采用了素数长度大小的数组。具体见gnu.trove.impl.PrimeFinder</p>
+
+<ul>
+<li>采用代码生成进行维护</li>
+</ul>
+
+
+<p>虽然这个和性能没什么关系。但是我们也知道要维护这么多的原生类型集合类，重复的逻辑多但没法重用，是个很纠结的事情。
+Trove采用代码模板，生成大量的类，通过这种方式，可以大大减少维护的工作量。</p>
+
+<h2>4 总结</h2>
+
+<p>JDK作为通用集合类，大多数情况下我们还是会优先选择的。不过，在一些性能敏感的地方，或者Trove可以提供更好的选择。
+作为靠谱的java开发人员，Trove应该像apache commons、google guava那样，存放在你的工具箱里边。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Web开发利器-Fiddler简介]]></title>
@@ -2613,238 +2917,6 @@ async在有些插件化的js时async可能可以用到，其他就很难用到�
 从这部分列表中挑选事项，<strong>集中精神逐项处理</strong>。周而复始，这样<strong>让每天都可以看到成果</strong>，激发自己的动力。</p>
 
 <p>ps: 我不是什么GTD专家，仅供参考。不过wunderlist真的是不错的TODO工具，推荐使用。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Node.js Best practices]]></title>
-    <link href="http://mccxj.github.com/blog/20130102_nodejs-best-practices.html"/>
-    <updated>2013-01-02T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/nodejs-best-practices</id>
-    <content type="html"><![CDATA[<p><strong>完整的ppt来源于<a href="http://www.slideshare.net/the_undefined/nodejs-best-practices-10428790">Node.js Best practices</a>,作者<a href="http://www.slideshare.net/the_undefined">Felix Geisendörfer</a>,需翻越</strong></p>
-
-<h3>Callbacks</h3>
-
-<p>下面是关于解析json文件的示例代码:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs);</span>
-<span class="s1">function readJSON(path, cb){</span>
-<span class="s1">  fs.readFile(path, &#39;</span><span class="nx">utf8</span><span class="err">&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
-    <span class="nx">cb</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
-<p>显然，上面的代码没有处理异常情况，因此再加个异常处理逻辑上去:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs);</span>
-<span class="s1">function readJSON(path, cb){</span>
-<span class="s1">  fs.readFile(path, &#39;</span><span class="nx">utf8</span><span class="err">&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
-    <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="nx">cb</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
-<p>还没有结束，我们还没考虑到文件内容不是json这种情况，会导致parse出现异常，因此再处理一下：</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs);</span>
-<span class="s1">function readJSON(path, cb){</span>
-<span class="s1">  fs.readFile(path, &#39;</span><span class="nx">utf8</span><span class="err">&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
-    <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="k">try</span><span class="p">{</span>
-      <span class="nx">cb</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
-    <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-      <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
-<p>对于cb来说，仍然无法区分正常结果和异常内容，这个问题通常可以通过增加一个err参数来处理，如:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs);</span>
-<span class="s1">function readJSON(path, cb){</span>
-<span class="s1">  fs.readFile(path, &#39;</span><span class="nx">utf8</span><span class="err">&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
-    <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="k">try</span><span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">json</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-    <span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-      <span class="k">return</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="nx">cb</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">json</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
-<p><strong>这个示例告诉我们，对于callback，需要时刻准备应付正常结果和异常情况的处理。</strong></p>
-
-<p>再来看看另外一个常见错误:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">function</span> <span class="nx">readJSONFiles</span><span class="p">(</span><span class="nx">files</span><span class="p">,</span> <span class="nx">cb</span><span class="p">){</span>
-  <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">{};</span>
-  <span class="kd">var</span> <span class="nx">remaining</span> <span class="o">=</span> <span class="nx">files</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-  
-  <span class="nx">files</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">){</span>
-    <span class="nx">readJSON</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">json</span><span class="p">){</span>
-      <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-      
-      <span class="nx">results</span><span class="p">[</span><span class="nx">file</span><span class="p">]</span> <span class="o">=</span> <span class="nx">json</span><span class="p">;</span>
-      <span class="k">if</span><span class="p">(</span><span class="o">!--</span><span class="nx">remaining</span><span class="p">)</span> <span class="nx">cb</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">results</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
-<p>这里隐含了一个常见的场景:<strong>批量处理时，任意一个失败，及时退出</strong>。有时候可以用标识符，这里采用另外一种手法：<strong>重置回调方法</strong>。</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">function</span> <span class="nx">readJSONFiles</span><span class="p">(</span><span class="nx">files</span><span class="p">,</span> <span class="nx">cb</span><span class="p">){</span>
-  <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">{};</span>
-  <span class="kd">var</span> <span class="nx">remaining</span> <span class="o">=</span> <span class="nx">files</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-  
-  <span class="nx">files</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">file</span><span class="p">){</span>
-    <span class="nx">readJSON</span><span class="p">(</span><span class="nx">file</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">json</span><span class="p">){</span>
-      <span class="k">if</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-        <span class="nx">cb</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
-        <span class="nx">cb</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){};</span>
-        <span class="k">return</span><span class="p">;</span>
-      <span class="p">}</span>
-      
-      <span class="nx">results</span><span class="p">[</span><span class="nx">file</span><span class="p">]</span> <span class="o">=</span> <span class="nx">json</span><span class="p">;</span>
-      <span class="k">if</span><span class="p">(</span><span class="o">!--</span><span class="nx">remaining</span><span class="p">)</span> <span class="nx">cb</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">results</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-<span class="p">}</span>
-</code></pre></div>
-
-
-<h3>Nested Callbacks</h3>
-
-<p>先看看一个恐怖的例子:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT A ...&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-  <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT B ...&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-    <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT C ...&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-      <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT D ...&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
-      <span class="p">});</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">});</span>
-</code></pre></div>
-
-
-<p>活生生就是一个怪物:)，多层嵌套的回调不是很好的风格，我们需要一些流程控制的东西来辅助，例如Control Flow Libs:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">var</span> <span class="nx">async</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;async&#39;</span><span class="p">);</span>
-
-<span class="nx">async</span><span class="p">.</span><span class="nx">series</span><span class="p">({</span>
-  <span class="nx">queryA</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">next</span><span class="p">){</span>
-    <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT A ...&#39;</span><span class="p">,</span> <span class="nx">next</span><span class="p">);</span>
-  <span class="p">},</span>
-  <span class="nx">queryB</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">next</span><span class="p">){</span>
-    <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT B ...&#39;</span><span class="p">,</span> <span class="nx">next</span><span class="p">);</span>
-  <span class="p">},</span>
-  <span class="nx">queryA</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">next</span><span class="p">){</span>
-    <span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;SELECT C ...&#39;</span><span class="p">,</span> <span class="nx">next</span><span class="p">);</span>
-  <span class="p">}</span>
-  <span class="c1">// ...</span>
-<span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">results</span><span class="p">){</span>
-  <span class="c1">//...</span>
-<span class="p">});</span>
-</code></pre></div>
-
-
-<p>像上面的代码，最明显的地方就是异常处理被完全隔离出来。<strong>如果要把代码分布到很多小方法里边的话，Node.js的确不是很容易做到</strong>。</p>
-
-<h3>Exceptions</h3>
-
-<p>通常throw new Error(msg)可以让你的程序进行异常退出，并在控制台上输入错误信息和堆栈信息。</p>
-
-<p>但有时候我们要考虑的是，<strong>一些未知的bug</strong>，例如下面一个有bug的示例:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="kd">function</span> <span class="nx">MyClass</span><span class="p">(){}</span>
-
-<span class="nx">MyClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">myMethod</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-  <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">myOtherMethod</span><span class="p">();</span>
-  <span class="p">},</span> <span class="mi">10</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="nx">MyClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">myOtherMethod</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){};</span>
-
-<span class="p">(</span><span class="k">new</span> <span class="nx">MyClass</span><span class="p">).</span><span class="nx">myMethod</span><span class="p">();</span>
-</code></pre></div>
-
-
-<p>我们可以采用Global Catch的方式:</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-  <span class="nx">console</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="s1">&#39;uncaught exception: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">.</span><span class="nx">stack</span><span class="p">);</span> 
-<span class="p">});</span>
-</code></pre></div>
-
-
-<p>更好的处理方式是:<strong>进程挂了，认栽了，到更高层面上去处理</strong>。</p>
-
-<div class="highlight"><pre><code class="javascript"><span class="nx">process</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;uncaughtException&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
-  <span class="c1">// You could use node-airbake for this</span>
-  <span class="nx">sendErrorToLog</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
-    <span class="c1">// Once the error was logged, kill the process</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">err</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nx">stack</span><span class="p">);</span>
-    <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">});</span>
-</code></pre></div>
-
-
-<h3>Deployment</h3>
-
-<p>比较初级的方式是采用node直接运行或在后台运行。老手可能会采用一个脚本来搞:</p>
-
-<div class="highlight"><pre><code class="bash"><span class="c">#! /bin/bash</span>
-
-<span class="k">while</span> :
-<span class="k">do</span>
-<span class="k">  </span>node server.js
-  <span class="nb">echo</span> <span class="s2">&quot;Server crashed!&quot;</span>
-  sleep 1
-<span class="k">done</span>
-</code></pre></div>
-
-
-<p>专家级采用的方式可能是(借助成熟的集成工具):</p>
-
-<div class="highlight"><pre><code class="bash"><span class="c">#!upstart</span>
-
-description <span class="s2">&quot;myapp&quot;</span>
-author <span class="s2">&quot;felix&quot;</span>
-
-start on<span class="o">(</span><span class="nb">local</span>-filesystems and net-device-up <span class="nv">IFACE</span><span class="o">=</span>eth0<span class="o">)</span>
-stop on shutdown
-
-respawn <span class="c"># restart when job dies</span>
-respawn limit 5 60 <span class="c"># give up restart after 5 respawns in 60 seconds</span>
-
-script
-  <span class="nb">exec </span>sudo -u www-data /path/to/server.js &gt;&gt; /var/log/myapp.log 2&gt;&amp;1
-end script
-</code></pre></div>
-
-
-<p>当然，还有些创新风格的(基于托管平台的):</p>
-
-<div class="highlight"><pre><code class="bash"><span class="nv">$git</span> push joyent master
-<span class="nv">$git</span> push nodejitsu master
-<span class="nv">$git</span> push heroku master
-</code></pre></div>
-
-
-<p><strong>没有托管平台的话，借助成熟的工具应该是最好的选择，性价比高。</strong></p>
 ]]></content>
   </entry>
   
