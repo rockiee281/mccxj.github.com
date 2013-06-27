@@ -66,6 +66,26 @@ public void test1() throws Exception {
 当然，在字符串修改的时候，会产生一个新的对象，如果执行很频繁，就会导致大量对象的创建，性能问题也就随之而来了。
 为了应付这个问题，通常我们会采用StringBuffer或StringBuilder类来处理。
 
+另外，字符串常量通常是在编译的时候就确定好的，定义在类的方法区里边，也就是说，不同的类，即使用了同样的字符串，
+还是属于不同的对象。所以才需要**通过引用字符串常量来减少相同的字符串的数量**。可以通过下面的代码来测试一下：
+
+``` java
+class A {
+    public void print() {
+        System.out.println("hello");
+    }
+}
+
+class B {
+    public void print() {
+        String s = "hello";
+        // 修改s的第一个字符为H
+        System.out.println("hello"); // 输出Hello
+        new A().print(); // 输出hello
+    }
+}
+```
+
 ## 字符串操作细节
 
 String类内部处理有个字符数组之外，还使用偏移位置offset和长度count，
