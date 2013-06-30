@@ -4,7 +4,7 @@
   <title><![CDATA[Category: java | 小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/blog/categories/java/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-06-27T21:27:53+08:00</updated>
+  <updated>2013-06-30T18:16:14+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -12,6 +12,33 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[带平衡的对象池设计]]></title>
+    <link href="http://mccxj.github.com/blog/20130630_object-balance-pool.html"/>
+    <updated>2013-06-30T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/object-balance-pool</id>
+    <content type="html"><![CDATA[<p>最近有个需求，是关于一个Socket连接池的功能改造，要求实现下面的需求:</p>
+
+<ol>
+<li>可配置多个服务器地址</li>
+<li>服务器地址可以配置权重(比如3:2:1)</li>
+<li>连接池可以设置最小连接和最大连接</li>
+<li>某服务器从崩溃中恢复后，连接池中的连接数可以自动恢复到服务器之间的权重比。</li>
+<li>连接可设置最大空闲释放时间</li>
+</ol>
+
+
+<p>一开始有同事自定义了一个链表来做取数和归还的操作，在线程安全方面操作感觉还是有点麻烦。
+后来我采用PriorityBlockingQueue来实现，其实就是内部变成了堆的结构。见下面的图:</p>
+
+<p><img src="/assets/images/2013/pool/1.png" alt="数据结构" /></p>
+
+<p><img src="/assets/images/2013/pool/2.png" alt="类图" /></p>
+
+<p><img src="/assets/images/2013/pool/3.png" alt="状态图" /></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[初探Java字符串]]></title>

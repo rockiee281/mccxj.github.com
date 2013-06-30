@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: 实践 | 小毛的胡思乱想]]></title>
+  <title><![CDATA[Category: 时间 | 小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/blog/categories/shi-jian/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-06-30T18:14:17+08:00</updated>
+  <updated>2013-06-30T18:16:14+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -14,637 +14,600 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Node.js Best practices]]></title>
-    <link href="http://mccxj.github.com/blog/20130102_nodejs-best-practices.html"/>
-    <updated>2013-01-02T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/nodejs-best-practices</id>
-    <content type="html"><![CDATA[<p><strong>完整的ppt来源于<a href="http://www.slideshare.net/the_undefined/nodejs-best-practices-10428790">Node.js Best practices</a>,作者<a href="http://www.slideshare.net/the_undefined">Felix Geisendörfer</a>,需翻越</strong></p>
+    <title type="html"><![CDATA[java性能--降低时间与空间消耗]]></title>
+    <link href="http://mccxj.github.com/blog/20130315_java-performance.html"/>
+    <updated>2013-03-15T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/java-performance</id>
+    <content type="html"><![CDATA[<h3>译者的话</h3>
 
-<h3>Callbacks</h3>
+<p>断断续续的翻译完了，有些地方翻译得比较纠结，很难选择一个合适的表达。
+中文和英文在表达上还是有很多习惯上的不同，我又不想掺杂太多自己的意译上去，搞得有点进退两难。
+有能力的同学还是尽量阅读英文的吧，毕竟这篇文章的英文并不深。</p>
 
-<p>下面是关于解析json文件的示例代码:
-{% highlight javascript %}
-var fs = require('fs);
-function readJSON(path, cb){
-  fs.readFile(path, 'utf8', function(err, data){</p>
+<p><strong>作者: Reter Sestoft(sestoft@dina.kvl.dk)</strong> <br/>
+<strong>对应版本:2005-04-13 Version2</strong><br/>
+<a href="http://www.itu.dk/people/sestoft/papers/performance.pdf">原文链接</a></p>
 
-<pre><code>cb(JSON.parse(data));
-</code></pre>
+<h3>前言</h3>
 
-<p>  }
-}
-{% endhighlight %}</p>
+<p>我们提出一些通过降低时间与间消耗来改进java程序运行时间的建议。
+这里没有什么魔术的技巧，仅仅在避免常见问题上提出建议。</p>
 
-<p>显然，上面的代码没有处理异常情况，因此再加个异常处理逻辑上去:
-{% highlight javascript %}
-var fs = require('fs);
-function readJSON(path, cb){
-  fs.readFile(path, 'utf8', function(err, data){</p>
+<h3>1 降低时间消耗</h3>
 
-<pre><code>if(err) return cb(err);
-cb(JSON.parse(data));
-</code></pre>
+<h4>1.1 基本代码优化</h4>
 
-<p>  }
-}
-{% endhighlight %}</p>
+<p>不要期望java编译器(例如javac或jikes)去做许多聪明的优化。
+因为java有比较严格的语句次序和线程语义，所以相对于C或者Fortran等比较少严格定义的语言，
+要安全的提高java程序的性能，编译器能做的事情很有限。但是你可以改进你自己的java源代码，来做到这点。</p>
 
-<p>还没有结束，我们还没考虑到文件内容不是json这种情况，会导致parse出现异常，因此再处理一下：
-{% highlight javascript %}
-var fs = require('fs);
-function readJSON(path, cb){
-  fs.readFile(path, 'utf8', function(err, data){</p>
-
-<pre><code>if(err) return cb(err);
-try{
-  cb(JSON.parse(data));
-}catch(err){
-  cb(err);
-}
-</code></pre>
-
-<p>  }
-}
-{% endhighlight %}</p>
-
-<p>对于cb来说，仍然无法区分正常结果和异常内容，这个问题通常可以通过增加一个err参数来处理，如:
-{% highlight javascript %}
-var fs = require('fs);
-function readJSON(path, cb){
-  fs.readFile(path, 'utf8', function(err, data){</p>
-
-<pre><code>if(err) return cb(err);
-try{
-  var json = JSON.parse(data);
-}catch(err){
-  return cb(err);
-}
-cb(null, json);
-</code></pre>
-
-<p>  }
-}
-{% endhighlight %}</p>
-
-<p><strong>这个示例告诉我们，对于callback，需要时刻准备应付正常结果和异常情况的处理。</strong></p>
-
-<p>再来看看另外一个常见错误:
-{% highlight javascript %}
-function readJSONFiles(files, cb){
-  var results = {};
-  var remaining = files.length;</p>
-
-<p>  files.forEach(function(file){</p>
-
-<pre><code>readJSON(file, function(err, json){
-  if(err) return cb(err);
-
-  results[file] = json;
-  if(!--remaining) cb(null, results);
-}
-</code></pre>
-
-<p>  });
-}
-{% endhighlight %}</p>
-
-<p>这里隐含了一个常见的场景:<strong>批量处理时，任意一个失败，及时退出</strong>。有时候可以用标识符，这里采用另外一种手法：<strong>重置回调方法</strong>。
-{% highlight javascript %}
-function readJSONFiles(files, cb){
-  var results = {};
-  var remaining = files.length;</p>
-
-<p>  files.forEach(function(file){</p>
-
-<pre><code>readJSON(file, function(err, json){
-  if(err){
-    cb(err);
-    cb = function(){};
-    return;
-  }
-
-  results[file] = json;
-  if(!--remaining) cb(null, results);
-}
-</code></pre>
-
-<p>  });
-}
-{% endhighlight %}</p>
-
-<h3>Nested Callbacks</h3>
-
-<p>先看看一个恐怖的例子:
-{% highlight javascript %}
-db.query('SELECT A ...', function(){
-  db.query('SELECT B ...', function(){</p>
-
-<pre><code>db.query('SELECT C ...', function(){
-  db.query('SELECT D ...', function(){
-  });
-});
-</code></pre>
-
-<p>  });
-});
-{% endhighlight %}</p>
-
-<p>活生生就是一个怪物:)，多层嵌套的回调不是很好的风格，我们需要一些流程控制的东西来辅助，例如Control Flow Libs:
-{% highlight javascript %}
-var async = require('async');</p>
-
-<p>async.series({
-  queryA: function(next){</p>
-
-<pre><code>db.query('SELECT A ...', next);
-</code></pre>
-
-<p>  },
-  queryB: function(next){</p>
-
-<pre><code>db.query('SELECT B ...', next);
-</code></pre>
-
-<p>  },
-  queryA: function(next){</p>
-
-<pre><code>db.query('SELECT C ...', next);
-</code></pre>
-
-<p>  }
-  // ...
-}, function(err, results){
-  //...
-});
-{% endhighlight %}</p>
-
-<p>像上面的代码，最明显的地方就是异常处理被完全隔离出来。<strong>如果要把代码分布到很多小方法里边的话，Node.js的确不是很容易做到</strong>。</p>
-
-<h3>Exceptions</h3>
-
-<p>通常throw new Error(msg)可以让你的程序进行异常退出，并在控制台上输入错误信息和堆栈信息。</p>
-
-<p>但有时候我们要考虑的是，<strong>一些未知的bug</strong>，例如下面一个有bug的示例:
-{% highlight javascript %}
-function MyClass(){}</p>
-
-<p>MyClass.prototype.myMethod = function(){
-  setTimeout(function(){</p>
-
-<pre><code>this.myOtherMethod();
-</code></pre>
-
-<p>  }, 10);
-}</p>
-
-<p>MyClass.prototype.myOtherMethod = function(){};</p>
-
-<p>(new MyClass).myMethod();
-{% endhighlight %}</p>
-
-<p>我们可以采用Global Catch的方式:
-{% highlight javascript %}
-process.on('uncaughtException', function(err){
-  console.err('uncaught exception: ' + err.stack);
-});
-{% endhighlight %}</p>
-
-<p>更好的处理方式是:<strong>进程挂了，认栽了，到更高层面上去处理</strong>。
-{% highlight javascript %}
-process.on('uncaughtException', function(err){
-  // You could use node-airbake for this
-  sendErrorToLog(function(){</p>
-
-<pre><code>// Once the error was logged, kill the process
-console.err(err.stack);
-process.exit(1);
-</code></pre>
-
-<p>  }
-});
-{% endhighlight %}</p>
-
-<h3>Deployment</h3>
-
-<p>比较初级的方式是采用node直接运行或在后台运行。老手可能会采用一个脚本来搞:
-{% highlight bash %}</p>
-
-<h1>! /bin/bash</h1>
-
-<p>while :
-do
-  node server.js
-  echo "Server crashed!"
-  sleep 1
-done
-{% endhighlight %}</p>
-
-<p>专家级采用的方式可能是(借助成熟的集成工具):
-{% highlight bash %}</p>
-
-<h1>!upstart</h1>
-
-<p>description "myapp"
-author "felix"</p>
-
-<p>start on(local-filesystems and net-device-up IFACE=eth0)
-stop on shutdown</p>
-
-<p>respawn # restart when job dies
-respawn limit 5 60 # give up restart after 5 respawns in 60 seconds</p>
-
-<p>script
-  exec sudo -u www-data /path/to/server.js >> /var/log/myapp.log 2>&amp;1
-end script
-{% endhighlight %}</p>
-
-<p>当然，还有些创新风格的(基于托管平台的):
-{% highlight bash %}
-$git push joyent master
-$git push nodejitsu master
-$git push heroku master
-{% endhighlight %}</p>
-
-<p><strong>没有托管平台的话，借助成熟的工具应该是最好的选择，性价比高。</strong></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[maven学习要点(旧)]]></title>
-    <link href="http://mccxj.github.com/blog/20121130_maven-quickstart.html"/>
-    <updated>2012-11-30T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/maven-quickstart</id>
-    <content type="html"><![CDATA[<p>我感觉maven这东西比ant容易上手(ant每个项目规则都不一样),看那个100页的迷你书+例子(推荐basecrm或spring3.0)基本就ok了~~
-哎，本来想写的很多，发现写出来的却很少。多多包涵!</p>
+<p><strong>注: 理解为语句上的次序</strong> <br/>
+<strong>注: 严格定义指语法上限制</strong></p>
 
 <ul>
-<li>maven是一个项目管理工具，跟ant相比亮点在于它遵守了COC规则，只要遵守就好处多多</li>
-<li>maven可以分为三部分:maven本身(提供基本功能),仓库(提供jar),maven插件(提供更多的集成功能)</li>
-<li>maven的配置文件是settings.xml,maven项目的配置文件是pom.xml</li>
-<li><p>settings.xml主要是配置仓库镜像,本地仓库,网络访问设置等信息,常用配置:
-{% highlight xml %}
-<localRepository>D:/repository</localRepository> --本地仓库
- <proxy>  --网络代理
-   <id>optional</id>
-   <active>true</active>
-   <protocol>http</protocol>
-   <username>proxyuser</username>
-   <password>proxypass</password>
-   <host>proxy.host.net</host>
-   <port>80</port>
-   <nonProxyHosts>local.net|some.host.com</nonProxyHosts>
- </proxy>
-<mirror>  --仓库镜像
-  <id>nexus</id>
-  <mirrorOf>*</mirrorOf>
-  <name>Mirror for maven central.</name>
-  <url>http://10.137.27.223:8080/nexus/content/groups/public</url>
-</mirror>
-{% endhighlight %}</p></li>
-<li><p>pom.xml主要分为三部分:项目本身的信息,使用的插件,依赖的jar</p></li>
-<li><p>项目本身的信息,用于唯一标识(groupid-artifactId-version, 通常是这3部分)，例如
-{% highlight xml %}
-<modelVersion>4.0.0</modelVersion> --maven3.x都是使用4.0.0
-<groupId>com.huawei.boss</groupId>
-<artifactId>boss-common</artifactId>
-<version>0.0.1-SNAPSHOT</version>
-<packaging>jar</packaging>
-{% endhighlight %}
-类似这个，默认就会被打包成boss-common-0.0.1-SNAPSHOT.jar。同样，项目的依赖库也是通过这种坐标在仓库中寻找的。</p></li>
-<li><p>artifactId通常推荐使用项目名当前缀,当项目是打包成war的时候,通常需要制定发布后的命名:
-{% highlight xml %}
-<build>
- <finalName>bossbase</finalName>
-</build>
-{% endhighlight %}</p></li>
-<li>可以通过properties定义一些常量,并通过${spring.version}之类来引用
-{% highlight xml %}
-<properties>
-
-<pre><code> &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
- &lt;spring.version&gt;2.5.6&lt;/spring.version&gt;
-</code></pre>
-
-<p></properties>
-{% endhighlight %}</p></li>
-<li><p>jar包依赖常用的有如下配置(仅举例说明):
-{% highlight xml %}
-<dependencies>
-   <dependency></p>
-
-<pre><code>     &lt;groupId&gt;org.springframework&lt;/groupId&gt;
-         &lt;artifactId&gt;spring-core&lt;/artifactId&gt;
-       &lt;version&gt;${spring.version}&lt;/version&gt;  --常量引用,在引用同个项目多个模块的时候相当有效
-     &lt;type&gt;jar&lt;/type&gt;  --默认就是jar
-       &lt;scope&gt;compile&lt;/scope&gt;  --默认是compile,表示对编译,测试,运行都有效
- &lt;/dependency&gt;
-</code></pre>
-
-  <dependency>
-
-<pre><code>    &lt;groupId&gt;geronimo-spec&lt;/groupId&gt;
-      &lt;artifactId&gt;geronimo-spec-jta&lt;/artifactId&gt; --这个是为了不依赖sun的专用东东
-     &lt;version&gt;1.0.1B-rc4&lt;/version&gt;
-          &lt;type&gt;pom&lt;/type&gt;
-    &lt;scope&gt;provided&lt;/scope&gt;  --在运行的时候不依赖，我们常见的时候j2ee规范之类的api,如servlet-api
-</code></pre>
-
-</dependency>
-
-<pre><code> &lt;dependency&gt;
-       &lt;groupId&gt;junit&lt;/groupId&gt;
-         &lt;artifactId&gt;junit&lt;/artifactId&gt;
-     &lt;version&gt;4.8.2&lt;/version&gt;
-       &lt;type&gt;jar&lt;/type&gt;
-         &lt;scope&gt;test&lt;/scope&gt;  --只在测试的时候生效,另外还有个ruuntime的scope,用于运行时依赖(如jdbc驱动等)
-&lt;/dependency&gt;
-</code></pre>
-
- <dependency>
-   <groupId>org.hibernate</groupId>
-   <artifactId>hibernate</artifactId>
-   <version>3.2.5.ga</version>
-   <exclusions>  --这里是排除依赖，因为jta官方版是在maven仓库中找不到的
-
-<pre><code> &lt;exclusion&gt;
-   &lt;groupId&gt;javax.transaction&lt;/groupId&gt;
-   &lt;artifactId&gt;jta&lt;/artifactId&gt;
- &lt;/exclusion&gt;
-</code></pre>
-
-<p>   </exclusions>
- </dependency>
-</dependencies>
-{% endhighlight %}</p></li>
-<li><p>当项目是分模块进行的时候,通常会考虑使用modules,如:
-{% highlight xml %}
- <modules></p>
-
-<pre><code> &lt;module&gt;basecrm-parent&lt;/module&gt;
- &lt;module&gt;common&lt;/module&gt;
- &lt;module&gt;systemmgr&lt;/module&gt;
- &lt;module&gt;prodmgr&lt;/module&gt;
-</code></pre>
-
-<p> </modules>
-{% endhighlight %}
-这个时候至少会有两级pom.xml,这样像properties,dependency等都是可以继承的(可参考basecrm项目或者spring3.x)</p></li>
-<li><p>plugin资源非常多，简单举几个常用插件(配置请上网找)<br/>
-maven-compiler-plugin 主要是配置编译方面的选项(例如使用什么版本的jdk)<br/>
-maven-surefire-plugin 跟测试有关的,例如配置测试失败是否继续,是否跳过测试等<br/>
-build-helper-maven-plugin 用于配置项目的目录结构,例如配置多个源代码目录等<br/>
-maven-shade-plugin 我只知道可以用来给打包加点料~~<br/>
-tomcat-maven-plugin 顾名思义,用于集成tomcat<br/>
-maven-jetty-plugin 顾名思义,用于集成jetty</p></li>
-<li><p>others <br/>
-maven仓库代理推荐nexus(网内已经有个现成的:http://10.137.27.223:8080/nexus)<br/>
-eclipse中的maven插件推荐m2eclipse(update-site: http://m2eclipse.sonatype.org/sites/m2e)<br/>
-maven实战迷你书(http://www.infoq.com/cn/minibooks/maven-in-action)</p></li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[jstl学习经验(旧)]]></title>
-    <link href="http://mccxj.github.com/blog/20121130_jstl.html"/>
-    <updated>2012-11-30T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/jstl</id>
-    <content type="html"><![CDATA[<p>为了在公司里边推广jstl，而总结的一些jstl使用技巧:</p>
-
-<h4>jstl可以很方便的处理NullPointException,访问越界等常见问题</h4>
-
-<p>{% highlight jsp %}
-&lt;c:set var=”SPExtraInfoList” value=”${queryresult[3]}”/>
-&lt;c:out value=”${queryresult[3]}”/>
-{% endhighlight %}
-这2个表达式不会因为没有第四个元素而报错</p>
-
-<h4>这2个表达式一般情况下表现是一样的，只是用c:out可以带上default的参数来处理NullPointException</h4>
-
-<p>{% highlight jsp %}
-<td>&lt;c:out value=”${spservice.m_SpID}”/></td>
-<td>${spservice.m_SpID}</td>
-{% endhighlight %}</p>
-
-<h4>即使担心其他Exception,也可以通过c:catch来做防御</h4>
-
-<p>{% highlight jsp %}
-&lt;c:catch>&lt;c:out value=”${values[9]/1000.00}”/>&lt;/c:catch>
-{% endhighlight %}</p>
-
-<h4>fn:length的使用</h4>
-
-<p>用来判断集合类型或String的长度，不过只是用来判断obj是否为空的话，用le语言${empty obj}更方便(同样支持多种类型)</p>
-
-<h4>关于fn:split</h4>
-
-<p>用这个方法切割会丢失空字符串,原因是这个标签使用StringTokenizer来处理而不是split方法。
-{% highlight jsp %}
-&lt;% String[] values = ((CEntityString)pageContext.getAttribute(“service”)).EntityString.split(“,”);
-   pageContext.setAttribute(“values”, values);  %>
-{% endhighlight %}
-这是比较丑的例子，对格式依赖比较严重，所以最好就使用比较清晰的结构</p>
-
-<h4>关于if-else和三元表达式</h4>
-
-<p>jstl做判断分支是比较麻烦的，只提供了c:otherwise的方式，只好将就点先用着吧。如
-{% highlight jsp %}
-&lt;c:choose>&lt;c:when test=”${’1′ eq spextrainfo[0]}”>是&lt;/c:when>&lt;c:otherwise>否&lt; /c:otherwise>&lt;/c:choose>
-{% endhighlight %}</p>
-
-<h4>jstl改变操作</h4>
-
-<p>jstl里边要做访问操作是比较方便的，不过涉及改变就挺麻烦的，如对某个字符串加个头，然后在Map里边检索，这样就不能在一个表达式里边写完，需要先c:set一下,如
-{% highlight jsp %}
-&lt;c:set var=”bzType” value=”BizType${spservice.m_SpBizType}”/>
-&lt;c:out value=”${BizTypeMap[bzType]}”/>
-{% endhighlight %}</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[ibatis进阶(旧)]]></title>
-    <link href="http://mccxj.github.com/blog/20121130_ibatis-more-config.html"/>
-    <updated>2012-11-30T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/ibatis-more-config</id>
-    <content type="html"><![CDATA[<h2>Ibatis比较少人使用的配置语法</h2>
-
-<p>简单来说，ibatis3虽然没有ognl,不过也支持基本的表达式（看起来有点像el表达式的样子) 上次有个问题，说到两个表单数据(两个javabean)，入同一个表，传参就应该不成问题了</p>
-
-<h4>java代码1:</h4>
-
-<p>{% highlight java %}
-   Map map = new HashMap();
-   ComplexBean bean = new ComplexBean();
-   bean.setMap(new HashMap());
-   bean.getMap().put("id", new Integer(1));
-   map.put("bean", bean);
-   Account account = new Account();
-   account.setId(2);
-   Account anotherAccount = new Account();
-   anotherAccount.setId(3);
-   map.put("accounts", new Account[] {account, anotherAccount});
-   Integer id = (Integer) sqlMap.queryForObject("mapBeanMap", map);
-{% endhighlight %}</p>
-
-<h4>ibatis配置1:</h4>
-
-<p>{% highlight xml %}
- <select id="mapBeanMap"
-   parameterClass="map"
-   resultClass="int" >
-   select count(ACC_ID) from Account where ACC_ID in (#bean.map.id#,#accounts[0].id#,#accounts[1].id#)
- </select>
-{% endhighlight %}</p>
-
-<h4>java代码2:</h4>
-
-<p>{% highlight java %}
-   Map map = new HashMap();
-   ComplexBean bean = new ComplexBean();
-   bean.setMap(new HashMap());
-   Account account = new Account();
-   account.setId(2);
-   Account anotherAccount = new Account();
-   anotherAccount.setId(3);
-   bean.getMap().put("accounts", new Account[] {account, anotherAccount});
-   map.put("bean", bean);
-{% endhighlight %}</p>
-
-<h4>ibatis配置2:</h4>
-
-<p>{% highlight xml %}
- <select id="mapBeanMap2"
-   parameterClass="map"
-   resultClass="int" >
-   select count(ACC_ID) from Account where ACC_ID in
-   <iterate close=")" open="(" conjunction="," property="bean.map.accounts"></p>
-
-<pre><code> #bean.map.accounts[].id#
-</code></pre>
-
-<p>   </iterate>
- </select>
-{% endhighlight %}</p>
-
-<h2>ibatis与泛型</h2>
-
-<p>当使用复杂配置并且参数带有泛型的时候，使用比较标签有可能导致如下错误:There is no READABLE property named ‘XXX’ in class ‘java.lang.Object’.这是因为进行比较的时候，ibatis是通过反射获取类型而不是先计算值的,这样泛型的时候会获取到Object类而不能得到真实的类型,自己简单打个补丁先:
-{% highlight diff %}</p>
-
-<h1>Index: src/com/ibatis/sqlmap/engine/mapping/sql/dynamic/elements/ConditionalTagHandler.java</h1>
-
-<p>--- src/com/ibatis/sqlmap/engine/mapping/sql/dynamic/elements/ConditionalTagHandler.java (revision 1079874)
-+++ src/com/ibatis/sqlmap/engine/mapping/sql/dynamic/elements/ConditionalTagHandler.java (working copy)
-@@ -72,14 +72,13 @@</p>
-
-<pre><code> if (prop != null) {
-   value1 = PROBE.getObject(parameterObject, prop);
-</code></pre>
-
-<ul>
-<li>   type = PROBE.getPropertyTypeForGetter(parameterObject, prop);
- } else {
-   value1 = parameterObject;</li>
-<li>   if (value1 != null) {</li>
-<li><pre><code> type = parameterObject.getClass();
-</code></pre></li>
-<li>   } else {</li>
-<li><pre><code> type = Object.class;
-</code></pre></li>
-<li>   }</li>
-<li> }</li>
-<li> if (value1 != null) {</li>
-<li>  type = value1.getClass();</li>
-<li> } else {</li>
-<li>  type = Object.class;
- }
- if (comparePropertyName != null) {
-   Object value2 = PROBE.getObject(parameterObject, comparePropertyName);
-{% endhighlight %}</li>
+<li>把循环不变量的计算移到循环之外。例如，避免重复计算一个for循环里的边界，像这样:</li>
 </ul>
 
 
-<h2>关于inlineParameterMap</h2>
+<p><code>java
+for (int i=0; i&lt;size()*2; i++) { ... }
+</code></p>
 
-<p>例如#name#(标准配置),#name:NUMBER#(以:分割),#myVar:javaType=int#都是有效的
-其中以:分割的有两种方式，#name:jdbcTypeName#,#name:jdbcTypeName:nullvalue#(如果后面还有则会被加到nullvalue上去) 这是老配置方法，个人不推荐使用。
-最后一种是新的配置方式,可以带上javaType,jdbcType,mode,nullValue,numericScale,handler等参数(这个文档有详细描述)</p>
+<p>应该仅计算一次循环边界，然后把结果赋值给一个本地变量，像这样:
+<code>java
+for (int i=0, stop=size()*2; i&lt;stop; i++) { ... }
+</code></p>
 
-<h2>jdbcType,javaType和TypeHandler</h2>
-
-<p>首先要说明一点的是,配置里边的jdbcType和javaType两个配置参数是为了生成TypeHandler(如果没有指定的话);
-查找typeHandler的内部结构是Map&lt;javaType, Map&lt;jdbcType, typeHandler&gt;&gt;,其中javaType是一个类,jdbcType是一个字符串;
-所以jdbcType其实和数据库的字段类型没什么关系,只要能找到相应的TypeHandler即可(当然通常都会对应上);
-typeHandler主要是做什么用的呢?无非就是使用jdbc api的时候选择setString/setInt还是getString/getObject之类</p>
-
-<h2>只指定resultClass，没有resultMap</h2>
-
-<p>如果没有指定resultMap，ibatis会根据parameterClass生成一个AutoResultMap对象;
-对于AutoResultMap,里边的每个属性的映射对应的typeHandler是什么?</p>
-
-<table markdown="1" class="table">
-  <tr><td>resultClass</td><td>TypeHandler</td></tr>
-  <tr><td>Map</td><td>ObjectTypeHandler</td></tr>
-  <tr><td>原型类型</td><td>相应类对应的typeHandler(javaType=?,jdbcType=null)</td></tr>
-  <tr><td>Bean</td><td>会对实例变量名称进行大写并和ResultSetMetaData信息进行对比,最后生成typeHandler(javaType=?,jdbcType=null)</td></tr>
-</table>
+<ul>
+<li>不要重复计算同样的子表达式:</li>
+</ul>
 
 
-<p>所以使用parameterClass是map的时候，某些字段的处理可能会有点问题,例如oracle的NUMBER类型会被转成BigDecimal类;</p>
+<p><code>java
+if (birds.elementAt(i).isGrower()) ...
+if (birds.elementAt(i).isPullet()) ...
+</code></p>
 
-<h2>只指定parameterClass，没有parameterMap</h2>
+<p>应该计算子表达式一次，然后把结果赋值给一个变量，并且重用这个变量:
+<code>java
+Bird bird = birds.elementAt(i);
+if (bird.isGrower()) ...
+if (bird.isPullet()) ...
+</code></p>
 
-<p>如果没有指定parameterMap，就会根据配置的sql解析inlineParameterMap;
-其中每个参数的TypeHandler如果没有指定，会根据参数的类型来寻找，例如#name,jdbcType=NUMBER# 会根据name计算后的类型来制定javaType
-这个typeHandler的好处可以对jdbc api友好，例如对于int默认会采用IntegerTypeHandler，这样会调用PreparedStatement#setInt, 而不是统统setString或者setObject。
-通常参数类型和jdbc类型不对应的时候，需要考虑设置typeHandler或者使用更强类型的Bean而不是统统使用map;</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[findbugs使用有感(旧)]]></title>
-    <link href="http://mccxj.github.com/blog/20121130_findbugs.html"/>
-    <updated>2012-11-30T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/findbugs</id>
-    <content type="html"><![CDATA[<p>最近抽出点时间来处理项目上庞大的findbugs问题,处理过程中总结了下面几类参见的毛病：</p>
+<ul>
+<li>每一次数组访问需要一个索引检查，所以降低数据访问次数是值得的。另外，通常java编译器不能
+自动优化多维数组的索引。例如，内循环(j)的每次迭代，重新计算索引rowsum[i]和arr的第一维索引arr[i]:</li>
+</ul>
 
-<h3>关于IO流</h3>
 
-<p>见过的有写response的outputStream,文件下载,数据导出。这些场景涉及流读取、写入和最后的关闭，是findbugs检查的重灾区.
-解决办法是使用common-io库,常用的方法有IOUtils#copy,IOUtils#write,IOUtils#closeQuietly。</p>
+<p>``` java
+double[] rowsum = new double[n];
+for (int i=0; i&lt;n; i++)
+  for (int j=0; j&lt;m; j++)</p>
 
-<h3>关于无效变量操作</h3>
+<pre><code>rowsum[i] += arr[i][j];
+</code></pre>
 
-<p>包括变量使用后置null,没有被使用的变量，虽然这种findbugs问题很低级,不过在系统中仍然存在很多。
-处理办法是
-1. 变量使用后置null是没什么用的,JVM的GC比想象中智能多了；
-2. 假如变量在稍后的处理过程一定会被赋值,则init是没有意义的。<br/>
-遵循的原则是相关的变量和操作集中在一起，缩短变量的作用域(同时，这样也对JVM比较友好)</p>
+<p>```</p>
 
-<h3>关于对象的延时加载</h3>
+<p>相反，在外循环的每次迭代中只计算一次这些索引值:
+``` java
+double[] rowsum = new double[n];
+for (int i=0; i&lt;n; i++) {
+  double[] arri = arr[i];
+  double sum = 0.0;
+  for (int j=0; j&lt;m; j++)</p>
 
-<p>系统中有些类实现了延时加载的singleton模式，还有的Action类中的实例变量使用了延时加载的方式。
-很不幸的是，singleton的延时加载实现几乎都是错的, Action类的实例变量延时加载也没什么意义。
-要实现singleton，最简单的方式是预加载方式,如果想做延时加载,可以使用内部静态类的实现方式。</p>
+<pre><code>sum += arri[j];
+</code></pre>
 
-<h3>关于执行效率</h3>
+<p>  rowsum[i] = sum;
+}
+```</p>
 
-<p>包括string的修改操作,map的遍历操作。如果有string的大量修改操作，应该使用StringBuffer或者StringBuilder
-(在jdk5以上，StringBuilder适用于大多数场合)。而对于map的遍历,应该使用entrySet而不是keySet,这些注意一下就ok了。
-另外系统有很多DateFormater的东西，用了很多静态变量来提高效率，可惜jdk的日期库是非常烂的,DateFormater也不是线程安全的东西，应该避免使用静态变量。</p>
+<p>注意的是，初始化中arri = arr[i]并没有拷贝数组的第i行;它仅仅把数组引用(4个字节)赋给arri.</p>
 
-<h3>关于异常处理</h3>
+<ul>
+<li>把不变属性声明为final static，让编译器可以inline它们和预计算不变表达式。</li>
+<li>把不变的变量声明为final，让编译器可以inline它们和不变表达式。</li>
+<li>如果可以的话，把一个长的if-else-if链替换为switch；它要快很多.</li>
+<li>加入一个长的if-else-if链不能替换为switch(例如因为它检测一个String)，
+假如它执行很多次的话，通常值得替换为一个final static的HashMap，或类似的结构。</li>
+<li>使用'聪明的'C惯用法没有什么用(除了让代码更隐晦)，例如一个while循环的循环条件中进行所有的计算工作:</li>
+</ul>
 
-<p>Exception is caught when Exception is not thrown 这个findbugs问题在系统出现非常多，也是最难处理的问题。从这个点
-就可以看出系统实现非常混乱，本来属于不同抽象层次的代码都堆在一起了，没有层次之分。这个问题一般是需要修改到那段逻辑的时候才会去
-解决，通过抽取方法/类的方式，把异常进行抽象化，最后借助框架层次上的异常统一处理逻辑就通常可以把Action上面的所有的try-catch干掉。</p>
 
-<h3>关于注释</h3>
+<p><code>java
+int year = 0;
+double sum = 200.0;
+double[] balance = new double[100];
+while ((balance[year++] = sum *= 1.05) &lt; 1000.0);
+</code></p>
 
-<p>这其实不是findbugs问题。可以发现java代码里边很多注释是没什么用的，包括一些显而易见的注释,方法注释(通常只有方法描述是有点意义，其他都是抄模板的)
-注释写不好，还不如不写，正确的做法是尽量写出自文档化的代码。</p>
+<h4>1.2 属性和变量</h4>
+
+<ul>
+<li>访问本地变量和方法中参数，要比访问静态属性或实例属性要快得多。
+对于一个循环中的属性访问，在循环之前可能值得拷贝属性的值到本地变量，
+然后在循环中只是引用本地变量。</li>
+<li>在方法里边的嵌套代码块或循环中，定义变量是没有运行时开销的。
+尽可能的声明为本地变量(尽可能使用小的作用域)通常有助于代码清晰，
+甚至可以帮助编译器改进你的程序。</li>
+</ul>
+
+
+<h4>1.3 字符串操作</h4>
+
+<ul>
+<li>不用通过重复的字符串连接来构建字符串。下面的循环在每次迭代会多花一倍的时间(较上次).
+并且也很可能造成堆碎片化(见第二节):</li>
+</ul>
+
+
+<p><code>java
+String s = "";
+for (int i=0; i&lt;n; i++) {
+  s += "#" + i;
+}
+</code></p>
+
+<p>应该使用StringBuilder对象和它的append方法。这样在每次迭代中的实现消耗都是线性的(较上次)，
+可能有几个数量级速度提升。
+<code>java
+StringBuilder sbuf = new StringBuilder();
+for (int i=0; i&lt;n; i++) {
+  sbuf.append("#").append(i);
+}
+String s = sbuf.toString();
+</code></p>
+
+<ul>
+<li><p>另一方面，一个包含一序列字符串连接的表达式会被自动编译成使用StringBuilder.append(...)的形式，所以也是可行的:
+<code>java
+String s = "(" + x + ", " + y + ")";
+</code></p></li>
+<li><p>不要通过重复查询或修改一个String或StringBuilder来处理字符串。
+而重复使用String的substring和index方法，可能是合理的，但是应该用怀疑的眼光来看待。</p></li>
+</ul>
+
+
+<p><strong>注: 这一段的翻译很纠结</strong></p>
+
+<h4>1.4 数组中常量表的排序</h4>
+
+<ul>
+<li>在方法中声明一个初始化数组变量，在方法的每次执行中都会导致一个新数组被分配：</li>
+</ul>
+
+
+<p><code>java
+public static int monthdays(int y, int m) {
+  int[] monthlengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+  return m == 2 &amp;&amp; leapyear(y) ? 29 : monthlengths[m-1];
+}
+</code></p>
+
+<p>一个初始化数组变量或者类似的表格应该仅仅声明和分配一次，并且在一个封闭的类中作为一个final static的属性存在：</p>
+
+<p><code>java
+private final static int[] monthlengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+public static int monthdays(int y, int m) {
+  return m == 2 &amp;&amp; leapyear(y) ? 29 : monthlengths[m-1];
+}
+</code></p>
+
+<ul>
+<li>更复杂的初始化可以使用一个静态代码块static { ... }，例如来预计算一个数组的内容:</li>
+</ul>
+
+
+<p>``` java
+private final static double[] logFac = new double[100];
+static {
+  double logRes = 0.0;
+  for (int i=1, stop=logFac.length; i&lt;stop; i++)</p>
+
+<pre><code>logFac[i] = logRes += Math.log(i);
+</code></pre>
+
+<p>}
+public static double logBinom(int n, int k) {
+  return logFac[n] - logFac[n-k] - logFac[k];
+}
+```</p>
+
+<p>静态初始化块在这个封闭的类被加载的时候执行。
+在这个例子中，它预先计算一个存放阶乘函数(n! = 1.2...(n-1)*n)的对数的表logFac。
+所以方法logBinomial(n,k)可以有效的计算二项式系数的对数。作为实例，
+从52张卡中选择7张卡，是Math.exp(logBinom(52, 7))，得到133784560。</p>
+
+<h4>1.5 方法</h4>
+
+<ul>
+<li>声明方法为private,final或者static可以让调用更快。当然，只有应用需要时你才应该这么做。</li>
+<li>作为例子，通常一个访问器方法如getSize，当子类无需覆盖它的时候，在类里边有理由作为final存在:</li>
+</ul>
+
+
+<p><code>java
+class Foo {
+private int size;
+...
+public final int getSize() {
+  return size;
+}
+}
+</code></p>
+
+<p>这样可以让o.getSize()和直接访问公有属性o.size一样快。
+做些适当的封装(让属性变成private)不会造成额外的性能影响。</p>
+
+<ul>
+<li>虚方法调用(Virtual method calls) (调用实例方法)是很快的，应该用来替换instanceof测试和强制转换。</li>
+<li>在现代java虚拟机实现中，像Sun的HotSpot JVM和IBM的JVM，接口方法调用和抽象方法调用实例方法是一样快的。
+因此使用接口，而不是他们的实现类作为方法参数，这样的友好编程方式是没有额外的性能影响的。</li>
+</ul>
+
+
+<h4>1.6 排序和搜索</h4>
+
+<ul>
+<li>永远不要使用选择排序、冒泡排序或插入排序，除非是一个非常小的数组或列表。
+使用堆排序(对于数组)或合并排序(对于双向链表)或快速排序(对于数组，但是你需要找个好的参考值)</li>
+<li>更好的选择是，使用能够保证很快的内置的排序例程:对于n个元素是O(nlog(n))，
+当数据接近排序好的时候，有时候乐意更快:</li>
+</ul>
+
+
+<p>对于数组，使用java.util.Arrays.sort，是一个改进过的快速排序；
+它不需要额外的内存，但是它不是稳定的(不能保证相等对象的顺序)。
+现在有所有原生类型和对象的重载版本。</p>
+
+<p>对于ArrayList<T>和LinkedList<T>,他们都实现了接口java.util.List<T>,可以使用
+java.util.Collections.sort来排序，它是稳定的(保证相等对象的顺序)和平滑的(对于接近排好序的列表接近线性时间)，
+但是它使用了额外的内存。</p>
+
+<ul>
+<li>避免在数组和列表里边做线性查询，除非你知道他们非常短。假如你的程序需要频繁的查找某些内容，
+可以从下面的方法中选择:</li>
+</ul>
+
+
+<p>-在排好序的数据上做两分搜索</p>
+
+<p>对于数组，使用java.util.Arrays.binarySearch。数组必须是排好序的，例如经过了java.util.Arrays.sort.
+已经有了所有原生类型和对象的重载版本。</p>
+
+<p>对于ArrayList<T>,使用java.util.Collections.binarySearch.数组列表必须是有序的，
+例如经过了java.util.Collections.sort.</p>
+
+<p>假如你还需要从一个set或者map中插入或删除元素，可以使用下面的方法:</p>
+
+<p>-哈希化(Hashing): 假如你的key对象有很好的hashCode方法，可以使用java.uitl包里边的HashSet<T>或HashMap&lt;K, V>。
+这适用于String和原生类型的包准类Interger,Double等等。</p>
+
+<p>-两分搜索树(Binary search trees)：假如你的key对象有一个很好的比较方法compareTo的话，可以使用
+java.util包里边的TreeSet<T>或TreeMap&lt;K, V>.这同样适用于String和原生类型的包装类Integer,Double等等。</p>
+
+<h4>1.7 异常</h4>
+
+<ul>
+<li>异常对象的构建new Exception(...)会构造一个调用栈轨迹(stack trace),需要消耗时间和空间，特别
+是在递归方法调用的时候。Exception类或子类的对象的创建要比普通对象慢30~100倍。另外一方面，使用
+try-catch快活着抛出一个异常是很快的。</li>
+<li>像下面演示的，你可以通过在Exception子类中覆盖方法fillInStackTrace，来阻止一个栈轨迹的生成。
+这可以让异常实例的创建要快上大约10倍。</li>
+</ul>
+
+
+<p>``` java
+class MyException extends Exception {
+  public Throwable fillInStackTrace() {</p>
+
+<pre><code>return this;
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<ul>
+<li>因此，你应该在真的打算抛出异常的时候才创建一个异常对象。另外，不要使用异常来实现流程控制
+(结束数据处理，跳出循环)；异常应该只是用来通知错误和异常情况(文件没有找到，非法的输入格式等等)。
+假如你的程序真的需要非常频发的抛出异常，可以重用一个预先构造的异常对象。</li>
+</ul>
+
+
+<h4>1.8 集合类</h4>
+
+<p>在包java.util.*的java集合类是设计良好并实现的。使用这些类可以很好的改进你的程序的速度，但是你需要一些陷阱.</p>
+
+<ul>
+<li>如果你使用HashSet<T>或HashMap&lt;K,V>，确保你的key对象有一个好而快的hashCode方法，并且它和equals方法保持一致。</li>
+<li>如果你使用TreeSet<T>或TreeMap&lt;K,V>, 确保你的key对象有一个好而快的compareTo方法，
+或者提供一个Comparator<T>.但创建TreeSet<T>或TreeMap&lt;K,V>的时候需要一个明确的Comparator<K>对象。</li>
+<li>注意通过索引定位ListedList<T>不是一个常量时间操作。因此在下面的循环中，假如lst是一个LinkedList<T>的话，
+在列表1st里边需要花费两倍的时间。(<strong>注:翻译很纠结，不准</strong>)，所以不应该使用:</li>
+</ul>
+
+
+<p><code>java
+int size = lst.size();
+for (int i=0; i&lt;size; i++)
+  System.out.println(lst.get(i));
+</code></p>
+
+<p>应该使用增强型for语句来迭代元素，它其实是使用集合的迭代器，所以遍历花费线性的时间:</p>
+
+<p><code>java
+for (T x : lst)
+  System.out.println(x);
+</code></p>
+
+<ul>
+<li>应该避免重复调用LinkedList<T>或ArrayList<T>的remove(Object o)方法，因为它使用顺序查找。</li>
+<li>应该避免重复调用LinkedList<T>的add(int i, T x)或者remove(int i)方法，除非i是链表的最后或第一个。
+这些方法都是使用顺序来查找第i个元素的。</li>
+<li>应该避免重复调用ArrayList<T>的add(int i, T x)或remove(int i)方法，除非i是ArrayList<T>的最后一个。
+它需要移动i后面的所有元素。</li>
+<li>尽量避免使用传统的集合类，如Vector,HashTable和Stack，因为它们的方法都是synchronized的，
+每一个集合方法的调用都有获取锁的运行时消耗。假如你真的需要一个同步的集合，请使用synchronizedCollection
+和java.util.Collection类的类似方法来创建。</li>
+<li>集合只能存放引用类型的数据，所以原生类型的值，例如int,double等等在集合中存储或作为key使用的时候，
+必须包准为Integer,Double等。这需要花费时间和空间，在内存受限的嵌入式应用中可能是不可接受的。需要注意的是，
+字符串和数组是引用类型数据，在使用时不需要被包装。</li>
+</ul>
+
+
+<p>假如你需要有原生类型元素或key的集合，考虑使用Trove library,它提供了特殊处理的集合，像用int的哈希Set等等。
+因此，他相对于通用的java集合类，它更快并且使用更少的内存。Trove可以在<a href="http://trove4j.sourceforge.net">http://trove4j.sourceforge.net</a>中找到。</p>
+
+<h4>1.9 输入和输出</h4>
+
+<ul>
+<li>使用带缓冲的输入和输出(包java.io里边的BufferedReader, BufferedWriter, BufferedInputStream,
+BufferedOutputStream)可以让输入/输出提速20倍。</li>
+<li>使用包java.util.zip里边的压缩流ZipInputStream和ZipOutputStream或者
+GZIPInputStream和GZIPOutputStream，可以加速冗长的数据格式如XML的输入输出。压缩和解压缩
+需要CPU时间，但是压缩的数据可以比没压缩的数据小很多，从硬盘或网络中读取的数据更少，
+因此无论如何还是节约了时间。同时它还节约了硬盘上的存储空间。</li>
+</ul>
+
+
+<h4>1.10 空间和对象创建</h4>
+
+<ul>
+<li>假如你的程序使用过多的空间(内存),那么它也会使用过多的时间。对象分配和垃圾回收需要时间，
+并且使用过多的内存导致糟糕的缓存利用率，甚至可能需要使用到虚拟内存(使用硬盘空间而不是RAM)。
+而且，依赖于JVM的垃圾回收器，使用太多内存可能导致长时间的回收停顿。这会让交互系统变得恼人，
+在实时系统更是难以接受(catastrophic).</li>
+<li>对象创建需要时间(分配，初始化，垃圾回收)，所以不要在没必要的时候创建对象。
+然而不要考虑对象池(在工厂方法里边)，除非真的有需要。
+最有可能的是,你只会添加代码和维护问题，你的对象池在回收一个池中对象的时候，可能引发微妙的错误，
+虽然它仍然被引用着并且被在程序的其他部分中被修改。</li>
+<li>小心不要创建从来没有被使用的对象。例如，创建一个错误消息字符串，当从来没有被真正使用过，这就是一个典型的错误。
+因为嵌入这个消息的异常被一个try-catch捕获之后，但它忽略了这个消息。</li>
+<li>GUI组件(通过AWT或Swing创建)可能要求更多的空间，并且可能没有被充分的回收。
+不要创建你不一定需要的GUI组件。</li>
+</ul>
+
+
+<h4>1.11 大数组操作</h4>
+
+<p>对于在数组上进行大量操作，有一些特别的方法。它们通常要比等同的for循环快很多，
+在某种程度上是因为它们只需要一次边界检查。</p>
+
+<ul>
+<li>static void java.lang.System.arrayCopy(src, si, dst, di, n)会把数组片段src[si..si+n-1]
+的元素拷贝到数组片段dst[di..di+n-1].</li>
+<li>static bool java.util.Arrays.equals(arr1, arr2)会返回true，当数组arr1和arr2有同样的长度
+并且它们的元素成对相等(pairwise equal)。还有参数类型为boolean[], byte[], char[],
+double[], float[],int[], long[], Object[]和short[]的重载方法。</li>
+<li>static void java.util.Arrays.fill(arr, x)会把数组arr的所有元素设置为x.这个方法拥有和
+Arrays.equals一样的重载方法。</li>
+<li>static void java.util.Arrays.fill(arr, i, j, x)会把元素arr[i..j-1]设置为x.这个方法拥有和
+Arrays.equals一样的重载方法。</li>
+<li>static int java.util.Arrays.hashcode(arr)会返回一个由数组元素的hashcode计算出来
+的数组的hashcode。这个方法拥有和Arrays.equals一样的重载方法。</li>
+</ul>
+
+
+<h4>1.12 科学计算</h4>
+
+<p>假如你需要在java中使用科学计算，Colt开源库提供了许多高性能和高质量的例程(routine)，用来处理
+线性代数、稀疏/稠密矩阵、数据分析统计工具、随机数生成器、数组算法、数学函数和复数。
+如果你需要的已经在这里存在了，就不要在写一个新的低效的、不精确的数值例程了。Colt在
+<a href="http://hoschek.home.cern.ch/hoschek/colt/">http://hoschek.home.cern.ch/hoschek/colt/</a>可以找到。</p>
+
+<h4>1.13 反射</h4>
+
+<ul>
+<li>反射方法调用，反射属性访问和反射对象创建(使用包java.lang.reflect)要比普通方法调用、属性访问、对象创建慢非常多。</li>
+<li>访问检查会拖慢一些反射调用；部分消耗或许可以通过把调用方法声明为public进行避免。这可以将反射调用加速8倍。</li>
+</ul>
+
+
+<h4>1.14 编译器和运行平台</h4>
+
+<ul>
+<li>正如上面提到的，许多C或者Fortran编译器可以做到的优化，java编译器做不到。另外一方面，在执行字节码的时候，
+Java虚拟机(JVM)里边的即时编译器(JIT)可以做到传统编译器不能做到的许多优化。</li>
+<li>例如，在cast(C)后面的一个测试条件(x instanceof C)可以被JVM优化，以致于最多只有一个测试会被执行。
+所以重写你的程序来避免instanceof测试或者cast的麻烦事，是没有必要去做的。</li>
+<li>许多不同的Java虚拟机(JVM)有着非常不同的特性:</li>
+</ul>
+
+
+<p>-Sun的HotSpot Client JVM会做一些优化，但是通常优先于快速启动，而不是深度优化。</p>
+
+<p>-Sun的HotSpot Server JVM(使用-server参数，在微软Windows不可用)会牺牲很长的启动时间来做非常深度的优化。</p>
+
+<p>-相对于Sun的HotSpot Server JVM，IBM的JVM会做非常深度的优化。</p>
+
+<p>-J2ME(移动手机)和PersonalJava(一些PDA)实现的JVM不会包括JIT编译器，很可能不会做任何的优化。
+所以，在这种情况下，在你的java代码中尽可能地做自我优化就显得更加重要了。</p>
+
+<p>-对于Oracle的JVM，Kaffe JVM,Intel的Open Runtime Platform,IBM的Jikes RVM等等，我不知道它们的优化特性。</p>
+
+<p>你可以命令行提示符中敲入java -version来看看你正在使用的什么样的JVM。</p>
+
+<h4>1.15 性能分析(Profiling)</h4>
+
+<p>假如一个java程序好像很慢，尝试对程序的运行进行性能分析。假设1.3节里边进行重复字符串连接的例子存放在文件MyExample.java
+里边。可以使用Sun的HostSpot JVM来进行编译和性能分析,像下面这样:</p>
+
+<p><code>bash
+javac -g MyExample.java
+java -Xprof MyExample 10000
+</code></p>
+
+<p>性能分析的结果会展示在标准输出里边(控制台):</p>
+
+<p>```
+Flat profile of 19.00 secs (223 total ticks): main
+  Interpreted + native Method
+  1.3% 1      + 0      java.lang.AbstractStringBuilder.append
+  1.3% 1      + 0      java.lang.String.<init>
+  2.6% 2      + 0      Total interpreted</p>
+
+<p>  Compiled + native Method
+  51.3% 0  + 40     java.lang.AbstractStringBuilder.expandCapacity
+  29.5% 23 + 0      java.lang.AbstractStringBuilder.append
+  10.3% 8  + 0      java.lang.StringBuilder.toString
+  6.4% 0   + 5      java.lang.String.<init>
+  97.4% 31 + 45     Total compiled</p>
+
+<p>  Thread-local ticks:
+  65.0% 145 Blocked (of total)</p>
+
+<p>Flat profile of 0.01 secs (1 total ticks): DestroyJavaVM
+  Thread-local ticks:
+  100.0% 1 Blocked (of total)</p>
+
+<p>  Global summary of 19.01 seconds:
+  100.0% 929 Received ticks
+  74.6%  693 Received GC ticks
+  0.8%     7 Other VM operations
+```</p>
+
+<p>它表示有51.%的计算时间花费在原生(native)方法expandCapacity,
+而且有29.5%花费在方法append上，这些方法都是出自类AbstractStringBuilder的。
+这看上去是String的+和=惹的祸，因为它被编译成append方法调用。</p>
+
+<p>但是下面部分的内容更有意义，它指出总时间的74.6%花费在垃圾回收上，
+因此只有25%的时间用于实际计算。这指出一个严重的问题:几乎马上会变成垃圾的数据分配得太多了。</p>
+
+<h3>2 降低空间消耗</h3>
+
+<ul>
+<li>在一个JVM中,数据是分配在调用栈(方法参数和本地变量)和堆(对象,包括字符串和数组)上的。
+对于每个线程的执行都有隔离的栈，并且所有的线程使用共同的堆。一个线程的栈随着方法调用的
+深度增长和收缩。对象，字符串和数组通过执行中的线程在堆中分配。他们的回收(垃圾回收)是通过
+一个自发的垃圾回收器来处理的。</li>
+<li>关于空间使用，这里有三个重要的方面: 分配率、保留区和碎片化:</li>
+</ul>
+
+
+<p>-分配率是指你的程序创建对象、字符串、数组的频率。
+一个高的分配率会消耗时间(分配，对象初始化和销毁)和空间(因为垃圾回收可能会为了效率的原因留出更多的内存)，
+即使分配的数据只有非常短的生命周期。</p>
+
+<p>–保留区(Retention)是指活动的堆数据的总量，也就是说，在任何时间点，调用栈可以企及的堆数据。
+高的保留区消耗空间(明显地)和时间(垃圾回收器必需对分配和消耗做更多的管理工作).</p>
+
+<p>–碎片化是碎片的产生:小的、不使用的内存块。持续更大对象的分配，例如增长字符串或者数组，
+可能会引起内存碎片化，留下很多没法使用的小内存片。
+这样的碎片化消耗时间(在分配的时候寻找一个足够大的hole)和空间(因为碎片变得没用)。
+大多数垃圾回收器小心避免碎片化，但是它可能需要花费时间和空间，在嵌入式JVM实现中可能做不到。</p>
+
+<ul>
+<li><p>空间泄露属于不需要或者意外的保留区(retention)，常常随着运行时间的增长引起内存消耗也直线上涨。
+空间泄露是由活动变量的可企及的对象，字符串或数组引起的，而那些对象事实上不会再被使用到。
+例如，假如你在HashMap中使用缓存计算结果，这就有可能出现:即使你不再需要这些计算结果，
+但是她们在HashMap中还是可访问的。这可以通过使用WeakHashMap替代来避免这个问题。</p></li>
+<li><p>一个深度尾递归(tail-recursive)方法可能造成空间泄露，所有应该写成一个循环。
+但一个java编译器不会自动优化一个尾递归方法为一个循环，所以执行堆栈中可企及的所有数据将会被保留着，
+直到方法返回。</p></li>
+<li><p>垃圾回收器(通用的，标记-清除, 引用计数, two-space(注: 不知怎么翻译), 增量式, 压缩式 ...)的类型
+很影响分配率(allocation rate), 保留区(retention)和碎片化(fragmentation)的时间和空间效果。
+然而，一个起作用的垃圾回收器就其本身而言，从来不会引起空间泄露。空间泄露是由你程序里边的错误引起的。</p></li>
+<li><p>确保一个类所有对象中共享的不变属性是static的。这样始终只有一个属性被创建。
+当所有Car对象有同样的icon时，不要这么写:</p></li>
+</ul>
+
+
+<p><code>java
+public class Car {
+  ImageIcon symbol = new ImageIcon("porsche.gif");
+  ...
+}
+</code></p>
+
+<p>应该像这样:</p>
+
+<p><code>java
+public class Car {
+  final static ImageIcon symbol = new ImageIcon("porsche.gif");
+  ...
+}
+</code></p>
+
+<ul>
+<li>当你不确定是否需要真的需要一个对象的时候，可以延迟分配:把分配推迟到它真正需要的时候(只分配一次)。
+因为像下面这样的话，将会对每一个Car对象无条件创建一个Button，而Button可能永远不会通过getButton调用来访问:</li>
+</ul>
+
+
+<p>``` java
+public class Car {
+  private Button button = new JButton();
+  public Car() {</p>
+
+<pre><code>... initialize button ...
+</code></pre>
+
+<p>  }
+  public final JButton getButton() {</p>
+
+<pre><code>return button;
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>你可以在getButton中延迟分配Button:</p>
+
+<p>``` java
+public class Car {
+  private Button button = null;
+  public Car() { ... }
+  public final JButton getButton() {</p>
+
+<pre><code>if (button == null) { // button not yet created, so create it
+  button = new JButton();
+  ... initialize button ...
+}
+return button;
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>这样会节省空间(Button对象)和时间(分配和初始化)。另一方面，假如button早知道是一定需要的话，
+提前分配和初始化会更有效，可以避免getButton里边的判断(判空)。</p>
+
+<h3>3 其他资源</h3>
+
+<p>J.Noble和C.Weir的著作Small Memory Software,Addison-Wesley 2001,展示了一些受限内存系统的设计模式。
+虽然不是所有建议都适用于java(例如它需要指示字运算(pointer arithmetics))，
+即使有点模式说(pattern-speak)的问题，但是大多数还是有用的。</p>
+
+<h3>4 致谢</h3>
+
+<p>感谢Morten Larsen，Jyrki Katajainen和Eirik Maus提供的有用的建议。</p>
 ]]></content>
   </entry>
   
