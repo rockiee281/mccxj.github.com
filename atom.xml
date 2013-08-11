@@ -4,7 +4,7 @@
   <title><![CDATA[小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-06-30T18:16:14+08:00</updated>
+  <updated>2013-08-11T14:45:26+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -12,6 +12,146 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Dom操作和渲染并不是同步的]]></title>
+    <link href="http://mccxj.github.com/blog/20130807_dom-operation-is-not-sync.html"/>
+    <updated>2013-08-07T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/dom-operation-is-not-sync</id>
+    <content type="html"><![CDATA[<h3>一个在ie6不兼容的线上问题</h3>
+
+<p>昨天，有同事找我看一个线上问题，说一个在ie8测试通过的功能，在ie6上不能正常使用。
+一开始，他用alert定位到是哪部分代码出问题，并认为后面有部分代码没有执行。奇怪的是，在这中间加上alert语句的话，
+在ie6上也是能够正常运行的。</p>
+
+<p>这部分代码简化后大概是这样的:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;select</span> <span class="na">onclick=</span><span class="s">&quot;javascript:selectbank(this);&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>--all--<span class="nt">&lt;/option&gt;</span>
+</span><span class='line'><span class="nt">&lt;/select&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">){</span>
+</span><span class='line'>  <span class="c1">// get val and desc from a pop up page</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">opt</span> <span class="o">=</span> <span class="s2">&quot;&lt;option value=&#39;&quot;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">+</span> <span class="s2">&quot;&#39;&gt;&quot;</span> <span class="o">+</span> <span class="nx">desc</span> <span class="o">+</span> <span class="s2">&quot;&lt;/option&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="nx">$</span><span class="p">(</span><span class="nx">obj</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">opt</span><span class="p">);</span>
+</span><span class='line'>  <span class="nx">$</span><span class="p">(</span><span class="nx">obj</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+</span><span class='line'>  <span class="c1">// alert(&quot;test&quot;);</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我发现没有加alert的时候，页面会报js错误。并且，这种情况在ie8不会出现。</p>
+
+<h3>Dom操作和渲染并不是同步的</h3>
+
+<p>为什么会出现这种情况，这主要因为Dom操作比普通js操作的消耗大很多，因为它需要改变页面元素，
+导致页面出现重新渲染的情况，这取决于浏览器的实现。像ie8等比较高级的浏览器，渲染、js速度都要快许多，
+所以不会出现这种情况。而ie6太慢了，很可能还没反应过来。</p>
+
+<p>类似的情况是，在一个js调用过程中(某次事件)，如果你频繁修改dom，浏览器很可能不会逐个生效，
+而是几个操作一起生效，跟期望的有点不一样。在一些低端浏览器，可以做的优化是，让调用过程尽量快，
+减少Dom操作，或者中间使用setTimeout休息一下。</p>
+
+<p>而像上面的问题，修改成下面的代码就可以了:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">){</span>
+</span><span class='line'>  <span class="c1">// get val and desc from a pop up page</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">opt</span> <span class="o">=</span> <span class="s2">&quot;&lt;option selected value=&#39;&quot;</span> <span class="o">+</span> <span class="nx">val</span> <span class="o">+</span> <span class="s2">&quot;&#39;&gt;&quot;</span> <span class="o">+</span> <span class="nx">desc</span> <span class="o">+</span> <span class="s2">&quot;&lt;/option&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="nx">$</span><span class="p">(</span><span class="nx">obj</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">opt</span><span class="p">);</span>
+</span><span class='line'>  <span class="c1">// alert(&quot;test&quot;);</span>
+</span><span class='line'>  <span class="c1">// ...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[WebSphere数据源中的连接被意外关闭案例]]></title>
+    <link href="http://mccxj.github.com/blog/20130806_was-connection-close-fail.html"/>
+    <updated>2013-08-06T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/was-connection-close-fail</id>
+    <content type="html"><![CDATA[<h3>频繁创建连接的现象</h3>
+
+<p>前阵子维护反馈说，oracle数据库每秒创建连接数过高，而主要来源来自于WebSphere集群所在的主机。
+按理说，使用连接池的应用，连接是不会很频繁的。追溯一下所在主机的程序，发现可疑对象是一个使用jdbc轮子的应用。
+就是自己写了一套代码封装了jdbc操作，虽然连接是从数据源中获取的。</p>
+
+<p>但是，单纯看代码，的确没发现有什么问题，该关闭的地方也关闭，不存在泄露的情况。再说，这种现象也不是泄露的表现。
+另外，由于生产上的数据库连接串，开发人员是没有的，所以生成都是通过jndi的方式来处理的，不存在盗链的代码。</p>
+
+<p>不过，我们还是在日志里边发现一些问题。在SystemOut的日志里边，频繁出现类似下面的异常信息:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">[</span><span class="mi">12</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="mi">27</span> <span class="mi">9</span><span class="o">:</span><span class="mi">01</span><span class="o">:</span><span class="mi">29</span><span class="o">:</span><span class="mi">262</span> <span class="n">GMT</span><span class="o">+</span><span class="mi">08</span><span class="o">:</span><span class="mi">00</span><span class="o">]</span> <span class="mi">00000038</span> <span class="n">MCWrapper</span>     <span class="n">E</span>   <span class="nl">J2CA0081E:</span>
+</span><span class='line'><span class="err">尝试对资源</span> <span class="n">ecareDB</span> <span class="err">的</span> <span class="n">ManagedConnection</span> <span class="n">WSRdbManagedConnectionImpl</span><span class="err">@</span><span class="mi">23</span><span class="n">f823f8</span> <span class="err">执行方法</span> <span class="n">cleanup</span> <span class="err">时，</span>
+</span><span class='line'><span class="err">方法</span> <span class="n">cleanup</span> <span class="err">失败。捕获的异常：</span><span class="n">com</span><span class="o">.</span><span class="na">ibm</span><span class="o">.</span><span class="na">ws</span><span class="o">.</span><span class="na">exception</span><span class="o">.</span><span class="na">WsException</span><span class="o">:</span> <span class="nl">DSRA0080E:</span>
+</span><span class='line'><span class="n">An</span> <span class="n">exception</span> <span class="n">was</span> <span class="n">received</span> <span class="n">by</span> <span class="n">the</span> <span class="n">Data</span> <span class="n">Store</span> <span class="n">Adapter</span><span class="o">.</span> <span class="n">See</span> <span class="n">original</span> <span class="n">exception</span> <span class="nl">message:</span>
+</span><span class='line'> <span class="n">Cannot</span> <span class="n">call</span> <span class="err">&#39;</span><span class="n">cleanup</span><span class="err">&#39;</span> <span class="n">on</span> <span class="n">a</span> <span class="n">ManagedConnection</span> <span class="k">while</span> <span class="n">it</span> <span class="n">is</span> <span class="n">still</span> <span class="n">in</span> <span class="n">a</span> <span class="n">transaction</span><span class="o">..</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>异常的来源，居然是连接的close方法。</p>
+
+<h3>为什么close会失败</h3>
+
+<p>在WebSphere的资料上没有找到相关的描述，但是我在ibatis的文档上找到了相关的描述(ibatis developer guide的12-13页)：</p>
+
+<p>The <transactionManager> element also allows an optional attribute commitRequired that can be true or
+false.  Normally iBATIS will not commit transactions unless an insert, update, or delete operation has been
+performed.  This is true even if you explicitly call the commitTransaction() method.  This behavior
+creates problems in some cases.  If you want iBATIS to always commit transactions, even if no insert,
+update, or delete operation has been performed, then set the value of the commitRequired attribute to true.
+Examples of where this attribute is useful include:</p>
+
+<ol>
+<li><p>If you call a stored procedures that updates data as well as returning rows.  In that case you would
+call the procedure with the queryForList() operation – so iBATIS would not normally commit the
+transaction.  But then the updates would be rolled back.</p></li>
+<li><p>In a WebSphere environment when you are using connection pooling and you use the JNDI
+<dataSource> and the JDBC or JTA transaction manager.  WebSphere requires all transactions on
+pooled connections to be committed or the connection will not be returned to the pool.</p></li>
+</ol>
+
+
+<p>Note that the commitRequired attribute has no effect when using the EXTERNAL transaction manager.</p>
+
+<h3>结论及对策</h3>
+
+<p>从上面的描述上看到，WebSphere环境的连接是需要提交事务的，否则会被意外关闭。
+并且，如果选择ibatis的事务管理机制，就应该设置commitRequired属性，要么就应该使用spring的事务解决方案。</p>
+
+<p>我们尝试给查询语句增加commit操作，果然异常信息不再出现，并且数据库连接数也大幅度减少了。
+看来，在生产系统中还是应该优先考虑成熟的解决方案，不要随便造轮子。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[带平衡的对象池设计]]></title>
@@ -3148,65 +3288,6 @@ async在有些插件化的js时async可能可以用到，其他就很难用到�
 
 <p>最后还介绍了一些异步加载的其他方案，例如增强的语法来支持异步逻辑。这种预编译的方式，我感觉不如在coffeescript上增加关键字的预处理方式，
 类似coffeescript的class关键字。另外还介绍<a href="https://developer.mozilla.org/en-US/docs/JavaScript/New_in_JavaScript/1.7?redirectlocale=en-US&amp;redirectslug=New_in_JavaScript_1.7">js1.7</a>关于异步逻辑的新特性:Generator。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[博客写作小结]]></title>
-    <link href="http://mccxj.github.com/blog/20130120_how-to-blog.html"/>
-    <updated>2013-01-20T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/how-to-blog</id>
-    <content type="html"><![CDATA[<p><img src="http://mccxj.github.com/assets/images/2013/howtoblog.jpg" alt="博客写作" />
-这是前两天在家里用手机敲的文字记录，小小的总结，希望对<strong>写作信心不足</strong>的童鞋有所帮助。</p>
-
-<p>写博客，<strong>不需要太在意写作技巧</strong>，文学性的问题，只需要<strong>把事情描述出来</strong>就可以了。
-假如有个场景是水龙头漏水，写下来的是什么偷税漏税，积少成多的东西，那是文学。不需要想得那么远，能赶紧把事情描述好，赶紧修理好就行了。
-单纯的记录，本身已经很难能可贵了，但很多时候我们连这个都做不到。</p>
-
-<p>我以前写过很多博文，里边有很多是<strong>流水账的记录方式</strong>，有个基本的格式:
-今天发生什么了，我觉得怎么样，假如这样的话会怎那样。基本是想到什么就敲什么，很简单吧。
-我觉得这个方法的好处是<strong>培养写作的信心</strong>，因为这样比较容易出内容嘛。坚持写，<strong>写得越久越容易有信心写下去</strong>。</p>
-
-<p>虽然读者对象很重要，但是一开始也没有多少读者，所以不需要太在意读者是谁，<strong>把自己当成唯一的读者</strong>就好了，
-对自己负责，不求内容精妙，但求格式工整，不是火星文。<strong>字数多少不在意</strong>，能写多少就写多少。</p>
-
-<p>一开始很难写出什么内容，只要坚持写就行了，慢慢就会写好了。
-经常回顾，<strong>多看看自己写的内容</strong>，<strong>对比别人写的内容</strong>，找到差距，有针对性的提高写作技巧，例如多模仿。</p>
-
-<p>如果有可能，<strong>为自己的博客做一下分享推广</strong>，让别人参与讨论，可以增强自己写作的信心，也可能得到很多的灵感，在以后写的更好。
-推广的方式可以考虑rss订阅，邮件分享，微博等。</p>
-
-<p><strong>博客系统尽量找简单点的</strong>，以前我使用blogspot就是因为界面比较简洁，还有像<a href="http://svbtle.com/">Svbtle</a>/<a href="http://natewienert.com/codename-obtvse">Obtvse</a>这样的<a href="http://www.36kr.com/p/93438.html">简约风格博客平台</a>
-像wordpress之类的系统，适合喜欢折腾的人:) 最近比较流行的是像<a href="http://pages.github.com">github page</a>和<a href="http://jekyllrb.com/">jekyll</a>这样的静态页面生成方式，还是比较适合it人的,
-我现在也是使用<a href="http://mccxj.github.com/blog/20120622_new-blog-in-github.html">这套系统</a>。</p>
-
-<p>最后，<strong>马上动手，enjoy it</strong>!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[抢票插件搞得上github page都要轻功]]></title>
-    <link href="http://mccxj.github.com/blog/20130120_github-across-gfw.html"/>
-    <updated>2013-01-20T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/github-across-gfw</id>
-    <content type="html"><![CDATA[<p><img src="http://mccxj.github.com/assets/images/2013/acrossgfw.jpg" alt="抢票插件搞得上github page都要轻功" /></p>
-
-<p>春运临近，浏览器抢票软件也变得流行，没回来那几天就看到新闻说:<a href="http://www.oschina.net/news/36770/12306_ticket_helper">12306 抢票版插件拖垮 Github 服务器</a>
-，没想到回来之后就发现github page不能用了，正确的说应该是github的子域名都不能用了，看来是贴倒部和宫刑部的新春贺礼来的。</p>
-
-<h2>抢票插件和github什么关系</h2>
-
-<p>抢票插件引用了github上的一个js文件，但github有个安全检测，当访问比较频繁的时候就会直接返回403 forbidden。
-然后作者没多想就在插件里加了个重试机制。如果返回的是403就每5秒重试一次，并且是永久重试，结果github认为你访问的更频繁了于是一直返回403。
-可想而知这就成了死循环，使用插件的用户一多，对github而言就产生DDOS了。
-换句话说，这是github的一种安全机制而已，抢票插件和github基本没什么关系，有关部门的做法更是弱智得不行呀。:)</p>
-
-<h2>轻功之ssh</h2>
-
-<p>以前用过free gate这种东西，不过不大稳定，而且感觉风险比较高。呵呵，你懂的。<br/>
-<a href="http://www.ssh110.com/help.html">ssh使用帮助</a>,跟人感觉用ssh命令行配合chrome插件是最方便的。<br/>
-<a href="http://blog.onlybird.com/%E5%85%8D%E8%B4%B9ssh%E4%BB%A3%E7%90%86">免费ssh代理</a>,速度还不错，不过不是特别稳定。<br/>
-<a href="http://wendal.net/2013/0108.html">Nutz福利之轻功</a>,应该不错,不过我还没用上。</p>
 ]]></content>
   </entry>
   
