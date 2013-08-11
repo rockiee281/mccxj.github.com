@@ -46,3 +46,11 @@ transaction.  But then the updates would be rolled back.
 pooled connections to be committed or the connection will not be returned to the pool.
 
 Note that the commitRequired attribute has no effect when using the EXTERNAL transaction manager.
+
+### 结论及对策
+
+从上面的描述上看到，WebSphere环境的连接是需要提交事务的，否则会被意外关闭。
+并且，如果选择ibatis的事务管理机制，就应该设置commitRequired属性，要么就应该使用spring的事务解决方案。
+
+我们尝试给查询语句增加commit操作，果然异常信息不再出现，并且数据库连接数也大幅度减少了。
+看来，在生产系统中还是应该优先考虑成熟的解决方案，不要随便造轮子。
