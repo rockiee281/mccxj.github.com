@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 笔记 | 小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/blog/categories/bi-ji/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-10-12T21:37:01+08:00</updated>
+  <updated>2013-10-12T22:16:46+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -12,6 +12,46 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[那些年，我读过的技术书]]></title>
+    <link href="http://mccxj.github.com/blog/20130921_books.html"/>
+    <updated>2013-09-21T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/books</id>
+    <content type="html"><![CDATA[<p>这几天发烧很反复，反而有点时间用来整理一下思路。想了很多以前的事情，回忆的感觉是很复杂的。
+突然想写写接触的技术书，现在工作的时间占据了大多数，看书的时间并不多，
+但是每年看的书是有点越来越多的感觉，只是很少有特别深刻的，大概是因为平时的读书习惯就是不求甚解，又或者是这种方式很适合我。</p>
+
+<p>C程序设计，谭浩强的教材估计是人手一册了。这也是我第一次接触编程语言，虽然我还是没学懂怎么写代码。
+回头来看，这本书的确写得不怎样，比起那本c语言传世之作差太远了，里边错误也不少。</p>
+
+<p>数据结构（用面向对象方法与C++语言描述），黄色皮的这本，应该是第一版。
+说起这本书，我当年也是没学明白，主要是我太懒了，还有就是这语言真有点复杂。
+这门课程每一两周就有一个课程设计，要编程的那种。我基本都是抄袭的，有一次我下决心想自己解决，
+结果就是整了一通宵，双向链表编译都没通过。不过还好老师手下留情，最后还是62分勉强通过。
+这门课程是到了毕业以后花3个月自学的，算是自己迄今为止看得最认真的一本书了，简直可以用改变我的职业生涯来形容。</p>
+
+<p>计算机网络，第四版，这也是大学的教材，纯英文版本，这本书是认识网络的通用书籍，是本很好的书，
+不过，并不是我从上面学到多少，我也是毕业以后才回去读的。我对这本书很有印象，主要是因为有一次我在图书馆，
+看到我同学的书已经翻烂了，而我的书还是新的，要知道这是一本大几百页的英文书。顿时觉着这个世界很可怕，
+别说自己不努力，即使你再努力，总有比你聪明的人比你还努力。难怪人家成绩如此的好。</p>
+
+<p>Linux系统管理技术手册，这是我毕业以后买的一本大部头英文书。我对linux有个比较系统的认识也源于这本书。
+不知有没有人在装系统的时候不小心把win也删除了没有？我就试过，后来在一次面试中被人当笑话了。
+虽然工作的时候也有接触这linux，但那一年春节放假的时候，我觉得我应该认真学习一下，而且我们还是有十几天假期的。
+于是到书店把这本书扛回去了，硬是在春节的时候看完。当然，只是看书很多是没概念的，于是我把家里的系统格了换成linux，公司也装上双系统，强迫自己适应。我对以前的公司环境还是心存感激的，很free的感觉。</p>
+
+<p>设计模式，四人帮的大作，我买了有好几年了，一直来来去去的翻，始终没有通读，而我也读过不少模式方面的书，
+但这本书一直保留在我的在读列表中，总感觉没读懂。直到最近这两年，有些开窍了，有时虽然不能想到利用哪种模式，
+或者是哪种模式，但直觉告诉我，就应该这么写。我想，我逐渐从这些设计模式上找到设计原则的味道了。</p>
+
+<p>其他书籍？没有第一时间在我脑子里边出现，即使我认同是一本好书，但也就仅仅是一本好书罢了。
+相对来说，我很少看java的专题书，我跟偏爱通用类。而数据库，即使毕业后一两年，
+我都是对数据库技术有点不屑的感觉，所以学得很少，直到最近这两年我才接触得多一些。</p>
+
+<p>娱乐而已，勿当真。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Async Javascript读书笔记]]></title>
@@ -427,79 +467,6 @@ wunderlist的功能非常简单，支持多客户端。友情提醒一下，工�
 <span class="nf">zipwith3</span><span class="p">(</span><span class="nv">P</span><span class="p">,</span> <span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">,</span> <span class="nv">LC</span><span class="p">)</span> <span class="o">-&gt;</span>
   <span class="p">[</span><span class="nv">P</span><span class="p">(</span><span class="nv">X</span><span class="p">,</span><span class="nv">Y</span><span class="p">,</span><span class="nv">Z</span><span class="p">)</span> <span class="p">||</span> <span class="p">{</span><span class="nv">X</span><span class="p">,</span><span class="nv">Y</span><span class="p">,</span><span class="nv">Z</span><span class="p">}</span> <span class="err">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="n">zip3</span><span class="p">(</span><span class="nv">LA</span><span class="p">,</span> <span class="nv">LB</span><span class="p">,</span> <span class="nv">LC</span><span class="p">)].</span>
 </code></pre></div></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[hello erlang, part 3]]></title>
-    <link href="http://mccxj.github.com/blog/20120718_hello-erlang-3.html"/>
-    <updated>2012-07-18T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/hello-erlang-3</id>
-    <content type="html"><![CDATA[<h3>练习重点</h3>
-
-<p>并发编程是erlang的重要话题，所以这次先来热身，熟悉一下erlang中进程的基本用法。</p>
-
-<h3>练习1:进程环</h3>
-
-<p>编写一个程序，它生成N个进程并相连形成一个环，一旦启动，这些进程会环绕发送M个消息。
-然后当收到消息的时候正常终止。调用ring:start(M, N, Message)来启动环。</p>
-
-<h3>思路及编程示例</h3>
-
-<p>首先，为了形成环状，就是让最后一个进程能够给第一个进程发送消息，
-调用spawn生成进程的时候，需要把第一个pid一直传递到最后一个。所以需要有个start的方法，
-但需要多加个第一个进程id的参数，关注参数N=1作为临界点。</p>
-
-<p>还有，需要等待消息，然后给下一个进程发送消息，之后继续等待消息，直到M=0。
-所以需要一个等待消息的方法，同时需要关注参数M=0作为临界点。</p>
-
-<p>最后，整个环，所有的进程一开始都在等待，需要有个消息来启动环，
-可以在第一个进程启动下一个进程之前，往自身邮箱里边发送一条消息，
-这样第一个进程进入等待消息的时候，就能接收到消息，从而启动环。</p>
-
-<p>我的代码示例如下：
-<div class="highlight"><pre><code class="erlang"><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">ring</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-
-<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% Exported Functions</span>
-<span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">start</span><span class="o">/</span><span class="mi">3</span><span class="p">]).</span>
-<span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">start</span><span class="o">/</span><span class="mi">4</span><span class="p">]).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-
-<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="c">%% API Functions</span>
-<span class="nf">start</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="n">self</span><span class="p">()</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="n">start</span><span class="p">},</span>
-  <span class="n">start</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="n">self</span><span class="p">()).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-
-<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">start</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Rid</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="n">waitmessage</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Rid</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-
-<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">start</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Rid</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="nv">Pid</span> <span class="o">=</span> <span class="nb">spawn</span><span class="p">(</span><span class="n">ring</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="p">[</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Rid</span><span class="p">]),</span>
-  <span class="n">waitmessage</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Pid</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-
-<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">waitmessage</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">N</span><span class="p">,</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="nv">Message</span><span class="p">,</span> <span class="p">_</span><span class="nv">Pid</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="k">receive</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-
-<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="p">{</span><span class="nv">Pd</span><span class="p">,</span> <span class="nv">Msg</span><span class="p">}</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span>
-  <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;pid </span><span class="si">~p</span><span class="s"> receive message </span><span class="si">~p</span><span class="s"> from </span><span class="si">~p~n</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">self</span><span class="p">(),</span> <span class="nv">Msg</span><span class="p">,</span> <span class="nv">Pd</span><span class="p">])</span>
-  <span class="n">ok</span>
-<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-
-<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-
-<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">waitmessage</span><span class="p">(</span><span class="nv">M</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Pid</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="k">receive</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-
-<span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="p">{</span><span class="nv">Pd</span><span class="p">,</span> <span class="nv">Msg</span><span class="p">}</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span>
-  <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;pid </span><span class="si">~p</span><span class="s"> receive message </span><span class="si">~p</span><span class="s"> from </span><span class="si">~p~n</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">self</span><span class="p">(),</span> <span class="nv">Msg</span><span class="p">,</span> <span class="nv">Pd</span><span class="p">]),</span>
-  <span class="nv">Pid</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="nv">Message</span><span class="p">},</span>
-  <span class="n">waitmessage</span><span class="p">(</span><span class="nv">M</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nv">N</span><span class="p">,</span> <span class="nv">Message</span><span class="p">,</span> <span class="nv">Pid</span><span class="p">)</span>
-<span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-
-<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="p">.</span>
-</code></pre></div></p>
-
-<p>通过简单的测试，如果去掉io:format的话，效率会提高不少。IO操作消耗的时间还是不可小视呀。
-另外，测试大数量进程的时候，内存也用得比较厉害，毕竟这个练习更像是一个同步操作。</p>
 ]]></content>
   </entry>
   

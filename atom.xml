@@ -4,7 +4,7 @@
   <title><![CDATA[小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-10-12T21:37:01+08:00</updated>
+  <updated>2013-10-12T22:16:46+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -38,6 +38,46 @@ java这边也要使用补\0的做法，如果使用java解密的话，就只能�
 因此按现在使用补空格的方法，在用户鉴权接口是能成功的，但在wlan密码认证接口里边是会导致认证失败的。</p>
 
 <p>如果需要更多关于加密补齐的资料，可以参考<a href="http://www.di-mgt.com.au/cryptopad.html">Using Padding in Encryption</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[那些年，我读过的技术书]]></title>
+    <link href="http://mccxj.github.com/blog/20130921_books.html"/>
+    <updated>2013-09-21T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/books</id>
+    <content type="html"><![CDATA[<p>这几天发烧很反复，反而有点时间用来整理一下思路。想了很多以前的事情，回忆的感觉是很复杂的。
+突然想写写接触的技术书，现在工作的时间占据了大多数，看书的时间并不多，
+但是每年看的书是有点越来越多的感觉，只是很少有特别深刻的，大概是因为平时的读书习惯就是不求甚解，又或者是这种方式很适合我。</p>
+
+<p>C程序设计，谭浩强的教材估计是人手一册了。这也是我第一次接触编程语言，虽然我还是没学懂怎么写代码。
+回头来看，这本书的确写得不怎样，比起那本c语言传世之作差太远了，里边错误也不少。</p>
+
+<p>数据结构（用面向对象方法与C++语言描述），黄色皮的这本，应该是第一版。
+说起这本书，我当年也是没学明白，主要是我太懒了，还有就是这语言真有点复杂。
+这门课程每一两周就有一个课程设计，要编程的那种。我基本都是抄袭的，有一次我下决心想自己解决，
+结果就是整了一通宵，双向链表编译都没通过。不过还好老师手下留情，最后还是62分勉强通过。
+这门课程是到了毕业以后花3个月自学的，算是自己迄今为止看得最认真的一本书了，简直可以用改变我的职业生涯来形容。</p>
+
+<p>计算机网络，第四版，这也是大学的教材，纯英文版本，这本书是认识网络的通用书籍，是本很好的书，
+不过，并不是我从上面学到多少，我也是毕业以后才回去读的。我对这本书很有印象，主要是因为有一次我在图书馆，
+看到我同学的书已经翻烂了，而我的书还是新的，要知道这是一本大几百页的英文书。顿时觉着这个世界很可怕，
+别说自己不努力，即使你再努力，总有比你聪明的人比你还努力。难怪人家成绩如此的好。</p>
+
+<p>Linux系统管理技术手册，这是我毕业以后买的一本大部头英文书。我对linux有个比较系统的认识也源于这本书。
+不知有没有人在装系统的时候不小心把win也删除了没有？我就试过，后来在一次面试中被人当笑话了。
+虽然工作的时候也有接触这linux，但那一年春节放假的时候，我觉得我应该认真学习一下，而且我们还是有十几天假期的。
+于是到书店把这本书扛回去了，硬是在春节的时候看完。当然，只是看书很多是没概念的，于是我把家里的系统格了换成linux，公司也装上双系统，强迫自己适应。我对以前的公司环境还是心存感激的，很free的感觉。</p>
+
+<p>设计模式，四人帮的大作，我买了有好几年了，一直来来去去的翻，始终没有通读，而我也读过不少模式方面的书，
+但这本书一直保留在我的在读列表中，总感觉没读懂。直到最近这两年，有些开窍了，有时虽然不能想到利用哪种模式，
+或者是哪种模式，但直觉告诉我，就应该这么写。我想，我逐渐从这些设计模式上找到设计原则的味道了。</p>
+
+<p>其他书籍？没有第一时间在我脑子里边出现，即使我认同是一本好书，但也就仅仅是一本好书罢了。
+相对来说，我很少看java的专题书，我跟偏爱通用类。而数据库，即使毕业后一两年，
+我都是对数据库技术有点不屑的感觉，所以学得很少，直到最近这两年我才接触得多一些。</p>
+
+<p>娱乐而已，勿当真。</p>
 ]]></content>
   </entry>
   
@@ -2821,453 +2861,6 @@ URI既可以看成是资源的地址，也可以看成是资源的名称。如�
 
 <p>判断链表是否存在循环这种面试题，还是有点实际用处的，以前真的没特别留意。
 算法这东西，真的是无处不在的呀。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[这些天,我们用到的算法]]></title>
-    <link href="http://mccxj.github.com/blog/20130327_these-days-algorithms.html"/>
-    <updated>2013-03-27T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/these-days-algorithms</id>
-    <content type="html"><![CDATA[<p>平时做的应用，的确很少涉及非常具体的局部算法。不过最近一段时间还是遇到了一些，稍微整理一下，留个纪念。</p>
-
-<h3>产品的组合生成</h3>
-
-<p>举个例子，手机的颜色有黑白的，内存有16G,32G的，那么就有黑色16G,黑色32G，白色16G，黑色32G等组合项，
-当然属性可能不止两项，想列出所有的组合项。</p>
-
-<p>如果只有两种属性，很简单</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="k">for</span><span class="o">(</span><span class="err">属性</span> <span class="n">in</span> <span class="err">属性</span><span class="mi">1</span><span class="o">)</span>
-</span><span class='line'>    <span class="k">for</span><span class="o">(</span><span class="err">属性</span> <span class="n">in</span> <span class="err">属性</span><span class="mi">2</span><span class="o">)</span>
-</span><span class='line'>       <span class="c1">// TODO 得到组合项</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>但是，如果有不定项的话，就不能这么写了。</p>
-
-<p><strong>这需要知道点回溯法的技巧，我是用了非递归的方式编写的</strong>:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kd">static</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="nf">merge</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;...</span> <span class="n">ls</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>    <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
-</span><span class='line'>    <span class="kt">int</span><span class="o">[]</span> <span class="n">pos</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">len</span><span class="o">];</span><span class="c1">//对i而言，表示第i种属性当前选择是哪个值</span>
-</span><span class='line'>    <span class="n">Arrays</span><span class="o">.</span><span class="na">fill</span><span class="o">(</span><span class="n">pos</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>
-</span><span class='line'>    <span class="n">String</span><span class="o">[]</span> <span class="n">r</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">[</span><span class="n">len</span><span class="o">];</span><span class="c1">//存放待生成的组合项</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">List</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;();</span>
-</span><span class='line'>    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span><span class="c1">//当前正在遍历第几种属性</span>
-</span><span class='line'>    <span class="k">while</span> <span class="o">(</span><span class="n">k</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>        <span class="k">while</span> <span class="o">(</span><span class="n">pos</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">&lt;</span> <span class="n">ls</span><span class="o">[</span><span class="n">k</span><span class="o">].</span><span class="na">size</span><span class="o">())</span> <span class="o">{</span>
-</span><span class='line'>            <span class="n">r</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">ls</span><span class="o">[</span><span class="n">k</span><span class="o">].</span><span class="na">get</span><span class="o">(</span><span class="n">pos</span><span class="o">[</span><span class="n">k</span><span class="o">]);</span>
-</span><span class='line'>            <span class="k">if</span> <span class="o">(</span><span class="n">k</span> <span class="o">==</span> <span class="n">len</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span><span class="c1">//是否已经是最后一个属性</span>
-</span><span class='line'>                <span class="c1">// 找到一个组合项，复制到res里边去</span>
-</span><span class='line'>                <span class="n">pos</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">pos</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span><span class='line'>                <span class="n">k</span><span class="o">++;</span><span class="c1">//当前位置的属性已经选择，处理下一种属性</span>
-</span><span class='line'>            <span class="o">}</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="n">pos</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'>        <span class="n">k</span><span class="o">--;</span><span class="c1">//当前位置的属性已经遍历完，需要回溯到上一种属性去</span>
-</span><span class='line'>        <span class="k">if</span> <span class="o">(</span><span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>            <span class="n">pos</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">pos</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">res</span><span class="o">;</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>说真的，即使加了注释，没有相关的算法基础，也是不容易看清楚的，所以有同事看到这个写法，在大呼救命。</p>
-
-<h3>请求URL参数匹配</h3>
-
-<p>最近有需求，要对请求里边的参数做匹配，规则是这样的：</p>
-
-<p>例如有下面三条规则(其中问号表示变量，参数的顺序没关系):
-* User=?&amp;Password=BB&amp;CurrentTab=LOG&amp;CurrentTab2=LOG
-* User=?&amp;Password=?&amp;CurrentTab=LOG1
-* User=?&amp;Password=?&amp;CurrentTab=LOG</p>
-
-<p>如果请求参数是XX=222&amp;User=Q&amp;Password=BB&amp;CurrentTab=LOG，则只能匹配第三条，因为第一条多一个参数，第二条的值是LOG1，对应不上。<br/>
-如果请求参数是User=QQ&amp;CurrentTab=LOG1&amp;Password=AA,同样只能匹配到第三条。</p>
-
-<p>有个非常简单的思路，就是把参数拆开，然后一个个匹配。但是由于业务的请求数非常大，担心对系统是否有影响。</p>
-
-<p>于是，弄了个测试原型，开50个线程的线程池，跑500个任务，每个任务跑1w次，匹配3个配置项。整个框架代码是这样的:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">work</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kd">final</span> <span class="n">String</span> <span class="n">match1</span> <span class="o">=</span> <span class="s">&quot;User=?&amp;Password=BB&amp;CurrentTab=LOG&amp;CurrentTab2=LOG&quot;</span><span class="o">;</span>
-</span><span class='line'>    <span class="kd">final</span> <span class="n">String</span> <span class="n">match2</span> <span class="o">=</span> <span class="s">&quot;User=?&amp;Password=?&amp;CurrentTab=LOG1&quot;</span><span class="o">;</span>
-</span><span class='line'>    <span class="kd">final</span> <span class="n">String</span> <span class="n">match3</span> <span class="o">=</span> <span class="s">&quot;User=?&amp;Password=?&amp;CurrentTab=LOG&quot;</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">ExecutorService</span> <span class="n">pool</span> <span class="o">=</span> <span class="n">Executors</span><span class="o">.</span><span class="na">newFixedThreadPool</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
-</span><span class='line'>    <span class="kt">int</span> <span class="n">tasksize</span> <span class="o">=</span> <span class="mi">500</span><span class="o">;</span>
-</span><span class='line'>    <span class="kd">final</span> <span class="n">CountDownLatch</span> <span class="n">latch</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CountDownLatch</span><span class="o">(</span><span class="n">tasksize</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kt">long</span> <span class="n">s</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">();</span>
-</span><span class='line'>    <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">tasksize</span><span class="o">;</span> <span class="n">k</span><span class="o">++)</span> <span class="o">{</span>
-</span><span class='line'>        <span class="n">pool</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="o">()</span> <span class="o">{</span>
-</span><span class='line'>            <span class="nd">@Override</span>
-</span><span class='line'>            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
-</span><span class='line'>                <span class="n">Random</span> <span class="n">r</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Random</span><span class="o">(</span><span class="mi">100000000</span><span class="o">);</span>
-</span><span class='line'>                <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-</span><span class='line'>                    <span class="n">String</span> <span class="n">toMatch</span> <span class="o">=</span> <span class="s">&quot;XX=&quot;</span>
-</span><span class='line'>                                     <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="na">nextInt</span><span class="o">()</span>
-</span><span class='line'>                                     <span class="o">+</span> <span class="s">&quot;&amp;User=AA&amp;Password=BB&amp;CurrentTab=LOG&quot;</span><span class="o">;</span>
-</span><span class='line'>                    <span class="c1">// TODO 测试toMatch</span>
-</span><span class='line'>                <span class="o">}</span>
-</span><span class='line'>                <span class="n">latch</span><span class="o">.</span><span class="na">countDown</span><span class="o">();</span>
-</span><span class='line'>            <span class="o">}</span>
-</span><span class='line'>        <span class="o">});</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">latch</span><span class="o">.</span><span class="na">await</span><span class="o">();</span>
-</span><span class='line'>    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">nanoTime</span><span class="o">()</span> <span class="o">-</span> <span class="n">s</span><span class="o">);</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>先用最简单的方法来做基准测试，有时候最简单的方法就可以满足要求了，粗略的代码如下:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'>                    <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">matchs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;();</span>
-</span><span class='line'>                    <span class="n">String</span><span class="o">[]</span> <span class="n">split</span> <span class="o">=</span> <span class="n">toMatch</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">&quot;&amp;&quot;</span><span class="o">);</span>
-</span><span class='line'>                    <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">mss</span> <span class="o">:</span> <span class="n">split</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>                        <span class="n">String</span><span class="o">[]</span> <span class="n">split2</span> <span class="o">=</span> <span class="n">mss</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">&quot;=&quot;</span><span class="o">);</span>
-</span><span class='line'>                        <span class="n">matchs</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">split2</span><span class="o">[</span><span class="mi">0</span><span class="o">],</span> <span class="n">split2</span><span class="o">[</span><span class="mi">1</span><span class="o">]);</span>
-</span><span class='line'>                    <span class="o">}</span>
-</span><span class='line'>                    <span class="n">similar</span><span class="o">(</span><span class="n">match1</span><span class="o">,</span> <span class="n">matchs</span><span class="o">);</span>
-</span><span class='line'>                    <span class="n">similar</span><span class="o">(</span><span class="n">match2</span><span class="o">,</span> <span class="n">matchs</span><span class="o">);</span>
-</span><span class='line'>                    <span class="n">similar</span><span class="o">(</span><span class="n">match3</span><span class="o">,</span> <span class="n">matchs</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'>                    <span class="o">....</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">similar</span><span class="o">(</span><span class="n">String</span> <span class="n">match</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">matchs</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">String</span><span class="o">[]</span> <span class="n">ms</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">&quot;&amp;&quot;</span><span class="o">);</span>
-</span><span class='line'>    <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">m</span> <span class="o">:</span> <span class="n">ms</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>        <span class="n">String</span><span class="o">[]</span> <span class="n">split2</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">&quot;=&quot;</span><span class="o">);</span>
-</span><span class='line'>        <span class="k">if</span> <span class="o">(!</span><span class="n">matchs</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">split2</span><span class="o">[</span><span class="mi">0</span><span class="o">]))</span>
-</span><span class='line'>            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">if</span> <span class="o">(!</span><span class="s">&quot;?&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">split2</span><span class="o">[</span><span class="mi">1</span><span class="o">]))</span> <span class="o">{</span>
-</span><span class='line'>            <span class="k">if</span> <span class="o">(!</span><span class="n">split2</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="na">equals</span><span class="o">(</span><span class="n">matchs</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">split2</span><span class="o">[</span><span class="mi">0</span><span class="o">])))</span>
-</span><span class='line'>                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在我的机器上简单跑一下，大约要28s。这个算法非常暴力，用split和map结构搞定了。
-如果用StringTokenizer的话，还能快些，我试了一下，把第一步split换了的话，大约需要25s.
-<strong>我觉得这个效果也还是可以接受的。</strong></p>
-
-<p>下面再用纯手工操作字符串的方式，代码如下:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-<span class='line-number'>85</span>
-<span class='line-number'>86</span>
-<span class='line-number'>87</span>
-<span class='line-number'>88</span>
-<span class='line-number'>89</span>
-<span class='line-number'>90</span>
-<span class='line-number'>91</span>
-<span class='line-number'>92</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'>                    <span class="n">UrlMatcher</span> <span class="n">matcher</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UrlMatcher</span><span class="o">(</span><span class="n">toMatch</span><span class="o">);</span>
-</span><span class='line'>                    <span class="n">matcher</span><span class="o">.</span><span class="na">match</span><span class="o">(</span><span class="n">match1</span><span class="o">);</span>
-</span><span class='line'>                    <span class="n">matcher</span><span class="o">.</span><span class="na">match</span><span class="o">(</span><span class="n">match2</span><span class="o">);</span>
-</span><span class='line'>                    <span class="n">matcher</span><span class="o">.</span><span class="na">match</span><span class="o">(</span><span class="n">match3</span><span class="o">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">class</span> <span class="nc">UrlMatcher</span> <span class="o">{</span>
-</span><span class='line'>    <span class="kd">private</span> <span class="n">String</span> <span class="n">toMatch</span><span class="o">;</span>
-</span><span class='line'>    <span class="kt">int</span><span class="o">[]</span> <span class="n">pos</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="mi">20</span><span class="o">];</span>
-</span><span class='line'>    <span class="kt">int</span> <span class="n">ps</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kd">public</span> <span class="nf">UrlMatcher</span><span class="o">(</span><span class="n">String</span> <span class="n">toMatch</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">ss</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'>        <span class="k">this</span><span class="o">.</span><span class="na">toMatch</span> <span class="o">=</span> <span class="n">toMatch</span><span class="o">;</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">toMatch</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">st</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">ed</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-</span><span class='line'>            <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="n">toMatch</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-</span><span class='line'>            <span class="k">if</span> <span class="o">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;=&#39;</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>                <span class="n">ed</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>                <span class="n">pos</span><span class="o">[</span><span class="n">ss</span><span class="o">++]</span> <span class="o">=</span> <span class="n">st</span><span class="o">;</span>
-</span><span class='line'>                <span class="n">pos</span><span class="o">[</span><span class="n">ss</span><span class="o">++]</span> <span class="o">=</span> <span class="n">ed</span><span class="o">;</span>
-</span><span class='line'>                <span class="n">st</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>                <span class="n">pos</span><span class="o">[</span><span class="n">ss</span><span class="o">++]</span> <span class="o">=</span> <span class="n">st</span><span class="o">;</span>
-</span><span class='line'>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;&amp;&#39;</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>                <span class="n">pos</span><span class="o">[</span><span class="n">ss</span><span class="o">++]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>                <span class="n">st</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>            <span class="o">}</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="n">pos</span><span class="o">[</span><span class="n">ss</span><span class="o">]</span> <span class="o">=</span> <span class="n">len</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>        <span class="n">ps</span> <span class="o">=</span> <span class="o">(</span><span class="n">ss</span> <span class="o">+</span> <span class="mi">1</span><span class="o">);</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">match</span><span class="o">(</span><span class="n">String</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">st</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">ed</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">vs</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'>        <span class="kt">int</span> <span class="n">ve</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-</span><span class='line'>            <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
-</span><span class='line'>            <span class="k">if</span> <span class="o">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;=&#39;</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>                <span class="n">ed</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>                <span class="n">vs</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;&amp;&#39;</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>                <span class="n">ve</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>                <span class="k">if</span> <span class="o">(!</span><span class="n">match2</span><span class="o">(</span><span class="n">m</span><span class="o">,</span> <span class="n">st</span><span class="o">,</span> <span class="n">ed</span><span class="o">,</span> <span class="n">vs</span><span class="o">,</span> <span class="n">ve</span><span class="o">))</span> <span class="o">{</span>
-</span><span class='line'>                    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-</span><span class='line'>                <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>                <span class="n">st</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
-</span><span class='line'>            <span class="o">}</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="k">return</span> <span class="nf">match2</span><span class="o">(</span><span class="n">m</span><span class="o">,</span> <span class="n">st</span><span class="o">,</span> <span class="n">ed</span><span class="o">,</span> <span class="n">vs</span><span class="o">,</span> <span class="n">len</span> <span class="o">-</span> <span class="mi">1</span><span class="o">);</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="kt">boolean</span> <span class="nf">match2</span><span class="o">(</span><span class="n">String</span> <span class="n">m</span><span class="o">,</span> <span class="kt">int</span> <span class="n">st</span><span class="o">,</span> <span class="kt">int</span> <span class="n">ed</span><span class="o">,</span> <span class="kt">int</span> <span class="n">vs</span><span class="o">,</span> <span class="kt">int</span> <span class="n">ve</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>        <span class="kt">boolean</span> <span class="n">ma</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-</span><span class='line'>        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">ps</span><span class="o">;</span> <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>            <span class="k">if</span> <span class="o">(</span><span class="n">pos</span><span class="o">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="o">]</span> <span class="o">-</span> <span class="n">pos</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">==</span> <span class="n">ed</span> <span class="o">-</span> <span class="n">st</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>                <span class="kt">int</span> <span class="n">sst</span> <span class="o">=</span> <span class="n">st</span> <span class="o">-</span> <span class="n">pos</span><span class="o">[</span><span class="n">i</span><span class="o">];</span>
-</span><span class='line'>                <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">pos</span><span class="o">[</span><span class="n">i</span><span class="o">];</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">pos</span><span class="o">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="o">];</span> <span class="n">j</span><span class="o">++)</span> <span class="o">{</span>
-</span><span class='line'>                    <span class="k">if</span> <span class="o">(</span><span class="n">toMatch</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">j</span><span class="o">)</span> <span class="o">!=</span> <span class="n">m</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">sst</span> <span class="o">+</span> <span class="n">j</span><span class="o">))</span> <span class="o">{</span>
-</span><span class='line'>                        <span class="n">ma</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-</span><span class='line'>                    <span class="o">}</span>
-</span><span class='line'>                <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>                <span class="k">if</span> <span class="o">(</span><span class="n">ma</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>                    <span class="k">if</span> <span class="o">(</span><span class="n">ve</span> <span class="o">==</span> <span class="n">vs</span> <span class="o">&amp;&amp;</span> <span class="sc">&#39;?&#39;</span> <span class="o">==</span> <span class="n">m</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">vs</span><span class="o">))</span> <span class="o">{</span>
-</span><span class='line'>                        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-</span><span class='line'>                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span><span class='line'>                        <span class="k">if</span> <span class="o">(</span><span class="n">pos</span><span class="o">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="o">]</span> <span class="o">-</span> <span class="n">pos</span><span class="o">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="o">]</span> <span class="o">==</span> <span class="n">ve</span> <span class="o">-</span> <span class="n">vs</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>                            <span class="kt">int</span> <span class="n">vst</span> <span class="o">=</span> <span class="n">vs</span> <span class="o">-</span> <span class="n">pos</span><span class="o">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="o">];</span>
-</span><span class='line'>                            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">pos</span><span class="o">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="o">];</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">pos</span><span class="o">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="o">];</span> <span class="n">j</span><span class="o">++)</span> <span class="o">{</span>
-</span><span class='line'>                                <span class="k">if</span> <span class="o">(</span><span class="n">toMatch</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">j</span><span class="o">)</span> <span class="o">!=</span> <span class="n">m</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">vst</span> <span class="o">+</span> <span class="n">j</span><span class="o">))</span> <span class="o">{</span>
-</span><span class='line'>                                    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-</span><span class='line'>                                <span class="o">}</span>
-</span><span class='line'>                            <span class="o">}</span>
-</span><span class='line'>                            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-</span><span class='line'>                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span><span class='line'>                            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-</span><span class='line'>                        <span class="o">}</span>
-</span><span class='line'>                    <span class="o">}</span>
-</span><span class='line'>                <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>            <span class="o">}</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<p>代码比较粗糙，对某些情况不是很严格，但不影响总体的性能评测，<strong>这个逻辑不到2s，要快15倍以上</strong>。
-这个写法的特点是:<strong>使用数组而不是Map，使用标记位置而不是截取字符串，一次扫描。</strong></p>
-
-<p><strong>不过，这个代码很粗糙，不要太当真。</strong></p>
-
-<p>看看我机器上显示的虚拟机负载情况。</p>
-
-<p>图1:最简单的做法
-<img src="http://mccxj.github.com/assets/images/2013/match1.jpg" alt="简单方法+多线程" /></p>
-
-<p>图2:手工打造，相对的内存消耗小些
-<img src="http://mccxj.github.com/assets/images/2013/match2.jpg" alt="手工打造+多线程" /></p>
-
-<p>图3:还是手工打造，不过单线程，相对来说CPU使用率就小很多了
-<img src="http://mccxj.github.com/assets/images/2013/match3.jpg" alt="手工打造+单线程" /></p>
-
-<h3>小结</h3>
-
-<p>经常听到算法没什么用，算法没地方使用的论调，我也都一笑置之。
-不过，<strong>我也承认，在现在的工作中，的确很少会直接面对非常具体的局部算法</strong>。
-但我还是不能赞同上面的观点，<strong>毕竟有些场景还是不得不考虑的</strong>:</p>
-
-<ol>
-<li>做不到，没有算法的支持，根本不知怎么写好</li>
-<li>做不好，简单的实现没法满足，需要高效的算法</li>
-</ol>
-
 ]]></content>
   </entry>
   
