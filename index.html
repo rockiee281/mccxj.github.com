@@ -9,9 +9,9 @@
   <meta name="author" content="蔡晓建">
 
   
-  <meta name="description" content="REmote DIctionary Server(Redis) 是一个由Salvatore Sanfilippo写的key-value存储系统，
-与memcached相比，redis支持更丰富的数据结构，特点是高性能、持久存储，适应高并发的应用场景。它起步较晚，发展迅速，
-目前已被许多大型机构采用 &hellip;">
+  <meta name="description" content="DES是广泛使用的分组对称加密算法，它要求待加密数据要8位对齐，所以在数据不足8位时候会出现padding的情况，
+所以有可能因为padding不同，而出现加解密结果不一样，这种情况在异构系统间的数据通信特别容易出现，例如java和cpp系统之间的通信。
+如果在开发过程中， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +66,63 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/20130930_des.html">DES加解密总结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-30T00:00:00+08:00" pubdate data-updated="true">Sep 30<span>th</span>, 2013</time>
+        
+         | <a href="/blog/20130930_des.html#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>DES是广泛使用的分组对称加密算法，它要求待加密数据要8位对齐，所以在数据不足8位时候会出现padding的情况，
+所以有可能因为padding不同，而出现加解密结果不一样，这种情况在异构系统间的数据通信特别容易出现，例如java和cpp系统之间的通信。
+如果在开发过程中，遇到不同语言加解密结果不一样的情况，应该关注一下补齐方式。
+关于补齐方式，请参考http://en.wikipedia.org/wiki/Padding_%28cryptography%29</p>
+
+<p>先说说java这里，java api已经集成了DES加解密算法，如果不指定补齐方式的话，默认的补齐方式是使用PKCS5Padding，
+这种情况下，长度不足8字节的部分，填充“0x01”—“0x08”，如不
+足1字节，则填充1个“0x01”，如不足2字节，则填充2个“0x02”，以此类推。更具
+体的描述，参考<a href="http://www.herongyang.com/Cryptography/DES-JDK-What-Is-PKCS5Padding.html">What Is PKCS5Padding?</a>
+如果我们指定补齐方式，如使用DES/ECB/NoPadding的话(其中ECB是加密的模式，也是默认的加密方式)，就需要自己手动补齐，例如补空格字符。
+现在的代码为了和后台的加解密结果一致，采用的是手动补齐的方式，即NoPadding方式。</p>
+
+<p>如果cpp实现的padding方式和java的不一致，就可能导致加解密失败。在我们的系统里边，cpp实现的padding是补\0的。
+这个字符在显示的时候就直接被当成结束符了，无需特殊处理。所以，如果使用java加密，cpp解密的话，
+java这边也要使用补\0的做法，如果使用java解密的话，就只能使用trim进行处理了。</p>
+
+<p>以我们这边使用的两个DES相关的接口为例，用户鉴权接口在配置里边有使用trim进行处理，而wlan密码认证接口没有使用trim处理。
+因此按现在使用补空格的方法，在用户鉴权接口是能成功的，但在wlan密码认证接口里边是会导致认证失败的。</p>
+
+<p>如果需要更多关于加密补齐的资料，可以参考<a href="http://www.di-mgt.com.au/cryptopad.html">Using Padding in Encryption</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1157,131 +1214,6 @@ redis的所有功能就是将数据以其固有的几种结构保存，并提供
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/20130809_java-hell-string-append.html">说说字符串拼接</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-09T00:00:00+08:00" pubdate data-updated="true">Aug 9<span>th</span>, 2013</time>
-        
-         | <a href="/blog/20130809_java-hell-string-append.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>String对象是无状态的</h3>
-
-<p>String的内部属性在初始化的时候就固定好了，也没有提供方法进行修改(反射等极端方法除外)，并且类被定义成final，所以String对象都是是实实在在的无状态对象，是不可变的。</p>
-
-<p>在通常的字符串拼接中，如果采用+运算符的话，通常会产生一个字符串对象，并把两个字符串的内部字符数组拷贝过去。
-因此，在一个常见的频繁修改字符串的场景中，字符数组的拷贝开销是很大的，随之字符串的加长会越到后面越慢,例如下面的代码。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">String</span> <span class="n">sb</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">;</span>
-</span><span class='line'><span class="k">for</span><span class="o">(</span><span class="n">String</span> <span class="n">str</span> <span class="o">:</span> <span class="n">strs</span><span class="o">){</span>
-</span><span class='line'>  <span class="n">sb</span> <span class="o">+=</span> <span class="n">str</span><span class="o">;</span>
-</span><span class='line'><span class="o">}</span>
-</span><span class='line'><span class="k">return</span> <span class="n">sb</span><span class="o">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>StringBuffer与StringBuilder</h3>
-
-<p>jdk早就考虑了这种场景，于是提供了StringBuffer，简单来说，就是一个可变的字符数组，开辟了一个字符数组缓冲区，增加(Append)时只是往缓冲区的空余地方写字符，当然也有可能缓冲区不够用，它的开销就集中在不够用的缓冲区扩展中(每次在现有基础上扩展一倍空间)。所以，最好能提前估计字符串的最终长度，减少扩展造成的消耗。不过，即便如此，通常也要把直接用String拼接的效率高许多，例如下面的代码。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">StringBuffer</span> <span class="n">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuffer</span><span class="o">();</span>
-</span><span class='line'><span class="k">for</span><span class="o">(</span><span class="n">String</span> <span class="n">str</span> <span class="o">:</span> <span class="n">strs</span><span class="o">){</span>
-</span><span class='line'>  <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">str</span><span class="o">);</span>
-</span><span class='line'><span class="o">}</span>
-</span><span class='line'><span class="k">return</span> <span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>到了jdk5，增加了StringBuilder，相对于StringBuffer来说，虽然它不是线程安全的，但在绝大多数场景下都是适用的，并且理论效率更佳(从oracle jdk的实现看，两个类除了是否同步这点，实现是一致的)。因此，习惯使用StringBuffer的童鞋，应该多关注一下StringBuilder。</p>
-
-<h3>字符串拼接的编译优化</h3>
-
-<p>再回到+操作符，本身java是没有运算符重载的，+只会对基本数学运算有效，而字符串，这么写只是语法糖而已，会变成StringBuilder操作(jdk5之前是StringBuffer)。例如下面的代码:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="n">String</span> <span class="nf">test</span><span class="o">(</span><span class="n">String</span> <span class="n">a</span><span class="o">){</span>
-</span><span class='line'>   <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="s">&quot;b&quot;</span><span class="o">;</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>通过javap查看，可以看到是这样的(大意就是new一个StringBuilder对象然后用append进行连接);</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kd">public</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span> <span class="nf">test</span><span class="o">(</span><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span><span class="o">);</span>
-</span><span class='line'>  <span class="nl">Code:</span>
-</span><span class='line'>   <span class="n">Stack</span><span class="o">=</span><span class="mi">2</span><span class="o">,</span> <span class="n">Locals</span><span class="o">=</span><span class="mi">2</span><span class="o">,</span> <span class="n">Args_size</span><span class="o">=</span><span class="mi">2</span>
-</span><span class='line'>   <span class="mi">0</span><span class="o">:</span>   <span class="k">new</span>     <span class="err">#</span><span class="mi">2</span><span class="o">;</span> <span class="c1">//class java/lang/StringBuilder</span>
-</span><span class='line'>   <span class="mi">3</span><span class="o">:</span>   <span class="n">dup</span>
-</span><span class='line'>   <span class="mi">4</span><span class="o">:</span>   <span class="n">invokespecial</span>   <span class="err">#</span><span class="mi">3</span><span class="o">;</span> <span class="c1">//Method java/lang/StringBuilder.&quot;&lt;init&gt;&quot;:()V</span>
-</span><span class='line'>   <span class="mi">7</span><span class="o">:</span>   <span class="n">aload_1</span>
-</span><span class='line'>   <span class="mi">8</span><span class="o">:</span>   <span class="n">invokevirtual</span>   <span class="err">#</span><span class="mi">4</span><span class="o">;</span> <span class="c1">//Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span>
-</span><span class='line'>   <span class="mi">11</span><span class="o">:</span>  <span class="n">ldc</span>     <span class="err">#</span><span class="mi">5</span><span class="o">;</span> <span class="c1">//String b</span>
-</span><span class='line'>   <span class="mi">13</span><span class="o">:</span>  <span class="n">invokevirtual</span>   <span class="err">#</span><span class="mi">4</span><span class="o">;</span> <span class="c1">//Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span>
-</span><span class='line'>   <span class="mi">16</span><span class="o">:</span>  <span class="n">invokevirtual</span>   <span class="err">#</span><span class="mi">6</span><span class="o">;</span> <span class="c1">//Method java/lang/StringBuilder.toString:()Ljava/lang/String;</span>
-</span><span class='line'>   <span class="mi">19</span><span class="o">:</span>  <span class="n">areturn</span>
-</span><span class='line'>  <span class="nl">LineNumberTable:</span>
-</span><span class='line'>   <span class="n">line</span> <span class="mi">3</span><span class="o">:</span> <span class="mi">0</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>因此，如果是像上面的情况，直接用+是合理的，对于其他情况，得考虑StringBuilder，同时要避免无意生成多余字符串的情况，例如append(&#8221;s&#8221; + a)的写法，编译器是不会自动优化的，写代码的时候应该换成append(&#8221;s&#8221;).append(a)。</p>
-
-<p>更多关于字符串不变量的讨论，请见<a href="http://mccxj.github.io/blog/20130615_java-string-constant-pool.html">初探Java字符串</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1295,6 +1227,10 @@ redis的所有功能就是将数据以其固有的几种结构保存，并提供
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/20130930_des.html">DES加解密总结</a>
+      </li>
     
       <li class="post">
         <a href="/blog/20130908_redis-introduction.html">redis简报</a>
@@ -1330,10 +1266,6 @@ redis的所有功能就是将数据以其固有的几种结构保存，并提供
     
       <li class="post">
         <a href="/blog/20130807_dom-operation-is-not-sync.html">Dom操作和渲染并不是同步的</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/20130806_was-connection-close-fail.html">WebSphere数据源中的连接被意外关闭案例</a>
       </li>
     
   </ul>
