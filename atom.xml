@@ -4,7 +4,7 @@
   <title><![CDATA[小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-10-12T22:16:46+08:00</updated>
+  <updated>2013-10-29T22:01:31+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -12,6 +12,33 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[有道云笔记使用感受]]></title>
+    <link href="http://mccxj.github.com/blog/20131029_youdao-note.html"/>
+    <updated>2013-10-29T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/youdao-note</id>
+    <content type="html"><![CDATA[<p>在笔记这个领域，网易的有道笔记的确是做得不错的。跟everynote相比，也不落下风，
+相对来说，我使用有道笔记的频率要高许多，下面就简单说说我的使用体验。</p>
+
+<p>pc版，ipad和Android版，我都有使用。在pc上我更倾向于网页收藏，但这个网页插件好像只有ie版，不是特别方便。
+当然，我在电脑上工作的时候，还是用来记录一些材料，快速想法等。总体来说，我觉得网页插件还是不如everynote的方便。
+不过，有道的空间要大不少，在保留网页的时候有很大优势。同时，智能提取正文也是很舒心的功能。</p>
+
+<p>对于ipad，输入其实是没有优势的，我很多是采用涂鸦，录音，照片等方式进行录入，语音识别？尝试过，但感觉综合的速度并不快，
+特别是出错的时候，容易打断思路，纠正成本很高。对于ipad来说，更多的时候是阅读，如果能从浏览器上直接保存到笔记上去就最好了，
+就像稍后阅读功能。所以ipad的使用体验感觉是要差一些的。</p>
+
+<p>手机Android版，大多数输入都是在这个版本上完成的，手机拼音的输入方式效率是不错的。在地铁上半小时，能完成好几百字的输入。
+只是屏幕太小了，阅读，涂鸦并不方便，主要以文字输入为主，有时候也做一下录音。</p>
+
+<p>对于我来说，每天在办公室的时间占据了大多数，不幸的是，公司不允许使用这一类工具。这大大的减少了我使用pc版的频率。
+所以我使用的场景基本是在地铁上，主要是用来记录一些想法，思路，用一些要点记录下来，便于以后整理发布。
+有需要的话，还可以通过邮件分享，不过pc上的邮件分享功能好像不能用。 总体来说，这个版本还是很好用的。</p>
+
+<p>上面就是我的使用感受。在这个产品的帮助下，我完成了数十篇的草稿，记录了很多思路和计划，有兴趣的童鞋都来试试吧！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[DES加解密总结]]></title>
@@ -2749,118 +2776,6 @@ URI既可以看成是资源的地址，也可以看成是资源的名称。如�
 感觉对于java这么古板的语言，坑都不少，跟何况c++这样的庞然大物? 总体来说，我给这本书评4颗星，推荐级别。</p>
 
 <p>下周的读书会，讲一本java网络编程的入门书籍。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[判断循环菜单的思考]]></title>
-    <link href="http://mccxj.github.com/blog/20130328_cycle-menu.html"/>
-    <updated>2013-03-28T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/cycle-menu</id>
-    <content type="html"><![CDATA[<p>今天下午的时候，在执行gem clean命令看到包依赖的时候，突然想起关于循环菜单的老问题。</p>
-
-<h3>无限级菜单的问题</h3>
-
-<p>很多系统的菜单都要求是无限级的，也就是可以很多层的父子菜单关系。
-在进行数据存储的设计的时候，以数据库为例，通常都会给菜单表增加一个父菜单的字段，用来标识从属于哪个菜单。</p>
-
-<p>这里就要求菜单的配置不能出现循环，例如某个菜单的父父菜单是它的子菜单，这是不允许的。
-但有时候难免出现一些错误，特别不是通过可视化界面增加菜单的时候。我们的系统也曾经出现过，例如见<a href="http://mccxj.github.com/blog/20120804_improve-bitter-code-7.html">定位数据问题</a>。</p>
-
-<h3>如何判断循环</h3>
-
-<p>就拿<a href="http://mccxj.github.com/blog/20120804_improve-bitter-code-7.html">定位数据问题</a>来说，当时时间比较急就没多想，直接参考了项目中已有的逻辑。</p>
-
-<p>考虑整个菜单结构是一棵树的话，它的判断逻辑的思路是，第一次把根结点去掉(最顶层的菜单)，
-第二次把剩余的树的根结点去掉，以此类推，直到最后没有结点(没有循环)，或没有结点可以删除(出现循环)。
-写成伪代码的话，大约是这样的:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">hasDel</span> <span class="o">=</span> <span class="kc">true</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">do</span>
-</span><span class='line'>  <span class="n">hasDel</span> <span class="o">=</span> <span class="kc">false</span>
-</span><span class='line'>  <span class="k">for</span> <span class="err">结点</span> <span class="n">in</span> <span class="err">树</span>
-</span><span class='line'>    <span class="k">if</span> <span class="err">结点</span> <span class="n">has</span> <span class="n">not</span> <span class="err">父节点</span>
-</span><span class='line'>      <span class="err">删除结点</span> <span class="n">and</span> <span class="n">hasDel</span> <span class="o">=</span> <span class="kc">true</span>
-</span><span class='line'>    <span class="n">end</span>
-</span><span class='line'>  <span class="n">end</span>
-</span><span class='line'><span class="k">while</span> <span class="n">hasDel</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="err">还剩下结点</span>
-</span><span class='line'>  <span class="err">出现循环</span>
-</span><span class='line'><span class="k">else</span>
-</span><span class='line'>  <span class="err">没有循环</span>
-</span><span class='line'><span class="n">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>因为每次操作都要循环剩下的整个树，循环的次数很关键，如果树有3层，扫描3次即可，如果层次很深，扫描的次数就比较可观了。</p>
-
-<h3>另一个思路</h3>
-
-<p>以其中某个结点为例，它有父节点..一直到根节点，或者出现循环。
-如果不是循环，则整结点都可以去掉。这样的话，只需要遍历整棵树，对未处理的结点，进行循环判断即可，而处理过的(去掉的)可以忽略。</p>
-
-<p>伪代码如下:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="k">for</span> <span class="err">结点</span> <span class="n">in</span> <span class="err">树</span>
-</span><span class='line'>  <span class="k">if</span> <span class="err">结点已经被标识为已处理</span>
-</span><span class='line'>    <span class="k">continue</span>
-</span><span class='line'>  <span class="k">else</span>
-</span><span class='line'>    <span class="err">判断结点到根结点是否存在循环</span><span class="o">(</span><span class="err">如在路径上遇到已处理的直接返回</span><span class="kc">false</span><span class="o">)</span>
-</span><span class='line'>    <span class="k">if</span> <span class="err">存在循环</span>
-</span><span class='line'>       <span class="err">出现循环</span>
-</span><span class='line'>    <span class="k">else</span>
-</span><span class='line'>       <span class="err">标记结点到根结点为已处理</span>
-</span><span class='line'>    <span class="n">end</span>
-</span><span class='line'>  <span class="n">end</span>
-</span><span class='line'><span class="n">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>问题现在就回到如何判断循环链表</strong>，这其实是个经典的面试笔试题了，我在网上挑了其中一个解答:<a href="http://blog.csdn.net/splendour/article/details/7701449">判断循环链表</a>
-对于我们的情况，在遇到已处理结点的时候，直接就可以说明没有循环了，这里可以小优化一下。</p>
-
-<h3>效率分析</h3>
-
-<p>我们粗略的分析一下，外层循环的数量级是整个树的结点数，判断循环的逻辑是和结点的深度有关系的，
-以极端的情况为例，只有1层的话，很明显，相当于扫描一次结点。如果是个非常深的结点(都是单子结点)，就最后一个的结点的话，循环判断的次数也是和结点数成线性的。</p>
-
-<p><strong>结点越深，循环判断的次数就越多，跟结点到根节点的长度成正比，但一次排除的结点也越多。总体还是跟总的结点数成线性正比的。</strong>
-相对于原来的处理方式，平均效率就是它的最好效率。</p>
-
-<h3>小结</h3>
-
-<p>判断链表是否存在循环这种面试题，还是有点实际用处的，以前真的没特别留意。
-算法这东西，真的是无处不在的呀。</p>
 ]]></content>
   </entry>
   
