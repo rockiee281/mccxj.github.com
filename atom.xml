@@ -4,7 +4,7 @@
   <title><![CDATA[小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-11-03T10:31:20+08:00</updated>
+  <updated>2013-11-08T22:23:51+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -12,6 +12,80 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[小心jsch的sftp连接泄露]]></title>
+    <link href="http://mccxj.github.com/blog/20131106_jsch-session-connect.html"/>
+    <updated>2013-11-06T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/jsch-session-connect</id>
+    <content type="html"><![CDATA[<p>今天早上和一个同事处理一个现网问题，从javacore里边可以看到大量的Connect Thread，如下所示：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">Connect</span> <span class="n">thread</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">1.100</span> <span class="n">session</span><span class="err">&quot;</span> <span class="n">prio</span><span class="o">=</span><span class="mi">6</span> <span class="n">tid</span><span class="o">=</span><span class="mh">0x042d3400</span> <span class="n">nid</span><span class="o">=</span><span class="mh">0x1458</span> <span class="n">runnable</span> <span class="o">[</span><span class="mh">0x04e4f000</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>堆栈信息如下:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="n">com</span><span class="o">.</span><span class="na">jcraft</span><span class="o">.</span><span class="na">jsch</span><span class="o">.</span><span class="na">Session</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">Session</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">1193</span><span class="o">)</span>
+</span><span class='line'><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">Thread</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">Thread</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">619</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>怀疑是资源泄露了，jsch是一个sftp的工具库。检查jsch的使用代码，可以看到代码是有进行关闭的，如下所示：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">JSch</span> <span class="n">jsch</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JSch</span><span class="o">();</span>
+</span><span class='line'><span class="n">Session</span> <span class="n">session</span> <span class="o">=</span> <span class="n">jsch</span><span class="o">.</span><span class="na">getSession</span><span class="o">(</span><span class="s">&quot;caixiaojian&quot;</span><span class="o">,</span> <span class="s">&quot;192.168.1.100&quot;</span><span class="o">,</span> <span class="mi">22</span><span class="o">);</span>
+</span><span class='line'><span class="n">session</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="s">&quot;******&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="n">session</span><span class="o">.</span><span class="na">setConfig</span><span class="o">(</span><span class="s">&quot;StrictHostKeyChecking&quot;</span><span class="o">,</span> <span class="s">&quot;no&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="n">session</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
+</span><span class='line'><span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="na">openChannel</span><span class="o">(</span><span class="s">&quot;sftp&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="n">channel</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
+</span><span class='line'><span class="n">ChannelSftp</span> <span class="n">c</span> <span class="o">=</span> <span class="o">(</span><span class="n">ChannelSftp</span><span class="o">)</span> <span class="n">channel</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">channel</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
+</span><span class='line'><span class="c1">//...</span>
+</span><span class='line'><span class="n">channel</span><span class="o">.</span><span class="na">disconnect</span><span class="o">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>不过从官方的<a href="http://www.jcraft.com/jsch/examples/Sftp.java.html">例子</a>上看到，最需要关闭的是session对象而不是channel对象。
+于是写了一个简单的测试Demo，把上面的代码跑5次，看看能不能重现:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#jstack -l 3621 | grep Connect</span>
+</span><span class='line'>Connect thread 192.168.1.100 session<span class="s2">&quot; prio=6 tid=0x042d3400 nid=0x1458 runnable [0x04e4f000]</span>
+</span><span class='line'><span class="s2">Connect thread 192.168.1.100 session&quot;</span> <span class="nv">prio</span><span class="o">=</span>6 <span class="nv">tid</span><span class="o">=</span>0x042d0400 <span class="nv">nid</span><span class="o">=</span>0x16c8 runnable <span class="o">[</span>0x04def000<span class="o">]</span>
+</span><span class='line'>Connect thread 192.168.1.100 session<span class="s2">&quot; prio=6 tid=0x041b4000 nid=0xd38 runnable [0x04d8f000]</span>
+</span><span class='line'><span class="s2">Connect thread 192.168.1.100 session&quot;</span> <span class="nv">prio</span><span class="o">=</span>6 <span class="nv">tid</span><span class="o">=</span>0x041b2000 <span class="nv">nid</span><span class="o">=</span>0x166c runnable <span class="o">[</span>0x04bcf000<span class="o">]</span>
+</span><span class='line'>Connect thread 192.168.1.100 session<span class="err">&quot;</span> <span class="nv">prio</span><span class="o">=</span>6 <span class="nv">tid</span><span class="o">=</span>0x041b1000 <span class="nv">nid</span><span class="o">=</span>0x450 runnable <span class="o">[</span>0x04b2f000<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>果然出现了，试着在最后调用一下session.disconnect(),重试一下果然不存在了上述线程了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[单词接龙问题]]></title>
@@ -2771,24 +2845,6 @@ URI既可以看成是资源的地址，也可以看成是资源的名称。如�
 <p>现在广东XXX版本、XXX等项目中均使用传统的RPC、SOAP方式的Web服务，而移动南方基地XXXX项目的后台,
 虽然采用了JSON格式进行交互，但还是属于RPC风格的。本文从资源的定义、获取、表述、关联、状态变迁等角度，
 试图快速理解RESTFul架构背后的概念。RESTFul架构与传统的RPC、SOAP等方式在理念上有很大的不同，希望本文能对各位理解REST有所帮助。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Goodbye,Google Reader]]></title>
-    <link href="http://mccxj.github.com/blog/20130519_rss-reading.html"/>
-    <updated>2013-05-19T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/rss-reading</id>
-    <content type="html"><![CDATA[<p>今天早上,把Google Reader的订阅迁移到鲜果,顺便整理了Reader里边的RSS订阅,略为增长了一点,到153个，主要增加了许多国内著名互联网公司的团队博客。
-鲜果是把订阅和RSS订阅分开的，对于我来说，这显得很不习惯。对于鲜果来说，想打造社交阅读平台，又不得不保留RSS订阅这种传统模式，也是挺无奈的。</p>
-
-<p>另外，看过Feng写的<a href="http://dbanotes.net/mylife/the_bloggers.html">那些写过博客的人们</a>,我也发现了有不少人的博客很久之前就停止更新了。
-博客这东西，在微博，微信等新媒体的冲击下，更显得步伐缓慢，似乎不适应新时代的要求。但只有这些写下的文字，才显得有点沉淀，
-也只有部分通过写博客获得了某些真实东西的人才坚持下来。</p>
-
-<p>分享一下我的<a href="https://www.dropbox.com/s/ypo8lnsjogbtklm/export-2013-05-19.opml?v=0rc-">RSS订阅</a>.</p>
-
-<p>Google Reader即将关闭，阅读还将继续~</p>
 ]]></content>
   </entry>
   
