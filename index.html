@@ -9,8 +9,8 @@
   <meta name="author" content="蔡晓建">
 
   
-  <meta name="description" content="平时工作，做需求的时候，总有有时间限制，俗称工作量评估，通常用x天或者x个单位点数来表示。在现实中，评估都是很随意的，实际结果经常有很大出入。
-在这里不评论，这种做法有多科学。只是单个任务工作量越大，越需要细分，直到有足够的清晰度，这样才能评估得比较靠谱。这里我们用一个例子来解释一下。 &hellip;">
+  <meta name="description" content="上周在京东商城买了一个HP的笔记本，没有带系统，本来以为装个系统不麻烦，没想到整了一天才装好。 事情是这样的，网上推荐使用USB安装，可是我手头上只有一个2G的USB，心想装个xp凑合使用着。我使用了老毛桃的装机工具，
+发现无论是使用ghost还是原版安装，都没法成功， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,54 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/20131120_notebook-system-install.html">周日笔记本系统安装记事</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-20T00:00:00+08:00" pubdate data-updated="true">Nov 20<span>th</span>, 2013</time>
+        
+         | <a href="/blog/20131120_notebook-system-install.html#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>上周在京东商城买了一个HP的笔记本，没有带系统，本来以为装个系统不麻烦，没想到整了一天才装好。</p>
+
+<p>事情是这样的，网上推荐使用USB安装，可是我手头上只有一个2G的USB，心想装个xp凑合使用着。我使用了老毛桃的装机工具，
+发现无论是使用ghost还是原版安装，都没法成功，重启之后到了xp启动界面就蓝屏了。</p>
+
+<p>尝试了好几次之后，并且测试chkdsk /f 后无效，我还是上网查找一下。<strong>错误码是0X0000007B</strong>，网上说这个是和硬盘有关,是设置问题或者病毒造成的硬盘引导分区错误。
+如果是在用原版系统盘安装系统的时候出这个问题，那说明机器配置还是比较新的，作为老的系统盘，不认这么新的硬盘接口，所以得进BIOS把硬盘模式改成IDE兼容模式。</p>
+
+<p>我这机器是新的，硬盘也重新格式化并分区了，应该不是什么病毒的问题。那应该是硬盘接口的问题，不过我发现BIOS里边没有硬盘的设置项目，上网搜索发现的确是没有这个设置的。</p>
+
+<p>看来xp是没希望了，只好换win7系统，win7的iso有2G多，只能分两次拷贝到笔记本硬盘上，再安装系统。果然，这次就很顺利了，整整折腾了一天。看来，装机也是技术活呀。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -346,63 +394,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/20130930_des.html">DES加解密总结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-30T00:00:00+08:00" pubdate data-updated="true">Sep 30<span>th</span>, 2013</time>
-        
-         | <a href="/blog/20130930_des.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>DES是广泛使用的分组对称加密算法，它要求待加密数据要8位对齐，所以在数据不足8位时候会出现padding的情况，
-所以有可能因为padding不同，而出现加解密结果不一样，这种情况在异构系统间的数据通信特别容易出现，例如java和cpp系统之间的通信。
-如果在开发过程中，遇到不同语言加解密结果不一样的情况，应该关注一下补齐方式。
-关于补齐方式，请参考http://en.wikipedia.org/wiki/Padding_%28cryptography%29</p>
-
-<p>先说说java这里，java api已经集成了DES加解密算法，如果不指定补齐方式的话，默认的补齐方式是使用PKCS5Padding，
-这种情况下，长度不足8字节的部分，填充“0x01”—“0x08”，如不
-足1字节，则填充1个“0x01”，如不足2字节，则填充2个“0x02”，以此类推。更具
-体的描述，参考<a href="http://www.herongyang.com/Cryptography/DES-JDK-What-Is-PKCS5Padding.html">What Is PKCS5Padding?</a>
-如果我们指定补齐方式，如使用DES/ECB/NoPadding的话(其中ECB是加密的模式，也是默认的加密方式)，就需要自己手动补齐，例如补空格字符。
-现在的代码为了和后台的加解密结果一致，采用的是手动补齐的方式，即NoPadding方式。</p>
-
-<p>如果cpp实现的padding方式和java的不一致，就可能导致加解密失败。在我们的系统里边，cpp实现的padding是补\0的。
-这个字符在显示的时候就直接被当成结束符了，无需特殊处理。所以，如果使用java加密，cpp解密的话，
-java这边也要使用补\0的做法，如果使用java解密的话，就只能使用trim进行处理了。</p>
-
-<p>以我们这边使用的两个DES相关的接口为例，用户鉴权接口在配置里边有使用trim进行处理，而wlan密码认证接口没有使用trim处理。
-因此按现在使用补空格的方法，在用户鉴权接口是能成功的，但在wlan密码认证接口里边是会导致认证失败的。</p>
-
-<p>如果需要更多关于加密补齐的资料，可以参考<a href="http://www.di-mgt.com.au/cryptopad.html">Using Padding in Encryption</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -416,6 +407,10 @@ java这边也要使用补\0的做法，如果使用java解密的话，就只能�
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/20131120_notebook-system-install.html">周日笔记本系统安装记事</a>
+      </li>
     
       <li class="post">
         <a href="/blog/20131108_mission-estimate.html">谈任务分解与评估</a>
@@ -451,10 +446,6 @@ java这边也要使用补\0的做法，如果使用java解密的话，就只能�
     
       <li class="post">
         <a href="/blog/20130821_soduku-generate.html">数独随机生成探讨</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/20130821_java-hell-stream-close.html">从流关闭说起</a>
       </li>
     
   </ul>
