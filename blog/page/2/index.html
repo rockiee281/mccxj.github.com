@@ -9,9 +9,9 @@
   <meta name="author" content="蔡晓建">
 
   
-  <meta name="description" content="DES是广泛使用的分组对称加密算法，它要求待加密数据要8位对齐，所以在数据不足8位时候会出现padding的情况，
-所以有可能因为padding不同，而出现加解密结果不一样，这种情况在异构系统间的数据通信特别容易出现，例如java和cpp系统之间的通信。
-如果在开发过程中， &hellip;">
+  <meta name="description" content="在笔记这个领域，网易的有道笔记的确是做得不错的。跟everynote相比，也不落下风，
+相对来说，我使用有道笔记的频率要高许多，下面就简单说说我的使用体验。 pc版，ipad和Android版，我都有使用。在pc上我更倾向于网页收藏，但这个网页插件好像只有ie版，不是特别方便。
+当然， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +66,62 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/20131029_youdao-note.html">有道云笔记使用感受</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-29T00:00:00+08:00" pubdate data-updated="true">Oct 29<span>th</span>, 2013</time>
+        
+         | <a href="/blog/20131029_youdao-note.html#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在笔记这个领域，网易的有道笔记的确是做得不错的。跟everynote相比，也不落下风，
+相对来说，我使用有道笔记的频率要高许多，下面就简单说说我的使用体验。</p>
+
+<p>pc版，ipad和Android版，我都有使用。在pc上我更倾向于网页收藏，但这个网页插件好像只有ie版，不是特别方便。
+当然，我在电脑上工作的时候，还是用来记录一些材料，快速想法等。总体来说，我觉得网页插件还是不如everynote的方便。
+不过，有道的空间要大不少，在保留网页的时候有很大优势。同时，智能提取正文也是很舒心的功能。</p>
+
+<p>对于ipad，输入其实是没有优势的，我很多是采用涂鸦，录音，照片等方式进行录入，语音识别？尝试过，但感觉综合的速度并不快，
+特别是出错的时候，容易打断思路，纠正成本很高。对于ipad来说，更多的时候是阅读，如果能从浏览器上直接保存到笔记上去就最好了，
+就像稍后阅读功能。所以ipad的使用体验感觉是要差一些的。</p>
+
+<p>手机Android版，大多数输入都是在这个版本上完成的，手机拼音的输入方式效率是不错的。在地铁上半小时，能完成好几百字的输入。
+只是屏幕太小了，阅读，涂鸦并不方便，主要以文字输入为主，有时候也做一下录音。</p>
+
+<p>对于我来说，每天在办公室的时间占据了大多数，不幸的是，公司不允许使用这一类工具。这大大的减少了我使用pc版的频率。
+所以我使用的场景基本是在地铁上，主要是用来记录一些想法，思路，用一些要点记录下来，便于以后整理发布。
+有需要的话，还可以通过邮件分享，不过pc上的邮件分享功能好像不能用。 总体来说，这个版本还是很好用的。</p>
+
+<p>上面就是我的使用感受。在这个产品的帮助下，我完成了数十篇的草稿，记录了很多思路和计划，有兴趣的童鞋都来试试吧！</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1028,79 +1084,6 @@ redis的所有功能就是将数据以其固有的几种结构保存，并提供
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/20130821_soduku-generate.html">数独随机生成探讨</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-21T00:00:00+08:00" pubdate data-updated="true">Aug 21<span>st</span>, 2013</time>
-        
-         | <a href="/blog/20130821_soduku-generate.html#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>思路</h3>
-
-<p>数独游戏应该很多人都玩过，规则也很简单。以前写过数独的程序解法，最近考虑了一下数独的随机生成。毕竟，每个数独一开始都是残缺的，它是怎么生成的?</p>
-
-<p>如果通过正向生成的话，还需要判断剩余的空格是否能够满足数独的问题。所以，我认为应该通过反向来创建，意思是通过一个完整的数独，然后随机从上面抠取，抠得越多，表明完成的难度越大。</p>
-
-<h3>具体方案</h3>
-
-<p>问题就变成，如何生成一个完整的随机的数独?根据数独的特点，我认为可以通过一个已有的数独来生成其他数独。方案如下:</p>
-
-<p><img src="/assets/images/2013/soduku/1.png" alt="row1" /></p>
-
-<ol>
-<li>首先看看上面的图案，对于一个完整的数独，1,2,3行调换次序，仍然可以保证变换后的数独是成立。
-同理，456,789也是同样的道理。行是如此，列也是可以成立的，abc,def,ghi的内部调换都是可以成立的。
-<img src="/assets/images/2013/soduku/2.png" alt="row2" /></li>
-<li>还有上图所示的情况，123和456整三行一起调换也是可以的。同样，在列上面也是一样的道理。</li>
-<li>还有其他一些思路，例如进行旋转操作，或者反过来的做法。</li>
-</ol>
-
-
-<h3>关于重复性</h3>
-
-<p>对于上述1,2两种方案，会不会出现重复的情况呢？我们进行下面的分析:</p>
-
-<p><img src="/assets/images/2013/soduku/3.png" alt="row3" /></p>
-
-<ol>
-<li>假设A1是x,B1是y,C1是z，我们想找到某个变化可以达到同样的效果。</li>
-<li>如果通过行变换的话，因为数独的限制，不可能有某一行在同样的列上有xyz存在，所以不能做到。</li>
-<li>同理，如果是列变化的话，在第一行的位置也不可能再有xyz存在，所以也是不能做到的。</li>
-</ol>
-
-
-<p>意思就是说，如果从某个变化开始，每做一次变换，都能得到一个新的数独，这样我们可以统计一下，一共可以有多少种变换方式。每三行中的行内的变化有6种排列，三行三行的也是有6中排列，计算上列的变换，就有
-6X6X6X6X6X6X6X6=1679616种。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1116,6 +1099,10 @@ redis的所有功能就是将数据以其固有的几种结构保存，并提供
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/20131126_connection-leak.html">连接池泄露定位案例</a>
+      </li>
     
       <li class="post">
         <a href="/blog/20131120_notebook-system-install.html">周日笔记本系统安装记事</a>
@@ -1151,10 +1138,6 @@ redis的所有功能就是将数据以其固有的几种结构保存，并提供
     
       <li class="post">
         <a href="/blog/20130901_junit-parameterized.html">JUnit参数化介绍与实践</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/20130821_soduku-generate.html">数独随机生成探讨</a>
       </li>
     
   </ul>
