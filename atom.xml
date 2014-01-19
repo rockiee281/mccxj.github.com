@@ -4,7 +4,7 @@
   <title><![CDATA[小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2013-12-22T09:50:22+08:00</updated>
+  <updated>2014-01-19T16:40:57+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -12,6 +12,93 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[对UC文章《实时监控Android设备网络包》的补充]]></title>
+    <link href="http://mccxj.github.com/blog/20131227_android-tcpdump-netcat-addon.html"/>
+    <updated>2013-12-27T00:00:00+08:00</updated>
+    <id>http://mccxj.github.com/blog/android-tcpdump-netcat-addon</id>
+    <content type="html"><![CDATA[<p>补充的内容，主要是一些细节的问题，备忘.</p>
+
+<h2>编译netcat</h2>
+
+<p>android上自己好像带了一个，不过也可以自己编译一个。 我这里使用cygwin来编译的，首先去下载源码。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># cygwin</span>
+</span><span class='line'><span class="nb">cd</span> /cygdrive/d/
+</span><span class='line'>mkdir -p netcat/toolchain
+</span><span class='line'>
+</span><span class='line'><span class="nb">export </span><span class="nv">NDK</span><span class="o">=</span>/cygdrive/d/android-ndk-r8e
+</span><span class='line'>/cygdrive/d/android-ndk-r8e/build/tools/make-standalone-toolchain.sh --platform<span class="o">=</span>android-8 --install-dir<span class="o">=</span>netcat/toolchain
+</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s1">&#39;pwd&#39;</span>/netcat/toolchain/bin:<span class="nv">$PATH</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">CC</span><span class="o">=</span>arm-linux-androideabi-gcc
+</span><span class='line'><span class="nb">export </span><span class="nv">RANLIB</span><span class="o">=</span>arm-linux-androideabi-ranlib
+</span><span class='line'><span class="nb">export </span><span class="nv">AR</span><span class="o">=</span>arm-linux-and roideabi-ar
+</span><span class='line'><span class="nb">export </span><span class="nv">LD</span><span class="o">=</span>arm-linux-androideabi-ld
+</span><span class='line'>
+</span><span class='line'><span class="c"># 开始编译源码</span>
+</span><span class='line'><span class="nb">cd </span>netcat-0.7.1/
+</span><span class='line'>./configure —host<span class="o">=</span>arm-linux
+</span><span class='line'>make
+</span><span class='line'>
+</span><span class='line'><span class="c"># 用file进行检测一下</span>
+</span><span class='line'>file src/netcat
+</span><span class='line'>src/netcat: ELF 32-bit LSB executable, ARM, version1 <span class="o">(</span>SYSV<span class="o">)</span>, ...
+</span><span class='line'>
+</span><span class='line'><span class="c"># 发到android上去</span>
+</span><span class='line'>adb push src/netcat /data/local/netcat
+</span><span class='line'>adb shell chmod 777 /data/local/netcat
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>tcpdump的使用</h2>
+
+<p>如果只是监听所有的包，可以用下面的：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>adb shell <span class="s2">&quot;tcpdump -n -s 0 -w - | nc -I -p 11233&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果先监听端口的话，又想转发的话，写法有点特别。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>adb shell <span class="s2">&quot;tcpdump -X -n -s 0 -w - port 5000 | nc -l -p 11233&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外，如果像我这样，有cygwin的话，就已经有nc命令了，可以像下面一样进行转发。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>adb forward tcp:11333 tcp:11233 <span class="o">&amp;&amp;</span> nc -v 127.0.0.1 | /cygdriver/d/Wireshark/Wireshark.exe -k -S -i -
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[连接池泄露定位案例]]></title>
@@ -1783,33 +1870,6 @@ pooled connections to be committed or the connection will not be returned to the
 
 <p>我们尝试给查询语句增加commit操作，果然异常信息不再出现，并且数据库连接数也大幅度减少了。
 看来，在生产系统中还是应该优先考虑成熟的解决方案，不要随便造轮子。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[带平衡的对象池设计]]></title>
-    <link href="http://mccxj.github.com/blog/20130630_object-balance-pool.html"/>
-    <updated>2013-06-30T00:00:00+08:00</updated>
-    <id>http://mccxj.github.com/blog/object-balance-pool</id>
-    <content type="html"><![CDATA[<p>最近有个需求，是关于一个Socket连接池的功能改造，要求实现下面的需求:</p>
-
-<ol>
-<li>可配置多个服务器地址</li>
-<li>服务器地址可以配置权重(比如3:2:1)</li>
-<li>连接池可以设置最小连接和最大连接</li>
-<li>某服务器从崩溃中恢复后，连接池中的连接数可以自动恢复到服务器之间的权重比。</li>
-<li>连接可设置最大空闲释放时间</li>
-</ol>
-
-
-<p>一开始有同事自定义了一个链表来做取数和归还的操作，在线程安全方面操作感觉还是有点麻烦。
-后来我采用PriorityBlockingQueue来实现，其实就是内部变成了堆的结构。见下面的图:</p>
-
-<p><img src="http://mccxj.github.com/assets/images/2013/pool/1.png" alt="数据结构" /></p>
-
-<p><img src="http://mccxj.github.com/assets/images/2013/pool/2.png" alt="类图" /></p>
-
-<p><img src="http://mccxj.github.com/assets/images/2013/pool/3.png" alt="状态图" /></p>
 ]]></content>
   </entry>
   
