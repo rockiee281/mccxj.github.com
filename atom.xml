@@ -4,7 +4,7 @@
   <title><![CDATA[小毛的胡思乱想]]></title>
   <link href="http://mccxj.github.com/atom.xml" rel="self"/>
   <link href="http://mccxj.github.com/"/>
-  <updated>2014-01-19T17:40:35+08:00</updated>
+  <updated>2014-01-19T17:43:34+08:00</updated>
   <id>http://mccxj.github.com/</id>
   <author>
     <name><![CDATA[蔡晓建]]></name>
@@ -14,12 +14,12 @@
 
   
   <entry>
-    <title type="html"><![CDATA[对UC文章《实时监控Android设备网络包》的补充]]></title>
+    <title type="html"><![CDATA[考察对类加载的理解(问题篇)]]></title>
     <link href="http://mccxj.github.com/blog/20131227_classloader-test.html"/>
     <updated>2013-12-27T00:00:00+08:00</updated>
     <id>http://mccxj.github.com/blog/classloader-test</id>
     <content type="html"><![CDATA[<p>类加载和程序运行是有些关系的，不妨来测试一下。<br/>
-难度:中高级</p>
+难度:中级</p>
 
 <h2>独立进程篇</h2>
 
